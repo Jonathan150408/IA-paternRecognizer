@@ -1,0 +1,2 @@
+tanh 
+abs_sum
