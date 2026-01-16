@@ -2,7 +2,41 @@
   "repoUrl": "https://github.com/Jonathan150408/IA-paternRecognizer",
   "projectName": "P_RemedAppro",
   "branch": "main",
-  "me": "jonathan150408",
+  "me": "Jonathan150408",
   "journalStartDate": null,
-  "exceptions": []
+  "exceptions": [
+    {
+      "id": "9d8f9a28-057f-4152-9b34-3030a8388073",
+      "type": "commitless",
+      "name": "learn(introduction) : introducing the project",
+      "description": "",
+      "date": "2026-01-16T08:32:00.000Z",
+      "duration": 30,
+      "status": "Done",
+      "author": "jonathan150408"
+    },
+    {
+      "id": "cad57732-531f-440e-adaa-8dd7efaa48d4",
+      "type": "commitpatch",
+      "sha": "3c8bff136b41970a3b45c30ed47de063d3bae752",
+      "url": "https://github.com/Jonathan150408/IA-paternRecognizer/commit/3c8bff136b41970a3b45c30ed47de063d3bae752",
+      "name": "chore(GitJournal) : Seting up gitjournal for the project",
+      "description": "",
+      "date": "2026-01-16T08:32:00.000Z",
+      "duration": 10,
+      "status": "Done",
+      "author": "Jonathan150408",
+      "patch": true
+    },
+    {
+      "id": "5b3e4e40-e197-49f6-9429-84402ce2c626",
+      "type": "commitless",
+      "name": "chore(help) : Helping a camarade to set up GitJournal",
+      "description": "",
+      "date": "2026-01-16T09:02:00.000Z",
+      "duration": 15,
+      "status": "Done",
+      "author": "Jonathan150408"
+    }
+  ]
 }
