@@ -106,7 +106,7 @@ namespace IA03
         {
             // Set form position to top right
             this.StartPosition = FormStartPosition.Manual;
-            this.Location = new Point(1200, 0);
+            this.Location = new Point(2000, 0);
 
             HandleGrid();
         }
