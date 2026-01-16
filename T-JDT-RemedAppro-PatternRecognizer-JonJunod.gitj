@@ -37,6 +37,16 @@
       "duration": 15,
       "status": "Done",
       "author": "Jonathan150408"
+    },
+    {
+      "id": "63e24cdf-2086-409a-8af7-a804bb70370c",
+      "type": "commitless",
+      "name": "learn(Convolutive Neural Network) : reading documentation",
+      "description": "https://www.datacamp.com/fr/tutorial/introduction-to-convolutional-neural-networks-cnns?dc_referrer=https%3A%2F%2Fwww.google.com%2F",
+      "date": "2026-01-16T10:24:00.000Z",
+      "duration": 20,
+      "status": "Done",
+      "author": "Jonathan150408"
     }
   ]
 }
