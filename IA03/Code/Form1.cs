@@ -38,6 +38,49 @@ namespace IA03
             //initialize the network
             Network = new List<Layer>();
 
+
+            //in the work
+
+            //new way to import network
+            //a link = a file = a layer, this means "foreach file that represents a layer, do..."
+            foreach (string link in File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "Ressources", "layers_links.txt")).Split(';'))
+            {
+                Layer tempLayer;
+
+                //split the function and the neurons (as text for the moment)
+                string[] str_wholeLayer = File.ReadAllText(link.Trim()).Split('+');
+
+                //split the neurons (as text) -> we get an array of text neurons
+                string[] str_allValues = str_wholeLayer[1].Split(';');
+
+                //converts the activation function
+                Enum.TryParse(str_wholeLayer[0], ignoreCase: true, out Function activation);
+                tempLayer = new Layer(new List<Neuron>(), activation);
+
+                //foreach neuron as text, we convert it into values (1 text neuron = 1 line in the file)
+                foreach (string str_neuron in str_allValues)
+                {
+                    string[] str_neuronValues = str_neuron.Trim().Split(' ');
+                    List<double> dbl_neuronValues = new List<double>(str_neuronValues.Length); //give the lenght to optimise the RAM usage
+
+                    //foreach value in the text, we convert it to double and assign it to the neuron
+                    for (int i = 0; i < str_neuronValues.Length - 1; i++)
+                    {
+                        double.TryParse(str_neuronValues[i], out double dbl_currentValue);
+                        dbl_neuronValues.Add(dbl_currentValue);
+                    }
+                    //parse the adjutement (last value)
+                    double.TryParse(str_neuronValues[str_neuronValues.Length - 1], out double dbl_adjustement);
+
+                    tempLayer.Neurons.Add(new Neuron(dbl_neuronValues, dbl_adjustement));
+                }
+                Network.Add(tempLayer);
+            }
+
+            //in the work
+
+
+            /*
             //gets the activations functions
             string path = Path.Combine(AppContext.BaseDirectory, "Ressources", "functions.txt");
             string content = File.ReadAllText(path);
@@ -95,7 +138,7 @@ namespace IA03
 
                 // Finally adds the layer to the Network -> next layer
                 Network.Add(new Layer(layer, functions[Network.Count]));
-            }
+            }*/
         }
         /// <summary>
         /// Loading
