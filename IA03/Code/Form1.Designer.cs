@@ -28,25 +28,16 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.grid1 = new System.Windows.Forms.TableLayoutPanel();
+            this.UserInput = new System.Windows.Forms.Panel();
             this.SuspendLayout();
             // 
-            // grid1
+            // UserInput
             // 
-            this.grid1.ColumnCount = 4;
-            this.grid1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
-            this.grid1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
-            this.grid1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
-            this.grid1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
-            this.grid1.Location = new System.Drawing.Point(400, 400);
-            this.grid1.Name = "grid1";
-            this.grid1.RowCount = 4;
-            this.grid1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
-            this.grid1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
-            this.grid1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
-            this.grid1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
-            this.grid1.Size = new System.Drawing.Size(200, 200);
-            this.grid1.TabIndex = 16;
+            this.UserInput.Location = new System.Drawing.Point(488, 149);
+            this.UserInput.Margin = new System.Windows.Forms.Padding(0);
+            this.UserInput.Name = "UserInput";
+            this.UserInput.Size = new System.Drawing.Size(200, 100);
+            this.UserInput.TabIndex = 17;
             // 
             // IA
             // 
@@ -54,7 +45,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ActiveCaptionText;
             this.ClientSize = new System.Drawing.Size(1061, 743);
-            this.Controls.Add(this.grid1);
+            this.Controls.Add(this.UserInput);
             this.Name = "IA";
             this.Text = "Form1";
             this.Load += new System.EventHandler(this.Form1_Load);
@@ -63,8 +54,7 @@
         }
 
         #endregion
-
-        private System.Windows.Forms.TableLayoutPanel grid1;
+        private System.Windows.Forms.Panel UserInput;
     }
 }
 
