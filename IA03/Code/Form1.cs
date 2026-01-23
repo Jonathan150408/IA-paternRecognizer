@@ -38,10 +38,10 @@ namespace IA03
             //initialize the network
             Network = new List<Layer>();
 
+            //
+            //Import part
+            //
 
-            //in the work
-
-            //new way to import network
             //a link = a file = a layer, this means "foreach file that represents a layer, do..."
             foreach (string link in File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "Ressources", "layers_links.txt")).Split(';'))
             {
@@ -76,69 +76,6 @@ namespace IA03
                 }
                 Network.Add(tempLayer);
             }
-
-            //in the work
-
-
-            /*
-            //gets the activations functions
-            string path = Path.Combine(AppContext.BaseDirectory, "Ressources", "functions.txt");
-            string content = File.ReadAllText(path);
-            string[] functions_str = content.Split('\n');
-            List<Function> functions = new List<Function>();
-            //parse the functions from text
-            foreach (string function in functions_str)
-            {
-                Enum.TryParse(function, ignoreCase: true, out Function activation);
-                functions.Add(activation);
-            }
-
-            // Gets the infos about the network
-            path = Path.Combine(AppContext.BaseDirectory, "Ressources", "poids.txt");
-            content = File.ReadAllText(path);
-
-            
-            // Split with the '+' character -> obtains the Layers
-            string[] strLayers = content.Split('+');
-
-            // Foreach layer (iLayer = index layer)
-            for (int iLayer = 0; iLayer < strLayers.Length; iLayer++)
-            {
-                string current_layer = strLayers[iLayer];
-                // Split with ';' -> gets the neurons values
-                string[] strNeurons = current_layer.Split(';');
-
-                // The current layer containing neurons
-                List<Neuron> layer = new List<Neuron>(strNeurons.Length);
-
-                // Foreach neurons
-                foreach (string current_neuron in strNeurons)
-                {
-                    // Split the weights and adjustment
-                    string[] strNeuronValues = current_neuron.Split(' ');
-
-                    // Pré-allocation de la liste des poids (double) pour ce neurone
-                    List<double> weights = new List<double>(strNeuronValues.Length - 1);
-
-                    // Parses the string into double values
-                    for (int i = 0; i < strNeuronValues.Length - 1; i++)
-                    {
-                        // Parses the current values, if not a value we take 0.0
-                        if (!double.TryParse(strNeuronValues[i], out double parsed))
-                            parsed = 0.0;
-                        weights.Add(parsed);
-                    }
-                    // Same with the adjustment
-                    if (!double.TryParse(strNeuronValues[strNeuronValues.Length - 1], out double adjustment))
-                        adjustment = 0.0;
-
-                    // Adds the new neuron to the layer
-                    layer.Add(new Neuron(weights, adjustment));
-                }
-
-                // Finally adds the layer to the Network -> next layer
-                Network.Add(new Layer(layer, functions[Network.Count]));
-            }*/
         }
         /// <summary>
         /// Loading

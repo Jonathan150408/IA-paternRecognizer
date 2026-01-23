@@ -73,6 +73,7 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
     <None Include="bin\Debug\IA03.exe.config" />
     <None Include="obj\Debug\DesignTimeResolveAssemblyReferences.cache" />
@@ -103,12 +104,9 @@
     <Content Include="obj\Debug\IA03.csproj.FileListAbsolute.txt" />
     <Content Include="obj\Debug\IA03.exe" />
     <Content Include="obj\Debug\IA03.pdb" />
-    <Content Include="Ressources\functions.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Ressources\poids.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    <None Include="Ressources\layers\layer2.txt" />
+    <None Include="Ressources\layers\layer1.txt" />
+    <None Include="Ressources\layers_links.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
