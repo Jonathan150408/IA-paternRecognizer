@@ -47,6 +47,16 @@
       "duration": 20,
       "status": "Done",
       "author": "Jonathan150408"
+    },
+    {
+      "id": "f219c67a-9f60-40f6-b280-ec945e5e8435",
+      "type": "commitless",
+      "name": "chore(files in project) : adding the existing files",
+      "description": "In Visual Studio, the files like .txt you manually write doesn't appear in the solution explorer. I added them (I hope)\r\nvisited :\r\nhttps://stackoverflow.com/questions/20033220/add-existing-folders-to-project-in-visual-studio",
+      "date": "2026-01-23T10:21:00.000Z",
+      "duration": 10,
+      "status": "Done",
+      "author": "Jonathan150408"
     }
   ]
 }
