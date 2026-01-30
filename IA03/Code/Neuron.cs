@@ -12,8 +12,8 @@ namespace IA03
         /// <summary>
         /// Weights
         /// </summary>
-        private List<double> _weights;
-        public List<double> Weights
+        private double[] _weights;
+        public double[] Weights
         {
             get { return _weights; }
             private set { _weights = value; }
@@ -35,7 +35,7 @@ namespace IA03
         /// </summary>
         /// <param name="weights"></param>
         /// <param name="adjustment"></param>
-        public Neuron(List<double> weights, double adjustment)
+        public Neuron(double[] weights, double adjustment)
         {
             this._weights = weights;
             this._adjustment = adjustment;
@@ -52,7 +52,7 @@ namespace IA03
             if (function == Layer.Function.sigmoid || function == Layer.Function.tanh)
             {
                 //adds the inpunt*weight result to result 16 times (1 for each input)
-                for (int i = 0; i < this.Weights.Count; i++)
+                for (int i = 0; i < this.Weights.Length; i++)
                     result += this._weights[i] * inputs[i];
 
                 //adds the adjustement
@@ -72,7 +72,7 @@ namespace IA03
             else
             {
                 //adds the inpunt*weight result to result 16 times (1 for each input)
-                for (int i = 0; i < this.Weights.Count; i++)
+                for (int i = 0; i < this.Weights.Length; i++)
                     result += Math.Abs(this._weights[i] * inputs[i]);
                 return result + Adjustment;
             }
@@ -101,7 +101,7 @@ namespace IA03
             double learning_rate = 0.001;
 
             //updates the weights
-            for (int i = 0; i < this.Weights.Count; i++)
+            for (int i = 0; i < this.Weights.Length; i++)
             {
                 this.Weights[i] += learning_rate * (expected - output) * given_values[i] * (1 - output * output);
             }

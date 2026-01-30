@@ -51,23 +51,24 @@ namespace IA03
                 string[] str_wholeLayer = File.ReadAllText(link.Trim()).Split('+');
 
                 //split the neurons (as text) -> we get an array of text neurons
-                string[] str_allValues = str_wholeLayer[1].Split(';');
+                string[] str_allValues = str_wholeLayer[2].Split(';');
 
                 //converts the activation function
                 Enum.TryParse(str_wholeLayer[0], ignoreCase: true, out Function activation);
-                tempLayer = new Layer(new List<Neuron>(), activation);
+                Enum.TryParse(str_wholeLayer[1], ignoreCase: true, out Layer.Type type);
+                tempLayer = new Layer(new List<Neuron>(), activation, type);
 
                 //foreach neuron as text, we convert it into values (1 text neuron = 1 line in the file)
                 foreach (string str_neuron in str_allValues)
                 {
                     string[] str_neuronValues = str_neuron.Trim().Split(' ');
-                    List<double> dbl_neuronValues = new List<double>(str_neuronValues.Length); //give the lenght to optimise the RAM usage
+                    double[] dbl_neuronValues = new double[str_neuronValues.Length - 1]; //give the lenght to optimise the RAM usage
 
                     //foreach value in the text, we convert it to double and assign it to the neuron
                     for (int i = 0; i < str_neuronValues.Length - 1; i++)
                     {
                         double.TryParse(str_neuronValues[i], out double dbl_currentValue);
-                        dbl_neuronValues.Add(dbl_currentValue);
+                        dbl_neuronValues[i] = dbl_currentValue;
                     }
                     //parse the adjutement (last value)
                     double.TryParse(str_neuronValues[str_neuronValues.Length - 1], out double dbl_adjustement);
@@ -101,7 +102,7 @@ namespace IA03
             this.UserInput.AutoSize = true;
             this.UserInput.BackColor = Color.White;
 
-            //create 16 checkboxes
+            //create a 32x32 square of  checkboxes
             for (int i = 0; i < 32; i++)
             {
                 for (int j = 0; j < 32; j++)
