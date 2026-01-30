@@ -180,86 +180,93 @@ namespace IA03
         /// </summary>
         private void WriteCalculations()
         {
-            //feature map for lines at the top of the kernel
-            double[,] lineUpMap = Kernels[0].GenerateFeatureMap(gridToAnalyse);
-            for (int i = 0; i < lineUpMap.GetLength(0); i++)
+            List<double[,]> convolutionals_Layers = new List<double[,]>();
+            foreach(Kernel kernel in Kernels)
             {
-                for (int j = 0; j < lineUpMap.GetLength(1) - 1; j++)
+                convolutionals_Layers.Add(kernel.GenerateFeatureMap(gridToAnalyse));
+            }
+            //writting feature maps values in the console
+            foreach (double[,] map in convolutionals_Layers)
+            {
+                for (int i = 0; i < map.GetLength(0); i++)
                 {
-                    Console.Write(lineUpMap[i, j].ToString());
+                    for (int j = 0; j < map.GetLength(1) - 1; j++)
+                    {
+                        if (map[i, j] == 0)
+                        {
+                            Console.Write(" ");
+                        }
+                        else
+                            Console.Write(map[i, j].ToString());
+                    }
+                    Console.WriteLine("|");
                 }
-                Console.WriteLine("|");
+                Console.WriteLine("________________________");
             }
-            Console.WriteLine("________________________");
-            // feature map for lines at the bottom of the kernel
-            double[,] lineDownMap = Kernels[1].GenerateFeatureMap(gridToAnalyse);
-            for (int i = 0; i < lineDownMap.GetLength(0); i++)
+
+            List<double[,]> pooled_maps = MaxPooling(convolutionals_Layers);
+            //writting pooled feature maps values in the console
+            foreach (double[,] map in pooled_maps)
             {
-                for (int j = 0; j < lineDownMap.GetLength(1) - 1; j++)
+                for (int i = 0; i < map.GetLength(0); i++)
                 {
-                    Console.Write(lineDownMap[i, j].ToString());
+                    for (int j = 0; j < map.GetLength(1) - 1; j++)
+                    {
+                        if (map[i, j] == 0)
+                        {
+                            Console.Write(" ");
+                        }
+                        else
+                            Console.Write(map[i, j].ToString());
+                    }
+                    Console.WriteLine("|");
                 }
-                Console.WriteLine("|");
+                Console.WriteLine("________________________");
             }
-            /*
-            //confirm the neurons values in console for layer 1
-            string lay1 = "";
-            foreach(Neuron neuron in Network[0].Neurons)
+        }
+        private List<double[,]> MaxPooling(List<double[,]> feature_maps)
+        {
+            List<double[,]> pooled_maps = new List<double[,]>();
+
+            foreach (double[,] map in feature_maps)
             {
-                foreach (double dbl in neuron.Weights)
+                double[,] temp_pooled_map = new double[(int)Math.Ceiling((double)(map.GetLength(0) / 2)), (int)Math.Ceiling((double)(map.GetLength(1) / 2))];
+                for (int i = 0; i < map.GetLength(0); i += 2)
                 {
-                    lay1 += dbl.ToString();
-                    lay1 += " | ";
+                    for (int j = 0; j < map.GetLength(1) -1; j += 2)
+                    {
+                        try
+                        {
+                            temp_pooled_map[(int)Math.Ceiling((double)(i / 2)), (int)Math.Ceiling((double)(j / 2))] =
+                                Math.Max(map[i, j],
+                                Math.Max(map[i + 1, j],
+                                Math.Max(map[i, j + 1], (map[i + 1, j + 1]))));
+                        }
+                        catch (Exception)
+                        {
+                            try
+                            {
+                                temp_pooled_map[(int)Math.Ceiling((double)(i / 2)), (int)Math.Ceiling((double)(j / 2))] = Math.Max(map[i, j], map[i + 1, j]);
+                            }
+                            catch (Exception)
+                            {
+                                try
+                                {
+                                    temp_pooled_map[(int)Math.Ceiling((double)(i / 2)), (int)Math.Ceiling((double)(j / 2))] = Math.Max(map[i, j], map[i, j + 1]);
+                                }
+                                catch (Exception)
+                                {
+                                    temp_pooled_map[(int)Math.Ceiling((double)(i / 2)), (int)Math.Ceiling((double)(j / 2))] = map[i, j];
+
+                                }
+                            }
+                        }
+
+                    }
                 }
-                lay1 += neuron.Adjustment.ToString() + "\n";
             }
-            Console.WriteLine(lay1);
 
-            //confirm the neurons values in console for layer 2
-            string lay2 = "";
-            foreach (Neuron neuron in Network[1].Neurons)
-            {
-                foreach (double dbl in neuron.Weights)
-                {
-                    lay2 += dbl.ToString();
-                    lay2 += " | ";
-                }
-                lay2 += neuron.Adjustment.ToString() + "\n";
-            }
-            Console.WriteLine(lay2);
-
-            //results from layer 1
-            int count = 0;
-            List<double> r1 = new List<double>();
-            foreach (double dbl in Network[0].GetLayerResults(gridToAnalyse))
-                r1.Add(dbl);
-
-            foreach (double result in r1)
-            {
-                if (count == 4)
-                    Console.WriteLine();
-                Console.WriteLine(result);
-                count ++;
-            }
-            Console.Write("---------------------------------\nFinal results :\n");
-
-            //final results
-            //values with sigmoid
-            List<double> r2 = new List<double>();
-            foreach (double dbl in Network[1].GetLayerResults(r1))
-                r2.Add(dbl);
-            foreach (double result in r2)
-            {
-                Console.WriteLine(result);
-            }
-            //conclusion
-            Console.WriteLine("---------------------------------\nConclusion :");
-            if (r2[0] > r2[1])
-                Console.WriteLine("Ligne horizontale");
-            else if (r2[1] > r2[0])
-                Console.WriteLine("Ligne verticale");
-            else
-                Console.WriteLine("Indéterminable");*/
+            return pooled_maps;
         }
         /// <summary>
         /// Gets the values
