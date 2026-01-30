@@ -57,6 +57,16 @@
       "duration": 10,
       "status": "Done",
       "author": "Jonathan150408"
+    },
+    {
+      "id": "4f9d4bd7-dd46-478b-a245-dfb31d4025bf",
+      "type": "commitless",
+      "name": "learn(CNN steps) : getting more informations about the CNNs",
+      "description": "(convolution)[https://www.superdatascience.com/blogs/convolutional-neural-networks-cnn-step-1-convolution-operation]\r\n(pooling)[https://www.superdatascience.com/blogs/convolutional-neural-networks-cnn-step-2-max-pooling]\r\n(flattering)[https://www.superdatascience.com/blogs/convolutional-neural-networks-cnn-step-3-flattening]\r\n(usage of a kernel)[https://medium.com/advanced-deep-learning/cnn-operation-with-2-kernels-resulting-in-2-feature-mapsunderstanding-the-convolutional-filter-c4aad26cf32]",
+      "date": "2026-01-30T10:54",
+      "duration": 50,
+      "status": "Done",
+      "author": "Jonathan150408"
     }
   ]
 }
