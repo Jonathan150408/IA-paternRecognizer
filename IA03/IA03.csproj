@@ -55,6 +55,7 @@
     <Compile Include="Code\Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
+    <Compile Include="Code\Kernel.cs" />
     <Compile Include="Code\Layer.cs" />
     <Compile Include="Code\Neuron.cs" />
     <Compile Include="obj\Debug\.NETFramework,Version=v4.7.2.AssemblyAttributes.cs" />

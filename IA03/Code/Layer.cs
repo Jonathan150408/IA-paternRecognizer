@@ -16,12 +16,8 @@ namespace IA03
 		{
 			sigmoid,
 			tanh,
-			abs_sum
-		}
-		public enum Type
-		{
-			kernel,
-			full_layer
+			abs_sum,
+			kernel
 		}
 		/// <summary>
 		/// Represents the function of the layer
@@ -31,15 +27,6 @@ namespace IA03
 		{
 			get { return _function; }
 			private set { _function = value; }
-		}
-		/// <summary>
-		/// Represents the usage of the layer (filter/analyse)
-		/// </summary>
-		private Type _type;
-		public Type type
-		{
-			get { return _type; }
-			set { _type = value; }
 		}
 
 		/// <summary>
@@ -56,11 +43,10 @@ namespace IA03
 		/// Constructor
 		/// </summary>
 		/// <param name="neurons"></param>
-		public Layer(List<Neuron> neurons, Function func, Type usage)
+		public Layer(List<Neuron> neurons, Function func)
 		{
 			Neurons = neurons;
 			function = func;
-			type = usage;
 		}
 		/// <summary>
 		/// Calculate the result of the layer

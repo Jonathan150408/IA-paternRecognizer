@@ -1,4 +1,6 @@
 ﻿using IA03;
+using IA03.Code;
+
 ///22.11.2025
 ///Mon projet consite en : former une IA simple, réseau 16-8-2, capable de distinguer une ligne/colonne dans une grille de 4*4
 using System;
@@ -14,19 +16,26 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using static IA03.Layer;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.Button;
 
 namespace IA03
 {
     public partial class IA : Form
     {
+        private const int COLUMNS_NUMBER = 32;
+        private const int ROWS_NUMBER = 32;
         /// <summary>
         /// The grid we'll analyse
         /// </summary>
-        public List<double> gridToAnalyse = new List<double>();
+        public double[,] gridToAnalyse = new double[ROWS_NUMBER,COLUMNS_NUMBER];
         /// <summary>
         /// The neuronal network
         /// </summary>
         private readonly List<Layer> Network;
+        /// <summary>
+        /// The kernels (= filters) used to analyse the grid
+        /// </summary>
+        private readonly List<Kernel> Kernels;
 
         /// <summary>
         /// The main program
@@ -37,6 +46,7 @@ namespace IA03
 
             //initialize the network
             Network = new List<Layer>();
+            Kernels = new List<Kernel>();
 
             //
             //Import part
@@ -51,31 +61,54 @@ namespace IA03
                 string[] str_wholeLayer = File.ReadAllText(link.Trim()).Split('+');
 
                 //split the neurons (as text) -> we get an array of text neurons
-                string[] str_allValues = str_wholeLayer[2].Split(';');
+                string[] str_allValues = str_wholeLayer[1].Split(';');
 
                 //converts the activation function
                 Enum.TryParse(str_wholeLayer[0], ignoreCase: true, out Function activation);
-                Enum.TryParse(str_wholeLayer[1], ignoreCase: true, out Layer.Type type);
-                tempLayer = new Layer(new List<Neuron>(), activation, type);
+                tempLayer = new Layer(new List<Neuron>(), activation);
 
-                //foreach neuron as text, we convert it into values (1 text neuron = 1 line in the file)
-                foreach (string str_neuron in str_allValues)
+                // For a layer
+                if (activation != Layer.Function.kernel)
                 {
-                    string[] str_neuronValues = str_neuron.Trim().Split(' ');
-                    double[] dbl_neuronValues = new double[str_neuronValues.Length - 1]; //give the lenght to optimise the RAM usage
-
-                    //foreach value in the text, we convert it to double and assign it to the neuron
-                    for (int i = 0; i < str_neuronValues.Length - 1; i++)
+                    //foreach neuron as text, we convert it into values (1 text neuron = 1 line in the file)
+                    foreach (string str_neuron in str_allValues)
                     {
-                        double.TryParse(str_neuronValues[i], out double dbl_currentValue);
-                        dbl_neuronValues[i] = dbl_currentValue;
-                    }
-                    //parse the adjutement (last value)
-                    double.TryParse(str_neuronValues[str_neuronValues.Length - 1], out double dbl_adjustement);
+                        string[] str_neuronValues = str_neuron.Trim().Split(' ');
+                        double[] dbl_neuronValues = new double[str_neuronValues.Length - 1];
 
-                    tempLayer.Neurons.Add(new Neuron(dbl_neuronValues, dbl_adjustement));
+                        //foreach value in the text, we convert it to double and assign it to the neuron
+                        for (int i = 0; i < str_neuronValues.Length - 1; i++)
+                        {
+                            double.TryParse(str_neuronValues[i], out double dbl_currentValue);
+                            dbl_neuronValues[i] = dbl_currentValue;
+                        }
+                        //parse the adjutement (last value)
+                        double.TryParse(str_neuronValues[str_neuronValues.Length - 1], out double dbl_adjustement);
+
+                        tempLayer.Neurons.Add(new Neuron(dbl_neuronValues, dbl_adjustement));
+                    }
+                    Network.Add(tempLayer);
                 }
-                Network.Add(tempLayer);
+                else if (activation == Function.kernel)
+                {
+                    Kernel tempKernel = new Kernel(new double[str_allValues[0].Trim().Split(' ').GetLength(0), str_allValues.Length]);
+
+                    //foreach line of values as text, we take it and...
+                    for (int i = 0; i < str_allValues.Length; i++)
+                    {
+                        string[] str_filterValues = str_allValues[i].Trim().Split(' ');
+                        //double[,] dbl_filterValues = new double[str_filterValues.Length, str_allValues.Length];
+
+                        //...we separate it into values (as text) that we convert into doubles
+                        for (int j = 0; j < str_filterValues.Length; j++)
+                        {
+                            double.TryParse(str_filterValues[i], out double dbl_currentValue);
+                            tempKernel.filter[i, j] = dbl_currentValue;
+                        }
+                    }
+
+                    this.Kernels.Add(tempKernel);
+                }
             }
         }
         /// <summary>
@@ -107,7 +140,7 @@ namespace IA03
             {
                 for (int j = 0; j < 32; j++)
                 {
-                    this.UserInput.Controls.Add(new CheckBox
+                    this.UserInput.Controls.Add(new System.Windows.Forms.CheckBox
                     {
                         Appearance = Appearance.Button,
                         Tag = 0,
@@ -133,7 +166,7 @@ namespace IA03
             this.Controls.Add(done);
 
             //link the click action with methods
-            foreach (CheckBox checkBox in this.UserInput.Controls)
+            foreach (System.Windows.Forms.CheckBox checkBox in this.UserInput.Controls)
             {
                 checkBox.MouseDown += CheckBox_MouseDown;
                 checkBox.MouseUp += CheckBox_MouseUp;
@@ -147,6 +180,28 @@ namespace IA03
         /// </summary>
         private void WriteCalculations()
         {
+            //feature map for lines at the top of the kernel
+            double[,] lineUpMap = Kernels[0].GenerateFeatureMap(gridToAnalyse);
+            for (int i = 0; i < lineUpMap.GetLength(0); i++)
+            {
+                for (int j = 0; j < lineUpMap.GetLength(1) - 1; j++)
+                {
+                    Console.Write(lineUpMap[i, j].ToString());
+                }
+                Console.WriteLine("|");
+            }
+            Console.WriteLine("________________________");
+            // feature map for lines at the bottom of the kernel
+            double[,] lineDownMap = Kernels[1].GenerateFeatureMap(gridToAnalyse);
+            for (int i = 0; i < lineDownMap.GetLength(0); i++)
+            {
+                for (int j = 0; j < lineDownMap.GetLength(1) - 1; j++)
+                {
+                    Console.Write(lineDownMap[i, j].ToString());
+                }
+                Console.WriteLine("|");
+            }
+            /*
             //confirm the neurons values in console for layer 1
             string lay1 = "";
             foreach(Neuron neuron in Network[0].Neurons)
@@ -204,7 +259,7 @@ namespace IA03
             else if (r2[1] > r2[0])
                 Console.WriteLine("Ligne verticale");
             else
-                Console.WriteLine("Indéterminable");
+                Console.WriteLine("Indéterminable");*/
         }
         /// <summary>
         /// Gets the values
@@ -213,8 +268,16 @@ namespace IA03
         /// <param name="e"></param>
         private void Done_Click(object sender, EventArgs e)
         {
-            foreach (CheckBox checkBox in this.UserInput.Controls)
-                gridToAnalyse.Add(Convert.ToInt16(checkBox.Tag));
+            for (int i = 0; i < ROWS_NUMBER; i++)
+            {
+                for (int j = 0; j < COLUMNS_NUMBER; j++)
+                {
+                    this.gridToAnalyse[i, j] = Convert.ToInt16(this.UserInput.Controls[i * 32 + j].Tag);
+                }
+            }
+
+            //foreach (CheckBox checkBox in this.UserInput.Controls)
+            //    gridToAnalyse.Add(Convert.ToInt16(checkBox.Tag));
             WriteCalculations();
 
             Console.ReadLine();
@@ -231,7 +294,7 @@ namespace IA03
         /// <param name="e"></param>
         private void CheckBox_MouseMove(object sender, MouseEventArgs e)
         {
-            CheckBox current_checkbox = sender as CheckBox;
+            System.Windows.Forms.CheckBox current_checkbox = sender as System.Windows.Forms.CheckBox;
             if (!current_checkbox.ClientRectangle.Contains(e.Location))
             {
                 // gives focus to the form
@@ -254,7 +317,7 @@ namespace IA03
         {
             if (e.Button == MouseButtons.Left)
             {
-                CheckBox current_checkbox = sender as CheckBox;
+                System.Windows.Forms.CheckBox current_checkbox = sender as System.Windows.Forms.CheckBox;
                 leftMouseButtonDown = false;
                 if (current_checkbox == chkSrc)
                 {
@@ -262,7 +325,7 @@ namespace IA03
                 }
             }
             //updates the color
-            foreach (CheckBox button in this.UserInput.Controls)
+            foreach (System.Windows.Forms.CheckBox button in this.UserInput.Controls)
             {
                 if (button.Checked)
                 {
@@ -285,7 +348,7 @@ namespace IA03
         /// <param name="e"></param>
         private void CheckBox_MouseDown(object sender, MouseEventArgs e)
         {
-            CheckBox current_checkbox = (CheckBox)sender;
+            System.Windows.Forms.CheckBox current_checkbox = (System.Windows.Forms.CheckBox)sender;
             leftMouseButtonDown = (e.Button == MouseButtons.Left);
             checkAfter = !current_checkbox.Checked;
             chkSrc = current_checkbox;
@@ -293,7 +356,7 @@ namespace IA03
         }
         private bool leftMouseButtonDown = false;
         private bool checkAfter = false;
-        private CheckBox chkSrc;
+        private System.Windows.Forms.CheckBox chkSrc;
 
     }
 }
