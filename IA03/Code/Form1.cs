@@ -11,6 +11,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Security.AccessControl;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
@@ -22,12 +23,12 @@ namespace IA03
 {
     public partial class IA : Form
     {
-        private const int COLUMNS_NUMBER = 32;
-        private const int ROWS_NUMBER = 32;
+        private const int GRIDSIZE = 32;
+        const int CELLSIZE = 16;
         /// <summary>
         /// The grid we'll analyse
-        /// </summary>
-        public double[,] gridToAnalyse = new double[ROWS_NUMBER,COLUMNS_NUMBER];
+        /// </summary> 
+        public double[,] gridToAnalyse = new double[GRIDSIZE,GRIDSIZE];
         /// <summary>
         /// The neuronal network
         /// </summary>
@@ -102,7 +103,7 @@ namespace IA03
                         //...we separate it into values (as text) that we convert into doubles
                         for (int j = 0; j < str_filterValues.Length; j++)
                         {
-                            double.TryParse(str_filterValues[i], out double dbl_currentValue);
+                            double.TryParse(str_filterValues[j], out double dbl_currentValue);
                             tempKernel.filter[i, j] = dbl_currentValue;
                         }
                     }
@@ -130,48 +131,55 @@ namespace IA03
         /// <returns></returns>
         private void HandleGrid()
         {
-            this.UserInput.Location = new Point((this.ClientSize.Width - this.UserInput.Width)/3, 50);
-
-            this.UserInput.AutoSize = true;
+            // handle the grid
+            this.UserInput.Location = new Point((this.ClientSize.Width - this.UserInput.Width) / 3, 50);
+            this.UserInput.AutoSize = false;
+            this.UserInput.Size = new Size(GRIDSIZE * CELLSIZE, GRIDSIZE * CELLSIZE);
             this.UserInput.BackColor = Color.White;
 
-            //create a 32x32 square of  checkboxes
-            for (int i = 0; i < 32; i++)
+            //create a 32x32 square of checkboxes
+            for (int i = 0; i < GRIDSIZE; i++)
             {
-                for (int j = 0; j < 32; j++)
+                for (int j = 0; j < GRIDSIZE; j++)
                 {
-                    this.UserInput.Controls.Add(new System.Windows.Forms.CheckBox
+                    System.Windows.Forms.CheckBox box = new System.Windows.Forms.CheckBox
                     {
                         Appearance = Appearance.Button,
                         Tag = 0,
-                        Size = new Size(16, 16),
-                        Location = new Point(j * 16, i * 16),
+                        Size = new Size(CELLSIZE, CELLSIZE),
+                        Location = new Point(j * CELLSIZE, i * CELLSIZE),
                         AutoSize = false,
                         Margin = new Padding(0),
                         Padding = new Padding(0),
                         BackColor = Color.White,
                         ForeColor = Color.White
-                    });
+                    };
+
+                    // link methods to draw
+                    box.MouseDown += CheckBox_MouseDown;
+                    box.MouseUp += CheckBox_MouseUp;
+                    box.MouseMove += CheckBox_MouseMove;
+
+                    this.UserInput.Controls.Add(box);
                 }
             }
-            //create a "next" button
+
+            //create a "next" button placed sous la grille
             Button done = new Button
             {
                 Size = new Size(200, 100),
-                Location = new Point((this.ClientSize.Width - 200) / 2, this.UserInput.Height + this.UserInput.Location.Y + 10),
+                Location = new Point((this.ClientSize.Width - 200) / 2, this.UserInput.Bottom + 10),
                 Text = "GO",
                 ForeColor = Color.White,
-                Font = new Font(this.Font.FontFamily, 20, FontStyle.Italic)
+                Font = new Font(this.Font.FontFamily, 20, FontStyle.Italic),
+                Cursor = Cursors.Hand,
+                TabStop = true
             };
+
             this.Controls.Add(done);
 
-            //link the click action with methods
-            foreach (System.Windows.Forms.CheckBox checkBox in this.UserInput.Controls)
-            {
-                checkBox.MouseDown += CheckBox_MouseDown;
-                checkBox.MouseUp += CheckBox_MouseUp;
-                checkBox.MouseMove += CheckBox_MouseMove;
-            }
+            // bring "done" to front so it's not covered
+            done.BringToFront();
             done.Click += Done_Click;
         }
 
@@ -275,9 +283,9 @@ namespace IA03
         /// <param name="e"></param>
         private void Done_Click(object sender, EventArgs e)
         {
-            for (int i = 0; i < ROWS_NUMBER; i++)
+            for (int i = 0; i < GRIDSIZE; i++)
             {
-                for (int j = 0; j < COLUMNS_NUMBER; j++)
+                for (int j = 0; j < GRIDSIZE; j++)
                 {
                     this.gridToAnalyse[i, j] = Convert.ToInt16(this.UserInput.Controls[i * 32 + j].Tag);
                 }
