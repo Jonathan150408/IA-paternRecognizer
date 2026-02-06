@@ -67,6 +67,26 @@
       "duration": 50,
       "status": "Done",
       "author": "Jonathan150408"
+    },
+    {
+      "id": "c609d6ba-7756-4acc-a9bf-ef5f5c410d91",
+      "type": "commitless",
+      "name": "learn(link between pooled maps and FNN) : reading blogs",
+      "description": "(the link)[https://www.superdatascience.com/blogs/convolutional-neural-networks-cnn-step-4-full-connection]\r\n(a summary)[vhttps://www.superdatascience.com/blogs/convolutional-neural-networks-cnn-summary]",
+      "date": "2026-02-06T07:54:00.000Z",
+      "duration": 25,
+      "status": "Done",
+      "author": "Jonathan150408"
+    },
+    {
+      "id": "f7c5a8bc-f1ed-47a4-88bf-0a5482f32195",
+      "type": "commitless",
+      "name": "learn(multiple convolutions, differents ways to pool) : learning and figuring what to do next",
+      "description": "For this task I used ChatGPT and learned :\r\n-> a CNN can have multiple convolution layers\r\n-> multiple convolution layers require one more spatial dimension on the kernel\r\n-> what is global pooling\r\n-> what is global average pooling\r\n-> what is better : for me it is global average pooling instead of max pooling\r\n-> what will the layer1 determine in the network\r\n-> how many neurons do I need for layer 2",
+      "date": "2026-02-06T09:22:00.000Z",
+      "duration": 70,
+      "status": "Done",
+      "author": "Jonathan150408"
     }
   ]
 }
