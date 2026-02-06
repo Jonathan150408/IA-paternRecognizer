@@ -188,6 +188,7 @@ namespace IA03
         /// </summary>
         private void WriteCalculations()
         {
+            // this is a list of feature maps
             List<double[,]> convolutionals_Layers = new List<double[,]>();
             foreach(Kernel kernel in Kernels)
             {
@@ -212,7 +213,7 @@ namespace IA03
                 Console.WriteLine("________________________");
             }
 
-            List<double[,]> pooled_maps = MaxPooling(convolutionals_Layers);
+            List<double[,]> pooled_maps = GeneralMaxPooling(convolutionals_Layers);
             //writting pooled feature maps values in the console
             foreach (double[,] map in pooled_maps)
             {
@@ -229,52 +230,61 @@ namespace IA03
                     }
                     Console.WriteLine("|");
                 }
-                Console.WriteLine("________________________");
+                Console.WriteLine("____________");
             }
         }
-        private List<double[,]> MaxPooling(List<double[,]> feature_maps)
+        /// <summary>
+        /// Takes all the feature maps and proceed to a 2x2 max pooling -> we only take the max value and the map become 4 times smaller
+        /// </summary>
+        /// <param name="feature_maps">A list of feature maps</param>
+        /// <returns>A list of pooled feature maps</returns>
+        private List<double[,]> GeneralMaxPooling(List<double[,]> feature_maps)
         {
             List<double[,]> pooled_maps = new List<double[,]>();
 
             foreach (double[,] map in feature_maps)
             {
+                // temporary map -> 4x smaller as the original map
                 double[,] temp_pooled_map = new double[(int)Math.Ceiling((double)(map.GetLength(0) / 2)), (int)Math.Ceiling((double)(map.GetLength(1) / 2))];
-                for (int i = 0; i < map.GetLength(0); i += 2)
+                for (int i = 0; i < map.GetLength(0) - 1; i += 2)
                 {
                     for (int j = 0; j < map.GetLength(1) -1; j += 2)
                     {
+                        List<double> temp_values_to_pool = new List<double>() { map[i, j] };
                         try
                         {
-                            temp_pooled_map[(int)Math.Ceiling((double)(i / 2)), (int)Math.Ceiling((double)(j / 2))] =
-                                Math.Max(map[i, j],
-                                Math.Max(map[i + 1, j],
-                                Math.Max(map[i, j + 1], (map[i + 1, j + 1]))));
+                            temp_values_to_pool.Add(map[i + 1, j]);
                         }
-                        catch (Exception)
+                        catch { }
+                        try
                         {
-                            try
-                            {
-                                temp_pooled_map[(int)Math.Ceiling((double)(i / 2)), (int)Math.Ceiling((double)(j / 2))] = Math.Max(map[i, j], map[i + 1, j]);
-                            }
-                            catch (Exception)
-                            {
-                                try
-                                {
-                                    temp_pooled_map[(int)Math.Ceiling((double)(i / 2)), (int)Math.Ceiling((double)(j / 2))] = Math.Max(map[i, j], map[i, j + 1]);
-                                }
-                                catch (Exception)
-                                {
-                                    temp_pooled_map[(int)Math.Ceiling((double)(i / 2)), (int)Math.Ceiling((double)(j / 2))] = map[i, j];
-
-                                }
-                            }
+                            temp_values_to_pool.Add(map[i, j + 1]);
                         }
-
+                        catch { }
+                        try
+                        {
+                            temp_values_to_pool.Add(map[i + 1, j + 1]);
+                        }
+                        catch { }
+                        temp_pooled_map[(int)Math.Ceiling((decimal)i / 2), (int)Math.Ceiling((decimal)j / 2)] = MaxPooling(temp_values_to_pool);
                     }
                 }
+                pooled_maps.Add(temp_pooled_map);
             }
 
             return pooled_maps;
+        }
+        private double MaxPooling(List<double> doubles)
+        {
+            double max_value = 0;
+
+
+            foreach (double value in doubles)
+            {
+                max_value = Math.Max(max_value, value);
+            }
+
+            return max_value;
         }
         /// <summary>
         /// Gets the values
