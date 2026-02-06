@@ -34,9 +34,9 @@ namespace IA03
         /// </summary>
         private readonly List<Layer> Network;
         /// <summary>
-        /// The kernels (= filters) used to analyse the grid
+        /// The kernels (= filters) used to analyse the grid, a list of lists because I use 2 convolution steps with multiple kernels
         /// </summary>
-        private readonly List<Kernel> Kernels;
+        private readonly List<List<Kernel>> Kernels;
 
         /// <summary>
         /// The main program
@@ -47,30 +47,31 @@ namespace IA03
 
             //initialize the network
             Network = new List<Layer>();
-            Kernels = new List<Kernel>();
+            Kernels = new List<List<Kernel>>();
 
             //
             //Import part
             //
 
-            //a link = a file = a layer, this means "foreach file that represents a layer, do..."
+            //a link = a file = a layer, this means "foreach file that represents a layer or a kernel, do..."
             foreach (string link in File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "Ressources", "layers_links.txt")).Split(';'))
             {
-                Layer tempLayer;
-
                 //split the function and the neurons (as text for the moment)
                 string[] str_wholeLayer = File.ReadAllText(link.Trim()).Split('+');
 
-                //split the neurons (as text) -> we get an array of text neurons
-                string[] str_allValues = str_wholeLayer[1].Split(';');
-
                 //converts the activation function
                 Enum.TryParse(str_wholeLayer[0], ignoreCase: true, out Function activation);
-                tempLayer = new Layer(new List<Neuron>(), activation);
 
                 // For a layer
                 if (activation != Layer.Function.kernel)
                 {
+                    //split the values (as text) -> we get an array of text like this
+                    ///1 0 0 0;
+                    ///1 0 0 0;
+                    string[] str_allValues = str_wholeLayer[1].Split(';');
+
+                    Layer tempLayer = new Layer(new List<Neuron>(), activation);
+
                     //foreach neuron as text, we convert it into values (1 text neuron = 1 line in the file)
                     foreach (string str_neuron in str_allValues)
                     {
@@ -92,23 +93,37 @@ namespace IA03
                 }
                 else if (activation == Function.kernel)
                 {
-                    Kernel tempKernel = new Kernel(new double[str_allValues[0].Trim().Split(' ').GetLength(0), str_allValues.Length]);
+                    string[] str_3dall_kernel_values = str_wholeLayer[1].Split('/');
 
-                    //foreach line of values as text, we take it and...
-                    for (int i = 0; i < str_allValues.Length; i++)
+                    Kernel tempKernel = new Kernel(new double[
+                        str_3dall_kernel_values.Length,
+                        str_3dall_kernel_values[0].Trim().Split(';').GetLength(0), 
+                        str_3dall_kernel_values[0].Trim().Split(' ').GetLength(1)
+                        ]);
+
+                    // gets the index (conv1, conv2)
+                    int.TryParse(str_wholeLayer[2], out int index);
+
+                    for (int h = 0; h < str_3dall_kernel_values.Length; h++)
                     {
-                        string[] str_filterValues = str_allValues[i].Trim().Split(' ');
-                        //double[,] dbl_filterValues = new double[str_filterValues.Length, str_allValues.Length];
-
-                        //...we separate it into values (as text) that we convert into doubles
-                        for (int j = 0; j < str_filterValues.Length; j++)
+                        string[] str_allValues = str_3dall_kernel_values[h].Split(';');
+                        //foreach line of values as text, we take it and...
+                        for (int i = 0; i < str_allValues.Length; i++)
                         {
-                            double.TryParse(str_filterValues[j], out double dbl_currentValue);
-                            tempKernel.filter[i, j] = dbl_currentValue;
+                            string[] str_filterValues = str_allValues[i].Trim().Split(' ');
+                            //double[,] dbl_filterValues = new double[str_filterValues.Length, str_allValues.Length];
+
+                            //...we separate it into values (as text) that we convert into doubles
+                            for (int j = 0; j < str_filterValues.Length; j++)
+                            {
+                                double.TryParse(str_filterValues[j], out double dbl_currentValue);
+                                tempKernel.Filter[i, j, h] = dbl_currentValue;
+                            }
                         }
                     }
 
-                    this.Kernels.Add(tempKernel);
+
+                    this.Kernels[index].Add(tempKernel);
                 }
             }
         }
@@ -190,9 +205,9 @@ namespace IA03
         {
             // this is a list of feature maps
             List<double[,]> convolutionals_Layers = new List<double[,]>();
-            foreach(Kernel kernel in Kernels)
+            foreach(Kernel kernel in Kernels[0])
             {
-                convolutionals_Layers.Add(kernel.GenerateFeatureMap(gridToAnalyse));
+                convolutionals_Layers.Add(kernel.GenerateFeatureMap(gridToAnalyse, 0));
             }
             //writting feature maps values in the console
             foreach (double[,] map in convolutionals_Layers)
@@ -217,7 +232,7 @@ namespace IA03
             //writting pooled feature maps values in the console
             foreach (double[,] map in pooled_maps)
             {
-                for (int i = 0; i < map.GetLength(0); i++)
+                for (int i = 0; i < map.GetLength(0) - 1; i++)
                 {
                     for (int j = 0; j < map.GetLength(1) - 1; j++)
                     {
@@ -232,6 +247,20 @@ namespace IA03
                 }
                 Console.WriteLine("____________");
             }
+
+            // checking what the flattered result looks like
+            foreach (double[,] map in pooled_maps)
+            {
+                for(int i = 0;i < map.GetLength(0) - 1; i++)
+                {
+                    for(int j = 0; j < map.GetLength(1) -1; j++)
+                    {
+                        Console.Write(map[(int)i, j].ToString());
+                    }
+                }
+                Console.WriteLine("|");
+            }
+
         }
         /// <summary>
         /// Takes all the feature maps and proceed to a 2x2 max pooling -> we only take the max value and the map become 4 times smaller
