@@ -1,2 +1,8 @@
-.\Ressources\layers\layer1.txt;
-.\Ressources\layers\layer2.txt
+.\Ressources\layers\kernel_lineUp.txt;
+.\Ressources\layers\kernel_lineLeft.txt;
+.\Ressources\layers\kernel_diagonalTopLeft.txt;
+.\Ressources\layers\kernel_diagonalTopRight.txt;
+.\Ressources\layers\kernel1_ upperLeftCorner.txt;
+.\Ressources\layers\kernel1_ upperRightCorner.txt;
+.\Ressources\layers\kernel1_ lowerLeftCorner.txt;
+.\Ressources\layers\kernel1_ lowerRightCorner.txt
