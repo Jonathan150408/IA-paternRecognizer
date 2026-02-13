@@ -216,18 +216,43 @@ namespace IA03
                     {
                         if (map[i, j] == 0)
                         {
-                            Console.Write(" ");
+                            Console.Write("  ");
                         }
                         else
-                            Console.Write(map[i, j].ToString());
+                            Console.Write(map[i, j].ToString() + " ");
                     }
                     Console.WriteLine("|");
                 }
                 Console.WriteLine("________________________");
             }
 
-            List<double[,]> pooled_maps = GeneralMaxPooling(convolutionals_Layers);
-            //writting pooled feature maps values in the console
+            //conv layer 2
+            Console.WriteLine("Basic feature maps level 2 - not pooled - not flattered");
+            List<double[,]> maps_2 = new List<double[,]>();
+            foreach (Kernel kernel_2 in this.Kernels[1])
+            {
+                maps_2.Add(kernel_2.RegenerateFeatureMap(convolutionals_Layers));
+            }
+            foreach (double[,] map in maps_2)
+            {
+                for (int i = 0; i < map.GetLength(0) - 1; i++)
+                {
+                    for (int j = 0; j < map.GetLength(1) - 1; j++)
+                    {
+                        if (map[i, j] == 0)
+                        {
+                            Console.Write("  ");
+                        }
+                        else
+                            Console.Write(map[i, j].ToString() + " ");
+                    }
+                    Console.WriteLine("|");
+                }
+                Console.WriteLine("________________________");
+            }
+
+            List<double[,]> pooled_maps = GeneralMaxPooling(maps_2);
+            //pooled feature maps
             Console.WriteLine("Pooled maps with max_pooling");
             foreach (double[,] map in pooled_maps)
             {
@@ -237,10 +262,10 @@ namespace IA03
                     {
                         if (map[i, j] == 0)
                         {
-                            Console.Write(" ");
+                            Console.Write("  ");
                         }
                         else
-                            Console.Write(map[i, j].ToString());
+                            Console.Write(map[i, j].ToString() + " ");
                     }
                     Console.WriteLine("|");
                 }
@@ -261,43 +286,7 @@ namespace IA03
                 Console.WriteLine("|");
             }
 
-            //test with conv layer 2
-            Console.WriteLine("Basic feature maps level 2 - not pooled - not flattered");
-            List<double[,]> maps_2 = new List<double[,]>();
-            foreach (Kernel kernel_2 in this.Kernels[1])
-            {
-                maps_2.Add(kernel_2.RegenerateFeatureMap(convolutionals_Layers));
-            }
-            foreach (double[,] map in maps_2)
-            {
-                for (int i = 0; i < map.GetLength(0) - 1; i++)
-                {
-                    for (int j = 0; j < map.GetLength(1) - 1; j++)
-                    {
-                        if (map[i, j] == 0)
-                        {
-                            Console.Write(" ");
-                        }
-                        else
-                            Console.Write(map[i, j].ToString());
-                    }
-                    Console.WriteLine("|");
-                }
-                Console.WriteLine("________________________");
-            }
-            //TEST
-            foreach (double[,] map in maps_2)
-            {
-                for (int i = 0; i < map.GetLength(0) - 1; i++)
-                {
-                    for (int j = 0; j < map.GetLength(1) - 1; j++)
-                    {
-                        Console.Write(j.ToString()[0]);
-                    }
-                    Console.WriteLine("|");
-                }
-                Console.WriteLine("________________________");
-            }
+            
 
         }
         /// <summary>
