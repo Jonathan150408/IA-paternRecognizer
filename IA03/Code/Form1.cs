@@ -232,12 +232,40 @@ namespace IA03
                 Console.WriteLine("______________________________________________________________");
             }
 
+            //pooling 1
+            List<double[,]> pooled_maps = GeneralMaxPooling(convolutionals_Layers);
+            Console.WriteLine("========= Pooled maps with max_pooling =========");
+            foreach (double[,] map in pooled_maps)
+            {
+                for (int i = 0; i < map.GetLength(0) - 1; i++)
+                {
+                    for (int j = 0; j < map.GetLength(1) - 1; j++)
+                    {
+                        //get rid of the non-valuable informations - ONLY VISUALLY
+                        if (map[i, j] == 0)
+                        {
+                            Console.Write("   ");
+                        }
+                        else if (map[i, j].ToString().Length == 1)
+                        {
+                            Console.Write(" " + map[i, j].ToString() + " ");
+                        }
+                        else
+                        {
+                            Console.Write(map[i, j].ToString() + " ");
+                        }
+                    }
+                    Console.WriteLine("|");
+                }
+                Console.WriteLine("____________________________________");
+            }
+
             //conv layer 2
             Console.WriteLine("========= Basic feature maps level 2 - not pooled - not flattered =========");
             List<double[,]> maps_2 = new List<double[,]>();
             foreach (Kernel kernel_2 in this.Kernels[1])
             {
-                maps_2.Add(kernel_2.RegenerateFeatureMap(convolutionals_Layers));
+                maps_2.Add(kernel_2.RegenerateFeatureMap(pooled_maps));
             }
             foreach (double[,] map in maps_2)
             {
@@ -245,7 +273,7 @@ namespace IA03
                 {
                     for (int j = 0; j < map.GetLength(1) - 1; j++)
                     {
-                        if (map[i, j] == 0)
+                        if (map[i, j] < 35)
                         {
                             Console.Write("   ");
                         }
@@ -263,52 +291,10 @@ namespace IA03
                 Console.WriteLine("______________________________________________________________");
             }
 
-            List<double[,]> pooled_maps = GeneralMaxPooling(maps_2);
-            //pooled feature maps
-            Console.WriteLine("========= Pooled maps with max_pooling =========");
-            foreach (double[,] map in pooled_maps)
-            {
-                for (int i = 0; i < map.GetLength(0) - 1; i++)
-                {
-                    for (int j = 0; j < map.GetLength(1) - 1; j++)
-                    {
-                        //get rid of the non-valuable informations - ONLY VISUALLY
-                        if (map[i, j] < 38)
-                        {
-                            Console.Write("   ");
-                        }
-                        else if (map[i, j].ToString().Length == 1)
-                        {
-                            Console.Write(" " + map[i, j].ToString() + " ");
-                        }
-                        else
-                        {
-                            Console.Write(map[i, j].ToString() + " ");
-                        }
-                    }
-                    Console.WriteLine("|");
-                }
-                Console.WriteLine("____________________________________");
-            }
-
-            // checking what the flattered result looks like
-            Console.WriteLine("========= Flattered result =========");
-            foreach (double[,] map in pooled_maps)
-            {
-                for(int i = 0;i < map.GetLength(0) - 1; i++)
-                {
-                    for(int j = 0; j < map.GetLength(1) -1; j++)
-                    {
-                        Console.Write(map[(int)i, j].ToString());
-                    }
-                }
-                Console.WriteLine("|");
-            }
-
             //pool again
-            Console.WriteLine("========= Pooled pooled maps with max_pooling =========");
-            List<double[,]> pooled_pooled_maps = GeneralMaxPooling(pooled_maps);
-            foreach (double[,] map in pooled_pooled_maps)
+            Console.WriteLine("========= Pooled maps with max_pooling part 2 =========");
+            List<double[,]> pooled_maps2 = GeneralMaxPooling(maps_2);
+            foreach (double[,] map in pooled_maps2)
             {
                 for (int i = 0; i < map.GetLength(0) - 1; i++)
                 {
@@ -332,8 +318,10 @@ namespace IA03
                 }
                 Console.WriteLine("____________________________________");
             }
-            Console.WriteLine("========= Flattered result again =========");
-            foreach (double[,] map in pooled_pooled_maps)
+
+            //flattening
+            Console.WriteLine("========= Flattened result =========");
+            foreach (double[,] map in pooled_maps2)
             {
                 for (int i = 0; i < map.GetLength(0) - 1; i++)
                 {
@@ -348,7 +336,7 @@ namespace IA03
             // count the number of intresting values (The bigger is, the more interesting is)
             Console.WriteLine("========= Count of interesting features =========");
             List<double> list = new List<double>();
-            foreach (double[,] map in pooled_pooled_maps)
+            foreach (double[,] map in pooled_maps2)
             {
                 double temp_counter20 = 0;
                 double temp_counter38 = 0;
@@ -421,7 +409,6 @@ namespace IA03
         private double MaxPooling(List<double> doubles)
         {
             double max_value = 0;
-
 
             foreach (double value in doubles)
             {
