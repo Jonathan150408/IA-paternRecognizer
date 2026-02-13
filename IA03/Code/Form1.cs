@@ -24,7 +24,8 @@ namespace IA03
     public partial class IA : Form
     {
         private const int GRIDSIZE = 32;
-        const int CELLSIZE = 16;
+        private const int CELLSIZE = 16;
+        private const int NUMBEROFCONVLAYERS = 2;
         /// <summary>
         /// The grid we'll analyse
         /// </summary> 
@@ -34,7 +35,7 @@ namespace IA03
         /// </summary>
         private readonly List<Layer> Network;
         /// <summary>
-        /// The kernels (= filters) used to analyse the grid, a list of lists because I use 2 convolution steps with multiple kernels
+        /// The kernels (= filters) that are used to analyse the grid, a list of lists because I use 2 convolution steps with multiple kernels
         /// </summary>
         private readonly List<List<Kernel>> Kernels;
 
@@ -48,15 +49,19 @@ namespace IA03
             //initialize the network
             Network = new List<Layer>();
             Kernels = new List<List<Kernel>>();
+            for (int i = 0; i < NUMBEROFCONVLAYERS; i++)
+            {
+                Kernels.Add(new List<Kernel>());
+            }
 
             //
-            //Import part
+            // Import part
             //
 
-            //a link = a file = a layer, this means "foreach file that represents a layer or a kernel, do..."
+            //a link = a file = a layer/kernel, this means "foreach file that represents a layer or a kernel, do..."
             foreach (string link in File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "Ressources", "layers_links.txt")).Split(';'))
             {
-                //split the function and the neurons (as text for the moment)
+                //split the informations (function and values) as text for the moment
                 string[] str_wholeLayer = File.ReadAllText(link.Trim()).Split('+');
 
                 //converts the activation function
@@ -93,35 +98,27 @@ namespace IA03
                 }
                 else if (activation == Function.kernel)
                 {
-                    string[] str_3dall_kernel_values = str_wholeLayer[1].Split('/');
+                    string[] str_kernel_lineofvalues = str_wholeLayer[1].Split(';');
 
                     Kernel tempKernel = new Kernel(new double[
-                        str_3dall_kernel_values.Length,
-                        str_3dall_kernel_values[0].Trim().Split(';').GetLength(0), 
-                        str_3dall_kernel_values[0].Trim().Split(' ').GetLength(1)
+                        str_kernel_lineofvalues.GetLength(0),                   //number of rows
+                        str_kernel_lineofvalues[0].Trim().Split(' ').Length     //number of values/row
                         ]);
 
                     // gets the index (conv1, conv2)
                     int.TryParse(str_wholeLayer[2], out int index);
 
-                    for (int h = 0; h < str_3dall_kernel_values.Length; h++)
+                    //foreach line of values as text, we take it and...
+                    for (int i = 0; i < str_kernel_lineofvalues.Length; i++)
                     {
-                        string[] str_allValues = str_3dall_kernel_values[h].Split(';');
-                        //foreach line of values as text, we take it and...
-                        for (int i = 0; i < str_allValues.Length; i++)
+                        //...we separate it into values (as text) that we convert into doubles
+                        string[] str_kernel_currentlinevalues = str_kernel_lineofvalues[i].Trim().Split(' ');
+                        for (int j = 0; j < str_kernel_currentlinevalues.Length; j++)
                         {
-                            string[] str_filterValues = str_allValues[i].Trim().Split(' ');
-                            //double[,] dbl_filterValues = new double[str_filterValues.Length, str_allValues.Length];
-
-                            //...we separate it into values (as text) that we convert into doubles
-                            for (int j = 0; j < str_filterValues.Length; j++)
-                            {
-                                double.TryParse(str_filterValues[j], out double dbl_currentValue);
-                                tempKernel.Filter[i, j, h] = dbl_currentValue;
-                            }
+                            double.TryParse(str_kernel_currentlinevalues[j], out double dbl_currentValue);
+                            tempKernel.Filter[i, j] = dbl_currentValue;
                         }
                     }
-
 
                     this.Kernels[index].Add(tempKernel);
                 }
@@ -207,9 +204,10 @@ namespace IA03
             List<double[,]> convolutionals_Layers = new List<double[,]>();
             foreach(Kernel kernel in Kernels[0])
             {
-                convolutionals_Layers.Add(kernel.GenerateFeatureMap(gridToAnalyse, 0));
+                convolutionals_Layers.Add(kernel.GenerateFeatureMap(gridToAnalyse));
             }
             //writting feature maps values in the console
+            Console.WriteLine("Basic feature maps level 1");
             foreach (double[,] map in convolutionals_Layers)
             {
                 for (int i = 0; i < map.GetLength(0); i++)
@@ -230,6 +228,7 @@ namespace IA03
 
             List<double[,]> pooled_maps = GeneralMaxPooling(convolutionals_Layers);
             //writting pooled feature maps values in the console
+            Console.WriteLine("Pooled maps with max_pooling");
             foreach (double[,] map in pooled_maps)
             {
                 for (int i = 0; i < map.GetLength(0) - 1; i++)
@@ -249,6 +248,7 @@ namespace IA03
             }
 
             // checking what the flattered result looks like
+            Console.WriteLine("Flattered result");
             foreach (double[,] map in pooled_maps)
             {
                 for(int i = 0;i < map.GetLength(0) - 1; i++)
@@ -259,6 +259,44 @@ namespace IA03
                     }
                 }
                 Console.WriteLine("|");
+            }
+
+            //test with conv layer 2
+            Console.WriteLine("Basic feature maps level 2 - not pooled - not flattered");
+            List<double[,]> maps_2 = new List<double[,]>();
+            foreach (Kernel kernel_2 in this.Kernels[1])
+            {
+                maps_2.Add(kernel_2.RegenerateFeatureMap(convolutionals_Layers));
+            }
+            foreach (double[,] map in maps_2)
+            {
+                for (int i = 0; i < map.GetLength(0) - 1; i++)
+                {
+                    for (int j = 0; j < map.GetLength(1) - 1; j++)
+                    {
+                        if (map[i, j] == 0)
+                        {
+                            Console.Write(" ");
+                        }
+                        else
+                            Console.Write(map[i, j].ToString());
+                    }
+                    Console.WriteLine("|");
+                }
+                Console.WriteLine("________________________");
+            }
+            //TEST
+            foreach (double[,] map in maps_2)
+            {
+                for (int i = 0; i < map.GetLength(0) - 1; i++)
+                {
+                    for (int j = 0; j < map.GetLength(1) - 1; j++)
+                    {
+                        Console.Write(j.ToString()[0]);
+                    }
+                    Console.WriteLine("|");
+                }
+                Console.WriteLine("________________________");
             }
 
         }

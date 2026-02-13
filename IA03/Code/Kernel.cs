@@ -11,8 +11,8 @@ namespace IA03.Code
 		/// <summary>
 		/// The doubles that will filter the area
 		/// </summary>
-		private double[,,] _filter;
-		public double[,,] Filter
+		private double[,] _filter;
+		public double[,] Filter
 		{
 			get { return _filter; }
 			set { _filter = value; }
@@ -21,7 +21,7 @@ namespace IA03.Code
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		public Kernel(double[,,] values)
+		public Kernel(double[,] values)
 		{
 			_filter = values;
 		}
@@ -31,7 +31,7 @@ namespace IA03.Code
 		/// </summary>
 		/// <param name="rawGrid"></param>
 		/// <returns></returns>
-		public double[,] GenerateFeatureMap(double[,] rawGrid, int kernel_index)
+		public double[,] GenerateFeatureMap(double[,] rawGrid)
 		{
 			double[,] featureMap = new double[rawGrid.GetLength(0) - this.Filter.GetLength(0) + 1, rawGrid.GetLength(1) - this.Filter.GetLength(1) + 1];
 			double current_result;
@@ -46,44 +46,73 @@ namespace IA03.Code
 					{
 						for (int jFromFilter = 0; jFromFilter < this.Filter.GetLength(1); jFromFilter++)
 						{
-							current_result += this.Filter[iFromFilter, jFromFilter, kernel_index] * rawGrid[i + iFromFilter, j + jFromFilter];
+							current_result += this.Filter[iFromFilter, jFromFilter] * rawGrid[i + iFromFilter, j + jFromFilter];
 						}
 					}
 					featureMap[i, j] = current_result;
 				}
 			}
 
-
 			return featureMap;
 		}
-		public double[,] Generate3DFeatureMap(List<double[,]> previous_feature_maps)
-		{
-			List<double[,]> generated_maps = new List<double[,]>();
-
-            // for each previous maps, we generate the corresponding map with the 3d kernel and store it
-            for (int i = 0; i < this._filter.GetLength(2) - 1; i++)
+		/// <summary>
+		/// Creates new feature maps based on the olds, simultate a 3D kernel (the filter is 2-dimensional but applied in a 3rd dimension)
+		/// </summary>
+		/// <param name="previousMaps">A list of old feature maps</param>
+		/// <returns>A list of 2d array -> feature maps</returns>
+        public double[,] RegenerateFeatureMap(List<double[,]> previousMaps)
+        {
+			//in this part, we generate multiple feature maps, next step we'll merge theses maps together
+			List<double[,]> new_maps = new List<double[,]>();
+			// for every maps that are given, we generate a new one based on it
+			for (int oldMapsCounter = 0; oldMapsCounter < previousMaps.Count; oldMapsCounter++)
 			{
-				generated_maps.Add(this.GenerateFeatureMap(previous_feature_maps[i], i));
-			}
+                double[,] temp_featureMap = new double[previousMaps[
+					oldMapsCounter].GetLength(0) - this.Filter.GetLength(0) + 1,
+					previousMaps[oldMapsCounter].GetLength(1) - this.Filter.GetLength(1) + 1
+					];
 
-            double[,] result = new double[generated_maps[0].GetLength(0) - 1, generated_maps[0].GetLength(1) - 1];
-
-            // here we add the results at same XY coordinates to only get 1 map
-            for (int i = 0; i < generated_maps[0].GetLength(0) - 1; i++) // width
-            {
-                for (int j = 0; j < generated_maps[0].GetLength(1) - 1; j++) // height
+                double current_result;
+                //browses the raw grid and calculate if the pattern matches the filter
+                for (int i = 0; i < temp_featureMap.GetLength(0); i++)
                 {
-					double temp_cell_result = 0;
-					// adding the cells
-					foreach (double[,] map in generated_maps)
-					{
-						temp_cell_result += map[i, j];
-					}
-					result[i, j] = temp_cell_result;
+                    for (int j = 0; j < temp_featureMap.GetLength(1); j++)
+                    {
+                        // try to match the pattern
+                        current_result = 0;
+                        for (int iFromFilter = 0; iFromFilter < this.Filter.GetLength(0); iFromFilter++)
+                        {
+                            for (int jFromFilter = 0; jFromFilter < this.Filter.GetLength(1); jFromFilter++)
+                            {
+                                current_result += this.Filter[iFromFilter, jFromFilter] * previousMaps[oldMapsCounter][i + iFromFilter, j + jFromFilter];
+                            }
+                        }
+                        temp_featureMap[i, j] = current_result;
+                    }
                 }
+                new_maps.Add(temp_featureMap);
             }
 
-            return result;
-		}
-	}
+			// Here we merge the maps to finish with on only map
+			double[,] result = new double[previousMaps[
+                    0].GetLength(0) - this.Filter.GetLength(0) + 1,
+                    previousMaps[0].GetLength(1) - this.Filter.GetLength(1) + 1
+					];
+
+			//every value from every row from every maps is added to the correct cell of the result
+			for (int i = 0; i < result.GetLength(0) - 1; i++)
+			{
+				for (int j = 0;j < result.GetLength(1) - 1; j++)
+				{
+					foreach (double[,] map in new_maps)
+					{
+						result[i, j] += map[i, j];
+					}
+				}
+			}
+
+			return result;
+
+        }
+    }
 }
