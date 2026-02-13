@@ -198,7 +198,7 @@ namespace IA03
         /// <summary>
         /// Show the details in the console
         /// </summary>
-        private void WriteCalculations()
+        private void MakePrediction()
         {
             // this is a list of feature maps
             List<double[,]> convolutionals_Layers = new List<double[,]>();
@@ -273,7 +273,7 @@ namespace IA03
                     for (int j = 0; j < map.GetLength(1) - 1; j++)
                     {
                         //get rid of the non-valuable informations - ONLY VISUALLY
-                        if (map[i, j] < 35)
+                        if (map[i, j] < 38)
                         {
                             Console.Write("   ");
                         }
@@ -305,7 +305,76 @@ namespace IA03
                 Console.WriteLine("|");
             }
 
-            
+            //pool again
+            Console.WriteLine("========= Pooled pooled maps with max_pooling =========");
+            List<double[,]> pooled_pooled_maps = GeneralMaxPooling(pooled_maps);
+            foreach (double[,] map in pooled_pooled_maps)
+            {
+                for (int i = 0; i < map.GetLength(0) - 1; i++)
+                {
+                    for (int j = 0; j < map.GetLength(1) - 1; j++)
+                    {
+                        //get rid of the non-valuable informations - ONLY VISUALLY
+                        if (map[i, j] == 0)
+                        {
+                            Console.Write("   ");
+                        }
+                        else if (map[i, j].ToString().Length == 1)
+                        {
+                            Console.Write(" " + map[i, j].ToString() + " ");
+                        }
+                        else
+                        {
+                            Console.Write(map[i, j].ToString() + " ");
+                        }
+                    }
+                    Console.WriteLine("|");
+                }
+                Console.WriteLine("____________________________________");
+            }
+            Console.WriteLine("========= Flattered result again =========");
+            foreach (double[,] map in pooled_pooled_maps)
+            {
+                for (int i = 0; i < map.GetLength(0) - 1; i++)
+                {
+                    for (int j = 0; j < map.GetLength(1) - 1; j++)
+                    {
+                        Console.Write(map[(int)i, j].ToString());
+                    }
+                }
+                Console.WriteLine("|");
+            }
+
+            // count the number of intresting values (The bigger is, the more interesting is)
+            Console.WriteLine("========= Count of interesting features =========");
+            List<double> list = new List<double>();
+            foreach (double[,] map in pooled_pooled_maps)
+            {
+                double temp_counter20 = 0;
+                double temp_counter38 = 0;
+                foreach (double value  in map)
+                {
+                    //why 37 ?
+                    // because a full line represents 37
+                    if (value > 37)
+                    {
+                        temp_counter38++;
+                    }
+                    //why 20 ?
+                    // because it is less than 37 but still big enought to not have like ~100 values
+                    else if (value > 20)
+                    {
+                        temp_counter20++;
+                    }
+                }
+                list.Add(temp_counter20);
+                list.Add(temp_counter38);
+            }
+            foreach (double value in list)
+            {
+                Console.Write(value.ToString() + " ");
+            }
+
 
         }
         /// <summary>
@@ -375,13 +444,17 @@ namespace IA03
                     this.gridToAnalyse[i, j] = Convert.ToInt16(this.UserInput.Controls[i * 32 + j].Tag);
                 }
             }
+            MakePrediction();
+            ConsoleKey key = Console.ReadKey().Key;
 
-            //foreach (CheckBox checkBox in this.UserInput.Controls)
-            //    gridToAnalyse.Add(Convert.ToInt16(checkBox.Tag));
-            WriteCalculations();
-
-            Console.ReadLine();
-            Application.Restart();
+            if (key == ConsoleKey.Enter)
+            {
+                Application.Restart();
+            }
+            else
+            {
+                Environment.Exit(0);
+            }
         }
 
         /// <summary>
