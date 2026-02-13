@@ -207,7 +207,7 @@ namespace IA03
                 convolutionals_Layers.Add(kernel.GenerateFeatureMap(gridToAnalyse));
             }
             //writting feature maps values in the console
-            Console.WriteLine("Basic feature maps level 1");
+            Console.WriteLine("========= Basic feature maps level 1 - not pooled - not flattered =========");
             foreach (double[,] map in convolutionals_Layers)
             {
                 for (int i = 0; i < map.GetLength(0); i++)
@@ -216,18 +216,24 @@ namespace IA03
                     {
                         if (map[i, j] == 0)
                         {
-                            Console.Write("  ");
+                            Console.Write("   ");
+                        }
+                        else if (map[i, j].ToString().Length == 1)
+                        {
+                            Console.Write(" " + map[i, j].ToString() + " ");
                         }
                         else
+                        {
                             Console.Write(map[i, j].ToString() + " ");
+                        }
                     }
                     Console.WriteLine("|");
                 }
-                Console.WriteLine("________________________");
+                Console.WriteLine("______________________________________________________________");
             }
 
             //conv layer 2
-            Console.WriteLine("Basic feature maps level 2 - not pooled - not flattered");
+            Console.WriteLine("========= Basic feature maps level 2 - not pooled - not flattered =========");
             List<double[,]> maps_2 = new List<double[,]>();
             foreach (Kernel kernel_2 in this.Kernels[1])
             {
@@ -241,39 +247,52 @@ namespace IA03
                     {
                         if (map[i, j] == 0)
                         {
-                            Console.Write("  ");
+                            Console.Write("   ");
+                        }
+                        else if (map[i, j].ToString().Length == 1)
+                        {
+                            Console.Write(" " + map[i, j].ToString() + " ");
                         }
                         else
+                        {
                             Console.Write(map[i, j].ToString() + " ");
+                        }
                     }
                     Console.WriteLine("|");
                 }
-                Console.WriteLine("________________________");
+                Console.WriteLine("______________________________________________________________");
             }
 
             List<double[,]> pooled_maps = GeneralMaxPooling(maps_2);
             //pooled feature maps
-            Console.WriteLine("Pooled maps with max_pooling");
+            Console.WriteLine("========= Pooled maps with max_pooling =========");
             foreach (double[,] map in pooled_maps)
             {
                 for (int i = 0; i < map.GetLength(0) - 1; i++)
                 {
                     for (int j = 0; j < map.GetLength(1) - 1; j++)
                     {
-                        if (map[i, j] == 0)
+                        //get rid of the non-valuable informations - ONLY VISUALLY
+                        if (map[i, j] < 35)
                         {
-                            Console.Write("  ");
+                            Console.Write("   ");
+                        }
+                        else if (map[i, j].ToString().Length == 1)
+                        {
+                            Console.Write(" " + map[i, j].ToString() + " ");
                         }
                         else
+                        {
                             Console.Write(map[i, j].ToString() + " ");
+                        }
                     }
                     Console.WriteLine("|");
                 }
-                Console.WriteLine("____________");
+                Console.WriteLine("____________________________________");
             }
 
             // checking what the flattered result looks like
-            Console.WriteLine("Flattered result");
+            Console.WriteLine("========= Flattered result =========");
             foreach (double[,] map in pooled_maps)
             {
                 for(int i = 0;i < map.GetLength(0) - 1; i++)
