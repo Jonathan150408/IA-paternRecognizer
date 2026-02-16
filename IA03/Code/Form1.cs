@@ -229,7 +229,7 @@ namespace IA03
                     }
                     Console.WriteLine("|");
                 }
-                Console.WriteLine("______________________________________________________________");
+                Console.WriteLine("_____________________________________________________________________________________");
             }
 
             //pooling 1
@@ -257,11 +257,11 @@ namespace IA03
                     }
                     Console.WriteLine("|");
                 }
-                Console.WriteLine("____________________________________");
+                Console.WriteLine("________________________________________");
             }
 
             //conv layer 2
-            Console.WriteLine("========= Basic feature maps level 2 - not pooled - not flattered =========");
+            Console.WriteLine("========= Basic feature maps level 2 - not pooled - not flattened =========");
             List<double[,]> maps_2 = new List<double[,]>();
             foreach (Kernel kernel_2 in this.Kernels[1])
             {
@@ -273,7 +273,8 @@ namespace IA03
                 {
                     for (int j = 0; j < map.GetLength(1) - 1; j++)
                     {
-                        if (map[i, j] < 35)
+                        //get rid of the values that are lower than 10
+                        if (map[i, j] < 10)
                         {
                             Console.Write("   ");
                         }
@@ -288,7 +289,7 @@ namespace IA03
                     }
                     Console.WriteLine("|");
                 }
-                Console.WriteLine("______________________________________________________________");
+                Console.WriteLine("______________________________");
             }
 
             //pool again
@@ -300,7 +301,6 @@ namespace IA03
                 {
                     for (int j = 0; j < map.GetLength(1) - 1; j++)
                     {
-                        //get rid of the non-valuable informations - ONLY VISUALLY
                         if (map[i, j] == 0)
                         {
                             Console.Write("   ");
@@ -316,7 +316,7 @@ namespace IA03
                     }
                     Console.WriteLine("|");
                 }
-                Console.WriteLine("____________________________________");
+                Console.WriteLine("_____________");
             }
 
             //flattening
@@ -327,7 +327,7 @@ namespace IA03
                 {
                     for (int j = 0; j < map.GetLength(1) - 1; j++)
                     {
-                        Console.Write(map[(int)i, j].ToString());
+                        Console.Write(map[(int)i, j].ToString() + " ");
                     }
                 }
                 Console.WriteLine("|");
@@ -338,25 +338,25 @@ namespace IA03
             List<double> list = new List<double>();
             foreach (double[,] map in pooled_maps2)
             {
-                double temp_counter20 = 0;
-                double temp_counter38 = 0;
+                double temp_counter_suspectedCorner = 0;
+                double temp_counter_confirmedCorner = 0;
                 foreach (double value  in map)
                 {
                     //why 37 ?
                     // because a full line represents 37
-                    if (value > 37)
+                    if (value > 25)
                     {
-                        temp_counter38++;
+                        temp_counter_confirmedCorner++;
                     }
                     //why 20 ?
                     // because it is less than 37 but still big enought to not have like ~100 values
                     else if (value > 20)
                     {
-                        temp_counter20++;
+                        temp_counter_suspectedCorner++;
                     }
                 }
-                list.Add(temp_counter20);
-                list.Add(temp_counter38);
+                list.Add(temp_counter_suspectedCorner);
+                list.Add(temp_counter_confirmedCorner);
             }
             foreach (double value in list)
             {
