@@ -49,7 +49,7 @@ namespace IA03
         {
             double result = 0;
 
-            if (function == Layer.Function.sigmoid || function == Layer.Function.tanh)
+            if (function == Layer.Function.sigmoid || function == Layer.Function.tanh || function == Layer.Function.none)
             {
                 //adds the inpunt*weight result to result 16 times (1 for each input)
                 for (int i = 0; i < this.Weights.Length; i++)
@@ -65,6 +65,7 @@ namespace IA03
                         return Sigmoid(result);
                     case Layer.Function.tanh:
                         return Math.Tanh(result);
+                    case Layer.Function.none:
                     default:
                         return result;
                 }
