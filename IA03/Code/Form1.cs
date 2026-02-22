@@ -241,8 +241,7 @@ namespace IA03
                 {
                     for (int j = 0; j < map.GetLength(1) - 1; j++)
                     {
-                        //get rid of the non-valuable informations - ONLY VISUALLY
-                        if (map[i, j] == 0)
+                         if (map[i, j] == 0)
                         {
                             Console.Write("   ");
                         }
@@ -273,8 +272,8 @@ namespace IA03
                 {
                     for (int j = 0; j < map.GetLength(1) - 1; j++)
                     {
-                        //get rid of the values that are lower than 10
-                        if (map[i, j] < 10)
+                        //get rid of 0
+                        if (map[i, j] == 0)
                         {
                             Console.Write("   ");
                         }
@@ -321,48 +320,42 @@ namespace IA03
 
             //flattening
             Console.WriteLine("========= Flattened result =========");
+            List<double> flatten = new List<double>();
             foreach (double[,] map in pooled_maps2)
             {
                 for (int i = 0; i < map.GetLength(0) - 1; i++)
                 {
                     for (int j = 0; j < map.GetLength(1) - 1; j++)
                     {
-                        Console.Write(map[(int)i, j].ToString() + " ");
+                        flatten.Add(map[i, j]);
+                        Console.Write(map[i, j].ToString() + " ");
                     }
                 }
                 Console.WriteLine("|");
             }
 
-            // count the number of intresting values (The bigger is, the more interesting is)
-            Console.WriteLine("========= Count of interesting features =========");
-            List<double> list = new List<double>();
-            foreach (double[,] map in pooled_maps2)
-            {
-                double temp_counter_suspectedCorner = 0;
-                double temp_counter_confirmedCorner = 0;
-                foreach (double value  in map)
-                {
-                    //why 37 ?
-                    // because a full line represents 37
-                    if (value > 25)
-                    {
-                        temp_counter_confirmedCorner++;
-                    }
-                    //why 20 ?
-                    // because it is less than 37 but still big enought to not have like ~100 values
-                    else if (value > 20)
-                    {
-                        temp_counter_suspectedCorner++;
-                    }
-                }
-                list.Add(temp_counter_suspectedCorner);
-                list.Add(temp_counter_confirmedCorner);
-            }
-            foreach (double value in list)
-            {
-                Console.Write(value.ToString() + " ");
-            }
+            Console.WriteLine("========= count of flatten =========\n" + flatten.Count);
 
+            //FNN
+            //Layer 1
+            Console.WriteLine("========= Layer 1 result =========");
+            List<double> layer1_raw_result = this.Network[0].GetLayerResults(flatten);
+            List<double> layer1_result = new List<double>();
+            foreach (double layer1_raw in layer1_raw_result)
+            {
+                layer1_result.Add(layer1_raw/1250);
+            }
+            foreach (double value in layer1_result)
+            {
+                Console.WriteLine(value + " ");
+            }
+            //layer 2
+            Console.WriteLine("========= Layer 2 result =========");
+            List<double> layer2_result = this.Network[1].GetLayerResults(layer1_result);
+            foreach (double value in layer2_result)
+            {
+                Console.WriteLine(value + " ");
+            }
 
         }
         /// <summary>
