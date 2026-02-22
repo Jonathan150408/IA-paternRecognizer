@@ -17,7 +17,8 @@ namespace IA03
 			sigmoid,
 			tanh,
 			abs_sum,
-			kernel
+			kernel,
+			none
 		}
 		/// <summary>
 		/// Represents the function of the layer
@@ -53,13 +54,13 @@ namespace IA03
 		/// </summary>
 		/// <param name="inputs">The inputs of the layer</param>
 		/// <returns>An array where each neuron has a place</returns>
-		public double[] GetLayerResults(List<double> inputs)
+		public List<double> GetLayerResults(List<double> inputs)
 		{
-			double[] results = new double[this.Neurons.Count];
+			List<double> results = new List<double>(this.Neurons.Count);
 			int index = 0;
 			foreach (Neuron neuron in this.Neurons)
 			{
-				results[index] = neuron.GetResult(inputs, this.function);
+				results.Add(neuron.GetResult(inputs, this.function));
 				index++;
 			}
 			return results;
