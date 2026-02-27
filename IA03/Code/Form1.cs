@@ -358,6 +358,36 @@ namespace IA03
                 Console.WriteLine(value + " ");
             }
 
+            //final decision
+            int index_of_max = 0;
+            double max_value = layer2_result[0];
+
+            for (int i = 1; i < layer2_result.Count; i++)
+            {
+                if (layer2_result[i] > max_value)
+                {
+                    max_value = layer2_result[i];
+                    index_of_max = i;
+                }
+            }
+
+            Console.WriteLine("&&&&&&&&& Final decision &&&&&&&&&");
+            switch (index_of_max)
+            {
+                case 0:
+                    Console.WriteLine("C'est un carré !!");
+                    break;
+                case 1:
+                    Console.WriteLine("C'est un triangle !!");
+                    break;
+                case 3:
+                    Console.WriteLine("C'est un cercle !!");
+                    break;
+                default:
+                    Console.WriteLine("Erreur :C");
+                    break;
+            }
+
             //Training phase
             Console.WriteLine("========= Training phase =========");
             //ask for real values
@@ -377,7 +407,7 @@ namespace IA03
                         shape = "Cercle";
                         break;
                 }
-                Console.WriteLine("Valeur attendue pour : " + shape);
+                Console.Write("Valeur attendue pour " + shape + ":\t");
                 double.TryParse(Console.ReadLine(), out expected[i]);
             }
 
