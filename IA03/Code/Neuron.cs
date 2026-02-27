@@ -88,27 +88,33 @@ namespace IA03
         {
             return 1.0 / (1.0 + Math.Exp(-x));
         }
-        /// <summary>
-        /// This method adjusts the weights and adjustment for a better result
-        /// </summary>
-        /// <param name="expected"></param>
-        /// <param name="given_values"></param>
-        /// <param name="function"></param>
-        public void Rework(double expected, List<double> given_values, Layer.Function function)
+
+
+    /// <summary>
+    /// Eachakes a litte correction on the values
+    /// </summary>
+    /// <param name="expected"></param>
+    /// <param name="output"></param>
+    /// <param name="processed_values"></param>
+        public (double[], double) CorrectNeuron(double expected, double output, List<double> processed_values)
         {
-            //output of the neuron
-            double output = this.GetResult(given_values, function);
             //learning rate
             double learning_rate = 0.001;
 
+            //delta
+            double delta = (1 - output * output) * (output - expected);
+
             //updates the weights
+            double[] new_weights = new double[this.Weights.Length];
             for (int i = 0; i < this.Weights.Length; i++)
             {
-                this.Weights[i] += learning_rate * (expected - output) * given_values[i] * (1 - output * output);
+                new_weights[i] = this.Weights[i] - learning_rate * processed_values[i] * delta;
             }
 
             //updates the adjustment
-            this.Adjustment += learning_rate * (expected - output) * (1 - output * output);
+            double new_adjustment = this.Adjustment - learning_rate * delta;
+
+            return (new_weights, new_adjustment);
         }
 
     }
