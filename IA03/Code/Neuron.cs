@@ -99,7 +99,7 @@ namespace IA03
         public (double[], double) CorrectNeuron(double expected, double output, List<double> processed_values)
         {
             //learning rate
-            double learning_rate = 0.001;
+            double learning_rate = 0.2;
 
             //delta
             double delta = (1 - output * output) * (output - expected);

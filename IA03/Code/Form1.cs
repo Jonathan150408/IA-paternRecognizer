@@ -14,6 +14,7 @@ using System.Net.Http;
 using System.Security.AccessControl;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using static IA03.Layer;
@@ -357,6 +358,39 @@ namespace IA03
                 Console.WriteLine(value + " ");
             }
 
+            //Training phase
+            Console.WriteLine("========= Training phase =========");
+            //ask for real values
+            double[] expected = new double[this.Network[this.Network.Count - 1].Neurons.Count]; //create an array as long as the number of neurons in the last layer
+            for (int i = 0; i < this.Network[this.Network.Count - 1].Neurons.Count; i++)
+            {
+                string shape = "";
+                switch (i)
+                {
+                    case 0:
+                        shape = "Carré";
+                        break;
+                    case 1:
+                        shape = "Triangle";
+                        break;
+                    case 2:
+                        shape = "Cercle";
+                        break;
+                }
+                Console.WriteLine("Valeur attendue pour : " + shape);
+                double.TryParse(Console.ReadLine(), out expected[i]);
+            }
+
+            //correct the network - only last layer
+            this.Network[1].CorrectLayer(expected, layer2_result, layer1_result);
+
+            //New result - not working for the moment
+            Console.WriteLine("========= Layer 2 result recalculated =========");
+            List<double> layer2_new_result = this.Network[1].GetLayerResults(layer1_result);
+            foreach (double value in layer2_new_result)
+            {
+                Console.WriteLine(value + " ");
+            }
         }
         /// <summary>
         /// Takes all the feature maps and proceed to a 2x2 max pooling -> we only take the max value and the map become 4 times smaller

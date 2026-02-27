@@ -1,6 +1,8 @@
 ﻿using IA03;
+using IA03.Properties;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,8 +18,8 @@ namespace IA03
 		{
 			sigmoid,
 			tanh,
-			abs_sum,
-			kernel,
+			abs_sum,			//previously used by me to sum the absolute values
+			kernel,				//used to make the programm know, that this is a kernel and not a layer
 			none
 		}
 		/// <summary>
@@ -64,6 +66,30 @@ namespace IA03
 				index++;
 			}
 			return results;
+		}
+
+		public void CorrectLayer(double[] expected_results, List<double> real_outputs, List<double> processed_values)
+        {
+			string path = Path.Combine(AppContext.BaseDirectory, "Ressources", "layers", "layer2.txt");
+			StreamWriter sw = new StreamWriter(path);
+            sw.WriteLine("tanh+");
+            //rewrite the file
+            int counter = 0;
+			foreach (Neuron neuron in this.Neurons)
+			{
+				(double[] temp_weights, double temp_adjustement) = neuron.CorrectNeuron(expected_results[counter], real_outputs[counter], processed_values);
+				counter++;
+				foreach (double dbl in temp_weights)
+				{
+					sw.Write(dbl + " ");
+				}
+				sw.Write(temp_adjustement);
+				if (counter != 3)
+				{
+                    sw.WriteLine(";");
+                }
+            }
+			sw.Close();
 		}
 
 	}
