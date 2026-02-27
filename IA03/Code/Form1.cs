@@ -380,11 +380,11 @@ namespace IA03
                 case 1:
                     Console.WriteLine("C'est un triangle !!");
                     break;
-                case 3:
+                case 2:
                     Console.WriteLine("C'est un cercle !!");
                     break;
                 default:
-                    Console.WriteLine("Erreur :C");
+                    Console.WriteLine("Erreur :C, index_of_max était : " + index_of_max);
                     break;
             }
 
