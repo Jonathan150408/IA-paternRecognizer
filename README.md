@@ -1,7 +1,14 @@
 # ✨ AI - Patern Recognizer ✨
-The main goal of the project is to learn more about AA and how does it works to improve my knowledges. During this project I will try to set up a basic AI that can recognize a simple pattern like a square or a triangle.
-## The pattern 🟧
-The main question is *'what do we give to the AI to process ?'*. And the response is simple : we'll give a grid of float numbers wich can contain a pattern like a square or a line. The user is prompted to create a pattern when the app is launched. Then the AI will analyse the grid and give the response.
-## Usage 📖
-To use this app, you just need to download and launch the .exe
-The program will ask you to fill the grid and the AI will give the response. If you want to try again, you just have to press `Enter` and the programm restarts.
+> Le but principal du projet est de dévellopper une IA simple capable de reconnaitre une forme telle qu'un carré, un cercle ou un triangle. Je profiterais de ce projet pour me familiariser avec la manière de "penser" de l'IA et ainsi en apprendre plus sur son fonctionnement.
+
+
+## Le patterne 🟧
+> Afin de pouvoir tester l'IA développée, nous lui donnerons une grille de 32x32 en 2 couleurs dans laquelle blanc signifie "vide" et est égal à 0 et bleu (ou noir) signifie que la case est remplie/dessinée et sera défini par la valeur 1. <br><br>
+> Au lancement du programme, un formulaire s'affiche et l'utilisateur est invité à dessiner dans la grille affichée. <br>
+> Une fois que l'utilisateur est satisfait de son oeuvre, ce dernier clique sur *GO* (un bouton dans le formulaire) et le programme converti le dessin en une grille de chiffre comme décrit précédemment, puis donne cette grille au réseau neuronal.
+
+
+## Utilisation 📖
+> Afin d'utiliser cette application, tout ce dont vous avez besoin de faire sera de télécharger le dossier **App_IA**, l'ouvrir est lancer le fichier .exe <br><br>
+> Le programme se lance ensuite et vous êtes invité à tester le réseau. Après que le réseau aie donné le résultat, ce dernier sera affiché dans la console, vous pouvez taper sur `Enter` et la programme redémarre. Rien de plus simple. <br><br>
+> Amusez-vous bien
