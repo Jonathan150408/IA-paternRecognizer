@@ -24,6 +24,7 @@ namespace IA03
 {
     public partial class IA : Form
     {
+        private const bool NEEDCORRECTION = false;
         private const int GRIDSIZE = 32;
         private const int CELLSIZE = 16;
         private const int NUMBEROFCONVLAYERS = 2;
@@ -338,35 +339,55 @@ namespace IA03
             Console.WriteLine("========= count of flatten =========\n" + flatten.Count);
 
             //FNN
-            //Layer 1
-            Console.WriteLine("========= Layer 1 result =========");
-            List<double> layer1_raw_result = this.Network[0].GetLayerResults(flatten);
-            List<double> layer1_result = new List<double>();
-            foreach (double layer1_raw in layer1_raw_result)
+            List<double> last_layer_result = new List<double>(flatten);
+            int layer_counter = 0;
+            foreach (Layer layer in this.Network)
             {
-                layer1_result.Add(layer1_raw/1250);
+                //calculate the result
+                last_layer_result = layer.GetLayerResults(last_layer_result);
+
+                //write the result in the console
+                Console.WriteLine("========= Layer {0} result =========", layer_counter);
+                foreach (double value in last_layer_result)
+                {
+                    Console.WriteLine(value + " ");
+                }
+
+                //update the counter
+                layer_counter++;
             }
-            foreach (double value in layer1_result)
-            {
-                Console.WriteLine(value + " ");
-            }
-            //layer 2
-            Console.WriteLine("========= Layer 2 result =========");
-            List<double> layer2_result = this.Network[1].GetLayerResults(layer1_result);
-            foreach (double value in layer2_result)
-            {
-                Console.WriteLine(value + " ");
-            }
+
+
+            ////Layer 1
+            //Console.WriteLine("========= Layer 1 result =========");
+            //List<double> layer1_raw_result = this.Network[0].GetLayerResults(flatten);
+            //List<double> layer1_result = new List<double>();
+            //foreach (double layer1_raw in layer1_raw_result)
+            //{
+            //    layer1_result.Add(layer1_raw/1250);
+            //}
+            //foreach (double value in layer1_result)
+            //{
+            //    Console.WriteLine(value + " ");
+            //}
+            ////layer 2
+            //Console.WriteLine("========= Layer 2 result =========");
+            //List<double> layer2_result = this.Network[1].GetLayerResults(layer1_result);
+            //foreach (double value in layer2_result)
+            //{
+            //    Console.WriteLine(value + " ");
+            //}
+
 
             //final decision
             int index_of_max = 0;
-            double max_value = layer2_result[0];
+            double max_value = last_layer_result[0];
 
-            for (int i = 1; i < layer2_result.Count; i++)
+            for (int i = 1; i < last_layer_result.Count; i++)
             {
-                if (layer2_result[i] > max_value)
+                if (last_layer_result[i] > max_value)
                 {
-                    max_value = layer2_result[i];
+                    max_value = last_layer_result[i];
                     index_of_max = i;
                 }
             }
@@ -388,39 +409,44 @@ namespace IA03
                     break;
             }
 
-            //Training phase
-            Console.WriteLine("========= Training phase =========");
-            //ask for real values
-            double[] expected = new double[this.Network[this.Network.Count - 1].Neurons.Count]; //create an array as long as the number of neurons in the last layer
-            for (int i = 0; i < this.Network[this.Network.Count - 1].Neurons.Count; i++)
+            if (NEEDCORRECTION)
             {
-                string shape = "";
-                switch (i)
+                //Training phase
+                Console.WriteLine("========= Training phase =========");
+                //ask for real values
+                double[] expected = new double[this.Network[this.Network.Count - 1].Neurons.Count]; //create an array as long as the number of neurons in the last layer
+                for (int i = 0; i < this.Network[this.Network.Count - 1].Neurons.Count; i++)
                 {
-                    case 0:
-                        shape = "Carré";
-                        break;
-                    case 1:
-                        shape = "Triangle";
-                        break;
-                    case 2:
-                        shape = "Cercle";
-                        break;
+                    string shape = "";
+                    switch (i)
+                    {
+                        case 0:
+                            shape = "Carré";
+                            break;
+                        case 1:
+                            shape = "Triangle";
+                            break;
+                        case 2:
+                            shape = "Cercle";
+                            break;
+                    }
+                    Console.Write("Valeur attendue pour " + shape + ":\t");
+                    double.TryParse(Console.ReadLine(), out expected[i]);
                 }
-                Console.Write("Valeur attendue pour " + shape + ":\t");
-                double.TryParse(Console.ReadLine(), out expected[i]);
+
+
+                //correct the network - only last layer
+                this.Network[1].CorrectLayer(expected, last_layer_result, flatten);
+
+                //New result - not working for the moment
+                Console.WriteLine("========= Layer 2 result recalculated =========");
+                List<double> layer2_new_result = this.Network[1].GetLayerResults(flatten);
+                foreach (double value in layer2_new_result)
+                {
+                    Console.WriteLine(value + " ");
+                }
             }
 
-            //correct the network - only last layer
-            this.Network[1].CorrectLayer(expected, layer2_result, layer1_result);
-
-            //New result - not working for the moment
-            Console.WriteLine("========= Layer 2 result recalculated =========");
-            List<double> layer2_new_result = this.Network[1].GetLayerResults(layer1_result);
-            foreach (double value in layer2_new_result)
-            {
-                Console.WriteLine(value + " ");
-            }
         }
         /// <summary>
         /// Takes all the feature maps and proceed to a 2x2 max pooling -> we only take the max value and the map become 4 times smaller

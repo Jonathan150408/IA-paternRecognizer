@@ -96,13 +96,24 @@ namespace IA03
     /// <param name="expected"></param>
     /// <param name="output"></param>
     /// <param name="processed_values"></param>
-        public (double[], double) CorrectNeuron(double expected, double output, List<double> processed_values)
+        public (double[], double) CorrectNeuron(double expected, double output, List<double> processed_values, Layer.Function function)
         {
             //learning rate
             double learning_rate = 0.1;
 
             //delta
-            double delta = (1 - output * output) * (output - expected);
+            double delta = 0;
+            switch (function)
+            {
+                case Layer.Function.tanh:
+                    delta = (1 - output * output) * (output - expected);
+                    break;
+                case Layer.Function.softmax:
+                    delta = output - expected;
+                    break;
+                default:
+                    throw new NotImplementedException();
+            }
 
             //updates the weights
             double[] new_weights = new double[this.Weights.Length];

@@ -20,6 +20,7 @@ namespace IA03
 			tanh,
 			abs_sum,			//previously used by me to sum the absolute values
 			kernel,				//used to make the programm know, that this is a kernel and not a layer
+			softmax,
 			none
 		}
 		/// <summary>
@@ -77,7 +78,7 @@ namespace IA03
             int counter = 0;
 			foreach (Neuron neuron in this.Neurons)
 			{
-				(double[] temp_weights, double temp_adjustement) = neuron.CorrectNeuron(expected_results[counter], real_outputs[counter], processed_values);
+				(double[] temp_weights, double temp_adjustement) = neuron.CorrectNeuron(expected_results[counter], real_outputs[counter], processed_values, this.function);
 				counter++;
 				foreach (double dbl in temp_weights)
 				{
