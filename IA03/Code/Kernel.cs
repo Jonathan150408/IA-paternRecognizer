@@ -53,13 +53,13 @@ namespace IA03.Code
 				}
 			}
 
-			return featureMap;
-		}
-		/// <summary>
-		/// Creates new feature maps based on the olds, simultate a 3D kernel (the filter is 2-dimensional but applied in a 3rd dimension)
-		/// </summary>
-		/// <param name="previousMaps">A list of old feature maps</param>
-		/// <returns>A list of 2d array -> feature maps</returns>
+            return FeatureMapsWithTanH(featureMap);
+        }
+        /// <summary>
+        /// Creates new feature maps based on the olds, simultate a 3D kernel (the filter is 2-dimensional but applied in a 3rd dimension)
+        /// </summary>
+        /// <param name="previousMaps">A list of old feature maps</param>
+        /// <returns>A list of 2d array -> feature maps</returns>
         public double[,] RegenerateFeatureMap(List<double[,]> previousMaps)
         {
 			//in this part, we generate multiple feature maps, next step we'll merge theses maps together
@@ -111,8 +111,22 @@ namespace IA03.Code
 				}
 			}
 
-			return result;
-
+			return FeatureMapsWithTanH(result);
         }
+
+		private double[,] FeatureMapsWithTanH(double[,] old_map)
+		{
+            double[,] featureMap = new double[old_map.GetLength(0), old_map.GetLength(1)];
+
+			for (int i = 0;i < old_map.GetLength(0); i++)
+			{
+				for(int j = 0; j < old_map.GetLength(1); j++)
+				{
+					featureMap[i, j] = Math.Tanh(old_map[i, j]);
+				}
+			}
+
+            return featureMap;
+		}
     }
 }

@@ -210,7 +210,7 @@ namespace IA03
                 convolutionals_Layers.Add(kernel.GenerateFeatureMap(gridToAnalyse));
             }
             //writting feature maps values in the console
-            Console.WriteLine("========= Basic feature maps level 1 - not pooled - not flattered =========");
+            Console.WriteLine("========= Basic feature maps level 1 rounded - not pooled - not flattered =========");
             foreach (double[,] map in convolutionals_Layers)
             {
                 for (int i = 0; i < map.GetLength(0); i++)
@@ -223,11 +223,11 @@ namespace IA03
                         }
                         else if (map[i, j].ToString().Length == 1)
                         {
-                            Console.Write(" " + map[i, j].ToString() + " ");
+                            Console.Write(" " + Math.Round(map[i, j]).ToString() + " ");
                         }
                         else
                         {
-                            Console.Write(map[i, j].ToString() + " ");
+                            Console.Write(Math.Round(map[i, j]).ToString() + " ");
                         }
                     }
                     Console.WriteLine("|");
@@ -237,7 +237,7 @@ namespace IA03
 
             //pooling 1
             List<double[,]> pooled_maps = GeneralMaxPooling(convolutionals_Layers);
-            Console.WriteLine("========= Pooled maps with max_pooling =========");
+            Console.WriteLine("========= Pooled maps with max_pooling rounded =========");
             foreach (double[,] map in pooled_maps)
             {
                 for (int i = 0; i < map.GetLength(0) - 1; i++)
@@ -248,13 +248,13 @@ namespace IA03
                         {
                             Console.Write("   ");
                         }
-                        else if (map[i, j].ToString().Length == 1)
+                        else if (Math.Round(map[i, j]).ToString().Length == 1)
                         {
-                            Console.Write(" " + map[i, j].ToString() + " ");
+                            Console.Write(" " + Math.Round(map[i, j]).ToString() + " ");
                         }
                         else
                         {
-                            Console.Write(map[i, j].ToString() + " ");
+                            Console.Write(Math.Round(map[i, j]).ToString() + " ");
                         }
                     }
                     Console.WriteLine("|");
@@ -263,7 +263,7 @@ namespace IA03
             }
 
             //conv layer 2
-            Console.WriteLine("========= Basic feature maps level 2 - not pooled - not flattened =========");
+            Console.WriteLine("========= Basic feature maps level 2 rounded - not pooled - not flattened =========");
             List<double[,]> maps_2 = new List<double[,]>();
             foreach (Kernel kernel_2 in this.Kernels[1])
             {
@@ -276,17 +276,17 @@ namespace IA03
                     for (int j = 0; j < map.GetLength(1) - 1; j++)
                     {
                         //get rid of 0
-                        if (map[i, j] == 0)
+                        if (Math.Round(map[i, j]) == 0)
                         {
                             Console.Write("   ");
                         }
                         else if (map[i, j].ToString().Length == 1)
                         {
-                            Console.Write(" " + map[i, j].ToString() + " ");
+                            Console.Write(" " + Math.Round(map[i, j]).ToString() + " ");
                         }
                         else
                         {
-                            Console.Write(map[i, j].ToString() + " ");
+                            Console.Write(Math.Round(map[i, j]).ToString() + " ");
                         }
                     }
                     Console.WriteLine("|");
@@ -295,7 +295,7 @@ namespace IA03
             }
 
             //pool again
-            Console.WriteLine("========= Pooled maps with max_pooling part 2 =========");
+            Console.WriteLine("========= Pooled maps with max_pooling part 2 rounded =========");
             List<double[,]> pooled_maps2 = GeneralMaxPooling(maps_2);
             foreach (double[,] map in pooled_maps2)
             {
@@ -309,11 +309,11 @@ namespace IA03
                         }
                         else if (map[i, j].ToString().Length == 1)
                         {
-                            Console.Write(" " + map[i, j].ToString() + " ");
+                            Console.Write(" " + Math.Round(map[i, j]).ToString() + " ");
                         }
                         else
                         {
-                            Console.Write(map[i, j].ToString() + " ");
+                            Console.Write(Math.Round(map[i, j]).ToString() + " ");
                         }
                     }
                     Console.WriteLine("|");
@@ -322,7 +322,7 @@ namespace IA03
             }
 
             //flattening
-            Console.WriteLine("========= Flattened result =========");
+            Console.WriteLine("========= Flattened rounded result =========");
             List<double> flatten = new List<double>();
             foreach (double[,] map in pooled_maps2)
             {
@@ -331,7 +331,7 @@ namespace IA03
                     for (int j = 0; j < map.GetLength(1) - 1; j++)
                     {
                         flatten.Add(map[i, j]);
-                        Console.Write(map[i, j].ToString() + " ");
+                        Console.Write(Math.Round(map[i, j]).ToString() + " ");
                     }
                 }
                 Console.WriteLine("|");
@@ -357,28 +357,6 @@ namespace IA03
                 //update the counter
                 layer_counter++;
             }
-
-
-            ////Layer 1
-            //Console.WriteLine("========= Layer 1 result =========");
-            //List<double> layer1_raw_result = this.Network[0].GetLayerResults(flatten);
-            //List<double> layer1_result = new List<double>();
-            //foreach (double layer1_raw in layer1_raw_result)
-            //{
-            //    layer1_result.Add(layer1_raw/1250);
-            //}
-            //foreach (double value in layer1_result)
-            //{
-            //    Console.WriteLine(value + " ");
-            //}
-            ////layer 2
-            //Console.WriteLine("========= Layer 2 result =========");
-            //List<double> layer2_result = this.Network[1].GetLayerResults(layer1_result);
-            //foreach (double value in layer2_result)
-            //{
-            //    Console.WriteLine(value + " ");
-            //}
-
 
             //final decision
             int index_of_max = 0;
