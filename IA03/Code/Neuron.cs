@@ -99,7 +99,7 @@ namespace IA03
         public (double[], double) CorrectNeuron(double expected, double output, List<double> processed_values, Layer.Function function)
         {
             //learning rate
-            double learning_rate = 0.1;
+            const double LEARNING_RATE = 0.01;
 
             //delta
             double delta;
@@ -119,11 +119,11 @@ namespace IA03
             double[] new_weights = new double[this.Weights.Length];
             for (int i = 0; i < this.Weights.Length; i++)
             {
-                new_weights[i] = this.Weights[i] - learning_rate * processed_values[i] * delta;
+                new_weights[i] = this.Weights[i] - LEARNING_RATE * processed_values[i] * delta;
             }
 
             //updates the adjustment
-            double new_adjustment = this.Adjustment - learning_rate * delta;
+            double new_adjustment = this.Adjustment - LEARNING_RATE * delta;
 
             return (new_weights, new_adjustment);
         }
