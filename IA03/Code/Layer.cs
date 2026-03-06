@@ -114,9 +114,9 @@ namespace IA03
 
 		public void CorrectLayer(double[] expected_results, List<double> real_outputs, List<double> processed_values)
         {
-			string path = Path.Combine(AppContext.BaseDirectory, "Ressources", "layers", "layer2.txt");
+			string path = Path.Combine(AppContext.BaseDirectory, "Ressources", "layers", "layer1.txt");
 			StreamWriter sw = new StreamWriter(path);
-            sw.WriteLine("tanh+");
+            sw.WriteLine("softmax+");
             //rewrite the file
             int counter = 0;
 			foreach (Neuron neuron in this.Neurons)
