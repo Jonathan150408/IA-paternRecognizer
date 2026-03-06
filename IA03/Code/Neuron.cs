@@ -99,7 +99,7 @@ namespace IA03
         public (double[], double) CorrectNeuron(double expected, double output, List<double> processed_values, Layer.Function function)
         {
             //learning rate
-            const double LEARNING_RATE = 0.01;
+            const double LEARNING_RATE = 0.005;
 
             //delta
             double delta;

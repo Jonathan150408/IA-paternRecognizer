@@ -36,11 +36,11 @@ namespace IA03
         /// <summary>
         /// The neuronal network
         /// </summary>
-        private readonly List<Layer> Network;
+        private List<Layer> Network;
         /// <summary>
         /// The kernels (= filters) that are used to analyse the grid, a list of lists because I use 2 convolution steps with multiple kernels
         /// </summary>
-        private readonly List<List<Kernel>> Kernels;
+        private List<List<Kernel>> Kernels;
 
         /// <summary>
         /// The main program
@@ -48,84 +48,84 @@ namespace IA03
         public IA()
         {
             InitializeComponent();
+            InitializeData();
+            ////initialize the network
+            //Network = new List<Layer>();
+            //Kernels = new List<List<Kernel>>();
+            //for (int i = 0; i < NUMBEROFCONVLAYERS; i++)
+            //{
+            //    Kernels.Add(new List<Kernel>());
+            //}
 
-            //initialize the network
-            Network = new List<Layer>();
-            Kernels = new List<List<Kernel>>();
-            for (int i = 0; i < NUMBEROFCONVLAYERS; i++)
-            {
-                Kernels.Add(new List<Kernel>());
-            }
+            ////
+            //// Import part
+            ////
 
-            //
-            // Import part
-            //
+            ////a link = a file = a layer/kernel, this means "foreach file that represents a layer or a kernel, do..."
+            //foreach (string link in File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "Ressources", "layers_links.txt")).Split(';'))
+            //{
+            //    //split the informations (function and values) as text for the moment
+            //    string[] str_wholeLayer = File.ReadAllText(link.Trim()).Split('+');
 
-            //a link = a file = a layer/kernel, this means "foreach file that represents a layer or a kernel, do..."
-            foreach (string link in File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "Ressources", "layers_links.txt")).Split(';'))
-            {
-                //split the informations (function and values) as text for the moment
-                string[] str_wholeLayer = File.ReadAllText(link.Trim()).Split('+');
+            //    //converts the activation function
+            //    Enum.TryParse(str_wholeLayer[0], ignoreCase: true, out Function activation);
 
-                //converts the activation function
-                Enum.TryParse(str_wholeLayer[0], ignoreCase: true, out Function activation);
+            //    // For a layer
+            //    if (activation != Layer.Function.kernel)
+            //    {
+            //        //split the values (as text) -> we get an array of text like this
+            //        ///1 0 0 0;
+            //        ///1 0 0 0;
+            //        string[] str_allValues = str_wholeLayer[1].Split(';');
 
-                // For a layer
-                if (activation != Layer.Function.kernel)
-                {
-                    //split the values (as text) -> we get an array of text like this
-                    ///1 0 0 0;
-                    ///1 0 0 0;
-                    string[] str_allValues = str_wholeLayer[1].Split(';');
+            //        Layer tempLayer = new Layer(new List<Neuron>(), activation);
 
-                    Layer tempLayer = new Layer(new List<Neuron>(), activation);
+            //        //foreach neuron as text, we convert it into values (1 text neuron = 1 line in the file)
+            //        foreach (string str_neuron in str_allValues)
+            //        {
+            //            string[] str_neuronValues = str_neuron.Trim().Split(' ');
+            //            double[] dbl_neuronValues = new double[str_neuronValues.Length - 1];
 
-                    //foreach neuron as text, we convert it into values (1 text neuron = 1 line in the file)
-                    foreach (string str_neuron in str_allValues)
-                    {
-                        string[] str_neuronValues = str_neuron.Trim().Split(' ');
-                        double[] dbl_neuronValues = new double[str_neuronValues.Length - 1];
+            //            //foreach value in the text, we convert it to double and assign it to the neuron
+            //            for (int i = 0; i < str_neuronValues.Length - 1; i++)
+            //            {
+            //                double.TryParse(str_neuronValues[i], out double dbl_currentValue);
+            //                dbl_neuronValues[i] = dbl_currentValue;
+            //            }
+            //            //parse the adjutement (last value)
+            //            double.TryParse(str_neuronValues[str_neuronValues.Length - 1], out double dbl_adjustement);
 
-                        //foreach value in the text, we convert it to double and assign it to the neuron
-                        for (int i = 0; i < str_neuronValues.Length - 1; i++)
-                        {
-                            double.TryParse(str_neuronValues[i], out double dbl_currentValue);
-                            dbl_neuronValues[i] = dbl_currentValue;
-                        }
-                        //parse the adjutement (last value)
-                        double.TryParse(str_neuronValues[str_neuronValues.Length - 1], out double dbl_adjustement);
+            //            tempLayer.Neurons.Add(new Neuron(dbl_neuronValues, dbl_adjustement));
+            //        }
+            //        Network.Add(tempLayer);
+            //    }
+            //    else if (activation == Function.kernel)
+            //    {
+            //        string[] str_kernel_lineofvalues = str_wholeLayer[1].Split(';');
 
-                        tempLayer.Neurons.Add(new Neuron(dbl_neuronValues, dbl_adjustement));
-                    }
-                    Network.Add(tempLayer);
-                }
-                else if (activation == Function.kernel)
-                {
-                    string[] str_kernel_lineofvalues = str_wholeLayer[1].Split(';');
+            //        Kernel tempKernel = new Kernel(new double[
+            //            str_kernel_lineofvalues.GetLength(0),                   //number of rows
+            //            str_kernel_lineofvalues[0].Trim().Split(' ').Length     //number of values/row
+            //            ]);
 
-                    Kernel tempKernel = new Kernel(new double[
-                        str_kernel_lineofvalues.GetLength(0),                   //number of rows
-                        str_kernel_lineofvalues[0].Trim().Split(' ').Length     //number of values/row
-                        ]);
+            //        // gets the index (conv1, conv2)
+            //        int.TryParse(str_wholeLayer[2], out int index);
 
-                    // gets the index (conv1, conv2)
-                    int.TryParse(str_wholeLayer[2], out int index);
+            //        //foreach line of values as text, we take it and...
+            //        for (int i = 0; i < str_kernel_lineofvalues.Length; i++)
+            //        {
+            //            //...we separate it into values (as text) that we convert into doubles
+            //            string[] str_kernel_currentlinevalues = str_kernel_lineofvalues[i].Trim().Split(' ');
+            //            for (int j = 0; j < str_kernel_currentlinevalues.Length; j++)
+            //            {
+            //                double.TryParse(str_kernel_currentlinevalues[j], out double dbl_currentValue);
+            //                tempKernel.Filter[i, j] = dbl_currentValue;
+            //            }
+            //        }
 
-                    //foreach line of values as text, we take it and...
-                    for (int i = 0; i < str_kernel_lineofvalues.Length; i++)
-                    {
-                        //...we separate it into values (as text) that we convert into doubles
-                        string[] str_kernel_currentlinevalues = str_kernel_lineofvalues[i].Trim().Split(' ');
-                        for (int j = 0; j < str_kernel_currentlinevalues.Length; j++)
-                        {
-                            double.TryParse(str_kernel_currentlinevalues[j], out double dbl_currentValue);
-                            tempKernel.Filter[i, j] = dbl_currentValue;
-                        }
-                    }
-
-                    this.Kernels[index].Add(tempKernel);
-                }
-            }
+            //        this.Kernels[index].Add(tempKernel);
+            //    }
+            //}
         }
         /// <summary>
         /// Loading
@@ -335,7 +335,7 @@ namespace IA03
                 Console.WriteLine("========= Layer {0} result =========", layer_counter);
                 foreach (double value in last_layer_result)
                 {
-                    Console.WriteLine(value.ToString("F20", CultureInfo.InvariantCulture));
+                    Console.WriteLine(value.ToString());
                 }
 
                 //update the counter
@@ -401,8 +401,53 @@ namespace IA03
 
                 //correct the network - only last layer
                 this.Network[this.Network.Count - 1].CorrectLayer(expected, last_layer_result, flatten);
+
+                //make the same prediction with the new values
+                InitializeData();
+                List<double> recalculated = new List<double>(this.Network[this.Network.Count - 1].GetLayerResults(flatten));
+                index_of_max = FindMaxValue(recalculated);
+
+                Console.WriteLine("\n\n\t\t&&&&&&&&& New result &&&&&&&&&\n");
+                switch (index_of_max)
+                {
+                    case 0:
+                        Console.WriteLine("\t\t\tC'est un carré !!");
+                        break;
+                    case 1:
+                        Console.WriteLine("\t\t\tC'est un triangle !!");
+                        break;
+                    case 2:
+                        Console.WriteLine("\t\t\tC'est un cercle !!");
+                        break;
+                    default:
+                        Console.WriteLine("\t\t\tErreur :C, index_of_max était : " + index_of_max);
+                        break;
+                }
+                Console.WriteLine("\n[{0}%, {1}%, {2}%]\n", Math.Round(recalculated[0] * 100), Math.Round(recalculated[1] * 100), Math.Round(recalculated[2] * 100));
             }
 
+        }
+
+        /// <summary>
+        /// find the max value and return the index
+        /// </summary>
+        /// <param name="values"></param>
+        /// <returns></returns>
+        private int FindMaxValue(List<double> values)
+        {
+            int index_of_max = 0;
+            double max_value = values[0];
+
+            for (int i = 1; i < values.Count; i++)
+            {
+                if (values[i] > max_value)
+                {
+                    max_value = values[i];
+                    index_of_max = i;
+                }
+            }
+
+            return index_of_max;
         }
         /// <summary>
         /// Takes all the feature maps and proceed to a 2x2 max pooling -> we only take the max value and the map become 4 times smaller
@@ -480,6 +525,90 @@ namespace IA03
             else
             {
                 Environment.Exit(0);
+            }
+        }
+
+        /// <summary>
+        /// Initialize the networks and the kernels from the "layer_links.txt" file
+        /// </summary>
+        private void InitializeData()
+        {
+            //initialize the network
+            Network = new List<Layer>();
+            Kernels = new List<List<Kernel>>();
+            for (int i = 0; i < NUMBEROFCONVLAYERS; i++)
+            {
+                Kernels.Add(new List<Kernel>());
+            }
+
+            //
+            // Import part
+            //
+
+            //a link = a file = a layer/kernel, this means "foreach file that represents a layer or a kernel, do..."
+            foreach (string link in File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "Ressources", "layers_links.txt")).Split(';'))
+            {
+                //split the informations (function and values) as text for the moment
+                string[] str_wholeLayer = File.ReadAllText(link.Trim()).Split('+');
+
+                //converts the activation function
+                Enum.TryParse(str_wholeLayer[0], ignoreCase: true, out Function activation);
+
+                // For a layer
+                if (activation != Layer.Function.kernel)
+                {
+                    //split the values (as text) -> we get an array of text like this
+                    ///1 0 0 0;
+                    ///1 0 0 0;
+                    string[] str_allValues = str_wholeLayer[1].Split(';');
+
+                    Layer tempLayer = new Layer(new List<Neuron>(), activation);
+
+                    //foreach neuron as text, we convert it into values (1 text neuron = 1 line in the file)
+                    foreach (string str_neuron in str_allValues)
+                    {
+                        string[] str_neuronValues = str_neuron.Trim().Split(' ');
+                        double[] dbl_neuronValues = new double[str_neuronValues.Length - 1];
+
+                        //foreach value in the text, we convert it to double and assign it to the neuron
+                        for (int i = 0; i < str_neuronValues.Length - 1; i++)
+                        {
+                            double.TryParse(str_neuronValues[i], out double dbl_currentValue);
+                            dbl_neuronValues[i] = dbl_currentValue;
+                        }
+                        //parse the adjutement (last value)
+                        double.TryParse(str_neuronValues[str_neuronValues.Length - 1], out double dbl_adjustement);
+
+                        tempLayer.Neurons.Add(new Neuron(dbl_neuronValues, dbl_adjustement));
+                    }
+                    Network.Add(tempLayer);
+                }
+                else if (activation == Function.kernel)
+                {
+                    string[] str_kernel_lineofvalues = str_wholeLayer[1].Split(';');
+
+                    Kernel tempKernel = new Kernel(new double[
+                        str_kernel_lineofvalues.GetLength(0),                   //number of rows
+                        str_kernel_lineofvalues[0].Trim().Split(' ').Length     //number of values/row
+                        ]);
+
+                    // gets the index (conv1, conv2)
+                    int.TryParse(str_wholeLayer[2], out int index);
+
+                    //foreach line of values as text, we take it and...
+                    for (int i = 0; i < str_kernel_lineofvalues.Length; i++)
+                    {
+                        //...we separate it into values (as text) that we convert into doubles
+                        string[] str_kernel_currentlinevalues = str_kernel_lineofvalues[i].Trim().Split(' ');
+                        for (int j = 0; j < str_kernel_currentlinevalues.Length; j++)
+                        {
+                            double.TryParse(str_kernel_currentlinevalues[j], out double dbl_currentValue);
+                            tempKernel.Filter[i, j] = dbl_currentValue;
+                        }
+                    }
+
+                    this.Kernels[index].Add(tempKernel);
+                }
             }
         }
 
