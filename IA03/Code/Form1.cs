@@ -219,11 +219,7 @@ namespace IA03
                     {
                         if (map[i, j] == 0)
                         {
-                            Console.Write("   ");
-                        }
-                        else if (map[i, j].ToString().Length == 1)
-                        {
-                            Console.Write(" " + Math.Round(map[i, j]).ToString() + " ");
+                            Console.Write("  ");
                         }
                         else
                         {
@@ -244,13 +240,9 @@ namespace IA03
                 {
                     for (int j = 0; j < map.GetLength(1) - 1; j++)
                     {
-                         if (map[i, j] == 0)
+                        if (map[i, j] == 0)
                         {
-                            Console.Write("   ");
-                        }
-                        else if (Math.Round(map[i, j]).ToString().Length == 1)
-                        {
-                            Console.Write(" " + Math.Round(map[i, j]).ToString() + " ");
+                            Console.Write("  ");
                         }
                         else
                         {
@@ -278,11 +270,7 @@ namespace IA03
                         //get rid of 0
                         if (Math.Round(map[i, j]) == 0)
                         {
-                            Console.Write("   ");
-                        }
-                        else if (map[i, j].ToString().Length == 1)
-                        {
-                            Console.Write(" " + Math.Round(map[i, j]).ToString() + " ");
+                            Console.Write("  ");
                         }
                         else
                         {
@@ -305,15 +293,11 @@ namespace IA03
                     {
                         if (map[i, j] == 0)
                         {
-                            Console.Write("   ");
-                        }
-                        else if (map[i, j].ToString().Length == 1)
-                        {
-                            Console.Write(" " + Math.Round(map[i, j]).ToString() + " ");
+                            Console.Write("  ");
                         }
                         else
                         {
-                            Console.Write(Math.Round(map[i, j]).ToString() + " ");
+                            Console.Write( Math.Round(map[i, j]).ToString() + " ");
                         }
                     }
                     Console.WriteLine("|");
