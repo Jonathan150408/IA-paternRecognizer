@@ -49,9 +49,16 @@ namespace IA03
         {
             double result = 0;
 
-            if (function == Layer.Function.sigmoid || function == Layer.Function.tanh || function == Layer.Function.none)
+            if (function == Layer.Function.abs_sum)
             {
                 //adds the inpunt*weight result to result 16 times (1 for each input)
+                for (int i = 0; i < this.Weights.Length; i++)
+                    result += Math.Abs(this._weights[i] * inputs[i]);
+                return result + Adjustment;
+            }
+            else
+            {
+                //adds input * weight to the result (1 for each input)
                 for (int i = 0; i < this.Weights.Length; i++)
                     result += this._weights[i] * inputs[i];
 
@@ -65,19 +72,12 @@ namespace IA03
                         return Sigmoid(result);
                     case Layer.Function.tanh:
                         return Math.Tanh(result);
+                    case Layer.Function.softmax:
                     case Layer.Function.none:
                     default:
                         return result;
                 }
             }
-            else
-            {
-                //adds the inpunt*weight result to result 16 times (1 for each input)
-                for (int i = 0; i < this.Weights.Length; i++)
-                    result += Math.Abs(this._weights[i] * inputs[i]);
-                return result + Adjustment;
-            }
-
         }
         /// <summary>
         /// The sigmoid function
@@ -102,7 +102,7 @@ namespace IA03
             double learning_rate = 0.1;
 
             //delta
-            double delta = 0;
+            double delta;
             switch (function)
             {
                 case Layer.Function.tanh:

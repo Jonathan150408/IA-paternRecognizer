@@ -66,7 +66,50 @@ namespace IA03
 				results.Add(neuron.GetResult(inputs, this.function));
 				index++;
 			}
-			return results;
+
+			//softmax needs all the raw results to operate, we can't place it in neuron.cs
+			if (this.function == Function.softmax)
+			{
+				return	SoftMax(results);
+			}
+			//every other case has been calculated previously in neuron.cs
+			else
+			{
+                return results;
+            }
+        }
+
+		private List<double> SoftMax(List<double> raw_outputs)
+		{
+            //1. get the greatest input
+            double max_value = raw_outputs[0];
+            for (int i = 1; i < raw_outputs.Count; i++)
+            {
+                if (raw_outputs[i] > max_value)
+                {
+                    max_value = raw_outputs[i];
+                }
+            }
+            //2. calculate the exponentials
+            List<double> exponentials = new List<double>(raw_outputs.Count);
+			foreach (double raw_output in raw_outputs)
+			{
+				exponentials.Add(Math.Exp(raw_output - max_value)); //subtract the max so softmax becomes more accurate
+            }
+			//3. calculate the sum
+			double exponentials_sum = 0;
+            foreach (double exponential in exponentials)
+			{
+				exponentials_sum += exponential;
+			}
+			//4. calculate the probability
+			List<double> finals_outputs = new List<double>(exponentials.Count);
+			for (int i = 0; i < exponentials.Count; i++)
+			{
+				finals_outputs.Add(exponentials[i]/exponentials_sum);
+			}
+
+			return finals_outputs;
 		}
 
 		public void CorrectLayer(double[] expected_results, List<double> real_outputs, List<double> processed_values)

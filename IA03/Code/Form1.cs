@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -24,7 +25,7 @@ namespace IA03
 {
     public partial class IA : Form
     {
-        private const bool NEEDCORRECTION = false;
+        private const bool NEEDCORRECTION = true;
         private const int GRIDSIZE = 32;
         private const int CELLSIZE = 16;
         private const int NUMBEROFCONVLAYERS = 2;
@@ -350,7 +351,7 @@ namespace IA03
                 Console.WriteLine("========= Layer {0} result =========", layer_counter);
                 foreach (double value in last_layer_result)
                 {
-                    Console.WriteLine(value + " ");
+                    Console.WriteLine(value.ToString("F20", CultureInfo.InvariantCulture));
                 }
 
                 //update the counter
@@ -436,11 +437,11 @@ namespace IA03
 
 
                 //correct the network - only last layer
-                this.Network[1].CorrectLayer(expected, last_layer_result, flatten);
+                this.Network[this.Network.Count - 1].CorrectLayer(expected, last_layer_result, flatten);
 
                 //New result - not working for the moment
                 Console.WriteLine("========= Layer 2 result recalculated =========");
-                List<double> layer2_new_result = this.Network[1].GetLayerResults(flatten);
+                List<double> layer2_new_result = this.Network[this.Network.Count - 1].GetLayerResults(flatten);
                 foreach (double value in layer2_new_result)
                 {
                     Console.WriteLine(value + " ");
