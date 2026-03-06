@@ -371,22 +371,23 @@ namespace IA03
                 }
             }
 
-            Console.WriteLine("&&&&&&&&& Final decision &&&&&&&&&");
+            Console.WriteLine("\n\n\t\t&&&&&&&&& Final decision &&&&&&&&&\n");
             switch (index_of_max)
             {
                 case 0:
-                    Console.WriteLine("C'est un carré !!");
+                    Console.WriteLine("\t\t\tC'est un carré !!");
                     break;
                 case 1:
-                    Console.WriteLine("C'est un triangle !!");
+                    Console.WriteLine("\t\t\tC'est un triangle !!");
                     break;
                 case 2:
-                    Console.WriteLine("C'est un cercle !!");
+                    Console.WriteLine("\t\t\tC'est un cercle !!");
                     break;
                 default:
-                    Console.WriteLine("Erreur :C, index_of_max était : " + index_of_max);
+                    Console.WriteLine("\t\t\tErreur :C, index_of_max était : " + index_of_max);
                     break;
             }
+            Console.WriteLine("\n[{0}%, {1}%, {2}%]\n", Math.Round(last_layer_result[0] * 100), Math.Round(last_layer_result[1] * 100), Math.Round(last_layer_result[2] * 100));
 
             if (NEEDCORRECTION)
             {
@@ -416,14 +417,6 @@ namespace IA03
 
                 //correct the network - only last layer
                 this.Network[this.Network.Count - 1].CorrectLayer(expected, last_layer_result, flatten);
-
-                //New result - not working for the moment
-                Console.WriteLine("========= Layer 2 result recalculated =========");
-                List<double> layer2_new_result = this.Network[this.Network.Count - 1].GetLayerResults(flatten);
-                foreach (double value in layer2_new_result)
-                {
-                    Console.WriteLine(value + " ");
-                }
             }
 
         }
