@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
@@ -26,9 +27,11 @@ namespace IA03
     public partial class IA : Form
     {
         private const bool NEEDCORRECTION = true;
+        private const bool WANTOPERATIONSDETAILS = false;
         private const int GRIDSIZE = 32;
         private const int CELLSIZE = 16;
         private const int NUMBEROFCONVLAYERS = 2;
+        private Stopwatch chrono = new Stopwatch();
         /// <summary>
         /// The grid we'll analyse
         /// </summary> 
@@ -47,85 +50,18 @@ namespace IA03
         /// </summary>
         public IA()
         {
+            chrono.Start();
+
             InitializeComponent();
             InitializeData();
-            ////initialize the network
-            //Network = new List<Layer>();
-            //Kernels = new List<List<Kernel>>();
-            //for (int i = 0; i < NUMBEROFCONVLAYERS; i++)
-            //{
-            //    Kernels.Add(new List<Kernel>());
-            //}
 
-            ////
-            //// Import part
-            ////
-
-            ////a link = a file = a layer/kernel, this means "foreach file that represents a layer or a kernel, do..."
-            //foreach (string link in File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "Ressources", "layers_links.txt")).Split(';'))
-            //{
-            //    //split the informations (function and values) as text for the moment
-            //    string[] str_wholeLayer = File.ReadAllText(link.Trim()).Split('+');
-
-            //    //converts the activation function
-            //    Enum.TryParse(str_wholeLayer[0], ignoreCase: true, out Function activation);
-
-            //    // For a layer
-            //    if (activation != Layer.Function.kernel)
-            //    {
-            //        //split the values (as text) -> we get an array of text like this
-            //        ///1 0 0 0;
-            //        ///1 0 0 0;
-            //        string[] str_allValues = str_wholeLayer[1].Split(';');
-
-            //        Layer tempLayer = new Layer(new List<Neuron>(), activation);
-
-            //        //foreach neuron as text, we convert it into values (1 text neuron = 1 line in the file)
-            //        foreach (string str_neuron in str_allValues)
-            //        {
-            //            string[] str_neuronValues = str_neuron.Trim().Split(' ');
-            //            double[] dbl_neuronValues = new double[str_neuronValues.Length - 1];
-
-            //            //foreach value in the text, we convert it to double and assign it to the neuron
-            //            for (int i = 0; i < str_neuronValues.Length - 1; i++)
-            //            {
-            //                double.TryParse(str_neuronValues[i], out double dbl_currentValue);
-            //                dbl_neuronValues[i] = dbl_currentValue;
-            //            }
-            //            //parse the adjutement (last value)
-            //            double.TryParse(str_neuronValues[str_neuronValues.Length - 1], out double dbl_adjustement);
-
-            //            tempLayer.Neurons.Add(new Neuron(dbl_neuronValues, dbl_adjustement));
-            //        }
-            //        Network.Add(tempLayer);
-            //    }
-            //    else if (activation == Function.kernel)
-            //    {
-            //        string[] str_kernel_lineofvalues = str_wholeLayer[1].Split(';');
-
-            //        Kernel tempKernel = new Kernel(new double[
-            //            str_kernel_lineofvalues.GetLength(0),                   //number of rows
-            //            str_kernel_lineofvalues[0].Trim().Split(' ').Length     //number of values/row
-            //            ]);
-
-            //        // gets the index (conv1, conv2)
-            //        int.TryParse(str_wholeLayer[2], out int index);
-
-            //        //foreach line of values as text, we take it and...
-            //        for (int i = 0; i < str_kernel_lineofvalues.Length; i++)
-            //        {
-            //            //...we separate it into values (as text) that we convert into doubles
-            //            string[] str_kernel_currentlinevalues = str_kernel_lineofvalues[i].Trim().Split(' ');
-            //            for (int j = 0; j < str_kernel_currentlinevalues.Length; j++)
-            //            {
-            //                double.TryParse(str_kernel_currentlinevalues[j], out double dbl_currentValue);
-            //                tempKernel.Filter[i, j] = dbl_currentValue;
-            //            }
-            //        }
-
-            //        this.Kernels[index].Add(tempKernel);
-            //    }
-            //}
+            //writes the chrono value
+            chrono.Stop();
+            Console.Write("Réseau chargé en ");
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.Write(chrono.ElapsedMilliseconds);
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.WriteLine(" ms");
         }
         /// <summary>
         /// Loading
@@ -137,11 +73,11 @@ namespace IA03
             // Set form position to top right
             this.StartPosition = FormStartPosition.Manual;
             this.Location = new Point(2000, 0);
-
+            chrono.Restart();
             HandleGrid();
         }
         /// <summary>
-        /// Create a grid and 16 checkboxes
+        /// Create the grid of 32x32 checkboxes (= 1024 checkboxes)
         /// </summary>
         /// <returns></returns>
         private void HandleGrid()
@@ -179,7 +115,7 @@ namespace IA03
                 }
             }
 
-            //create a "next" button placed sous la grille
+            //create a "next" button placed under the grid
             Button done = new Button
             {
                 Size = new Size(200, 100),
@@ -196,6 +132,14 @@ namespace IA03
             // bring "done" to front so it's not covered
             done.BringToFront();
             done.Click += Done_Click;
+
+            //writes the chrono value
+            chrono.Stop();
+            Console.Write("Formulaire chargé en ");
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.Write(chrono.ElapsedMilliseconds);
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.WriteLine(" ms");
         }
 
         /// <summary>
@@ -209,104 +153,17 @@ namespace IA03
             {
                 convolutionals_Layers.Add(kernel.GenerateFeatureMap(gridToAnalyse));
             }
-            //writting feature maps values in the console
-            Console.WriteLine("========= Basic feature maps level 1 rounded - not pooled - not flattered =========");
-            foreach (double[,] map in convolutionals_Layers)
-            {
-                for (int i = 0; i < map.GetLength(0); i++)
-                {
-                    for (int j = 0; j < map.GetLength(1) - 1; j++)
-                    {
-                        if (map[i, j] == 0)
-                        {
-                            Console.Write("  ");
-                        }
-                        else
-                        {
-                            Console.Write(Math.Round(map[i, j]).ToString() + " ");
-                        }
-                    }
-                    Console.WriteLine("|");
-                }
-                Console.WriteLine("_____________________________________________________________________________________");
-            }
-
             //pooling 1
             List<double[,]> pooled_maps = GeneralMaxPooling(convolutionals_Layers);
-            Console.WriteLine("========= Pooled maps with max_pooling rounded =========");
-            foreach (double[,] map in pooled_maps)
-            {
-                for (int i = 0; i < map.GetLength(0) - 1; i++)
-                {
-                    for (int j = 0; j < map.GetLength(1) - 1; j++)
-                    {
-                        if (map[i, j] == 0)
-                        {
-                            Console.Write("  ");
-                        }
-                        else
-                        {
-                            Console.Write(Math.Round(map[i, j]).ToString() + " ");
-                        }
-                    }
-                    Console.WriteLine("|");
-                }
-                Console.WriteLine("________________________________________");
-            }
-
             //conv layer 2
-            Console.WriteLine("========= Basic feature maps level 2 rounded - not pooled - not flattened =========");
             List<double[,]> maps_2 = new List<double[,]>();
             foreach (Kernel kernel_2 in this.Kernels[1])
             {
                 maps_2.Add(kernel_2.RegenerateFeatureMap(pooled_maps));
             }
-            foreach (double[,] map in maps_2)
-            {
-                for (int i = 0; i < map.GetLength(0) - 1; i++)
-                {
-                    for (int j = 0; j < map.GetLength(1) - 1; j++)
-                    {
-                        //get rid of 0
-                        if (Math.Round(map[i, j]) == 0)
-                        {
-                            Console.Write("  ");
-                        }
-                        else
-                        {
-                            Console.Write(Math.Round(map[i, j]).ToString() + " ");
-                        }
-                    }
-                    Console.WriteLine("|");
-                }
-                Console.WriteLine("______________________________");
-            }
-
             //pool again
-            Console.WriteLine("========= Pooled maps with max_pooling part 2 rounded =========");
             List<double[,]> pooled_maps2 = GeneralMaxPooling(maps_2);
-            foreach (double[,] map in pooled_maps2)
-            {
-                for (int i = 0; i < map.GetLength(0) - 1; i++)
-                {
-                    for (int j = 0; j < map.GetLength(1) - 1; j++)
-                    {
-                        if (map[i, j] == 0)
-                        {
-                            Console.Write("  ");
-                        }
-                        else
-                        {
-                            Console.Write( Math.Round(map[i, j]).ToString() + " ");
-                        }
-                    }
-                    Console.WriteLine("|");
-                }
-                Console.WriteLine("_____________");
-            }
-
             //flattening
-            Console.WriteLine("========= Flattened rounded result =========");
             List<double> flatten = new List<double>();
             foreach (double[,] map in pooled_maps2)
             {
@@ -315,68 +172,175 @@ namespace IA03
                     for (int j = 0; j < map.GetLength(1) - 1; j++)
                     {
                         flatten.Add(map[i, j]);
-                        Console.Write(Math.Round(map[i, j]).ToString() + " ");
                     }
                 }
-                Console.WriteLine("|");
             }
-
-            Console.WriteLine("========= count of flatten =========\n" + flatten.Count);
-
             //FNN
             List<double> last_layer_result = new List<double>(flatten);
-            int layer_counter = 0;
-            foreach (Layer layer in this.Network)
+            if (!WANTOPERATIONSDETAILS)
             {
-                //calculate the result
-                last_layer_result = layer.GetLayerResults(last_layer_result);
-
-                //write the result in the console
-                Console.WriteLine("========= Layer {0} result =========", layer_counter);
-                foreach (double value in last_layer_result)
+                foreach (Layer layer in this.Network)
                 {
-                    Console.WriteLine(value.ToString());
+                    last_layer_result = layer.GetLayerResults(last_layer_result);
                 }
+            }
 
-                //update the counter
-                layer_counter++;
+            //writes the operations details if wanted
+            if (WANTOPERATIONSDETAILS)
+            {
+                //After convolution 1
+                Console.WriteLine("========= Basic feature maps level 1 rounded - not pooled - not flattered =========");
+                foreach (double[,] map in convolutionals_Layers)
+                {
+                    for (int i = 0; i < map.GetLength(0); i++)
+                    {
+                        for (int j = 0; j < map.GetLength(1) - 1; j++)
+                        {
+                            if (map[i, j] == 0)
+                            {
+                                Console.Write("  ");
+                            }
+                            else
+                            {
+                                Console.Write(Math.Round(map[i, j]).ToString() + " ");
+                            }
+                        }
+                        Console.WriteLine("|");
+                    }
+                    Console.WriteLine("_____________________________________________________________________________________");
+                }
+                //After max pooling 1
+                Console.WriteLine("========= Pooled maps with max_pooling rounded =========");
+                foreach (double[,] map in pooled_maps)
+                {
+                    for (int i = 0; i < map.GetLength(0) - 1; i++)
+                    {
+                        for (int j = 0; j < map.GetLength(1) - 1; j++)
+                        {
+                            if (map[i, j] == 0)
+                            {
+                                Console.Write("  ");
+                            }
+                            else
+                            {
+                                Console.Write(Math.Round(map[i, j]).ToString() + " ");
+                            }
+                        }
+                        Console.WriteLine("|");
+                    }
+                    Console.WriteLine("________________________________________");
+                }
+                //After convolution 2
+                Console.WriteLine("========= Basic feature maps level 2 rounded - not pooled - not flattened =========");
+                foreach (double[,] map in maps_2)
+                {
+                    for (int i = 0; i < map.GetLength(0) - 1; i++)
+                    {
+                        for (int j = 0; j < map.GetLength(1) - 1; j++)
+                        {
+                            //get rid of 0
+                            if (Math.Round(map[i, j]) == 0)
+                            {
+                                Console.Write("  ");
+                            }
+                            else
+                            {
+                                Console.Write(Math.Round(map[i, j]).ToString() + " ");
+                            }
+                        }
+                        Console.WriteLine("|");
+                    }
+                    Console.WriteLine("______________________________");
+                }
+                //After max pooling 2
+                Console.WriteLine("========= Pooled maps with max_pooling part 2 rounded =========");
+                foreach (double[,] map in pooled_maps2)
+                {
+                    for (int i = 0; i < map.GetLength(0) - 1; i++)
+                    {
+                        for (int j = 0; j < map.GetLength(1) - 1; j++)
+                        {
+                            if (map[i, j] == 0)
+                            {
+                                Console.Write("  ");
+                            }
+                            else
+                            {
+                                Console.Write(Math.Round(map[i, j]).ToString() + " ");
+                            }
+                        }
+                        Console.WriteLine("|");
+                    }
+                    Console.WriteLine("_____________");
+                }
+                //After flatten
+                Console.WriteLine("========= Flattened rounded result =========");
+                foreach (double[,] map in pooled_maps2)
+                {
+                    for (int i = 0; i < map.GetLength(0) - 1; i++)
+                    {
+                        for (int j = 0; j < map.GetLength(1) - 1; j++)
+                        {
+                            Console.Write(Math.Round(map[i, j]).ToString() + " ");
+                        }
+                    }
+                    Console.WriteLine("|");
+                }
+                Console.WriteLine("========= count of flatten =========\n" + flatten.Count);
+                //Every feed-forward layer
+                int layer_counter = 0;
+                foreach (Layer layer in this.Network)
+                {
+                    //calculate the result
+                    last_layer_result = layer.GetLayerResults(last_layer_result);
+
+                    //write the result in the console
+                    Console.WriteLine("========= Layer {0} result =========", layer_counter);
+                    foreach (double value in last_layer_result)
+                    {
+                        Console.WriteLine(value.ToString());
+                    }
+                    //update the counter
+                    layer_counter++;
+                }
             }
 
             //final decision
-            int index_of_max = 0;
-            double max_value = last_layer_result[0];
+            int index_of_max = FindMaxValue(last_layer_result);
 
-            for (int i = 1; i < last_layer_result.Count; i++)
-            {
-                if (last_layer_result[i] > max_value)
-                {
-                    max_value = last_layer_result[i];
-                    index_of_max = i;
-                }
-            }
+            //writes the chrono value
+            chrono.Stop();
+            Console.Write("Calculs terminés en ");
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.Write(chrono.ElapsedMilliseconds);
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.WriteLine(" ms");
 
-            Console.WriteLine("\n\n\t\t&&&&&&&&& Final decision &&&&&&&&&\n");
+            //shows the final decision
+            Console.WriteLine("\n========= Résultat =========\n");
+            Console.Write("C'est un ");
             switch (index_of_max)
             {
                 case 0:
-                    Console.WriteLine("\t\t\tC'est un carré !!");
+                    Console.WriteLine("\x1b[3m{0}\x1b[23m", "carré");
                     break;
                 case 1:
-                    Console.WriteLine("\t\t\tC'est un triangle !!");
+                    Console.WriteLine("\x1b[3m{0}\x1b[23m", "triangle");
                     break;
                 case 2:
-                    Console.WriteLine("\t\t\tC'est un cercle !!");
+                    Console.WriteLine("\x1b[3m{0}\x1b[23m", "cercle");
                     break;
                 default:
-                    Console.WriteLine("\t\t\tErreur :C, index_of_max était : " + index_of_max);
+                    Console.WriteLine("Erreur :C, index_of_max était : " + index_of_max);
                     break;
             }
             Console.WriteLine("\n[{0}%, {1}%, {2}%]\n", Math.Round(last_layer_result[0] * 100), Math.Round(last_layer_result[1] * 100), Math.Round(last_layer_result[2] * 100));
 
+            //only if we want to train the network
             if (NEEDCORRECTION)
             {
                 //Training phase
-                Console.WriteLine("========= Training phase =========");
+                Console.WriteLine("========= Phase d'entrainement =========");
                 //ask for real values
                 double[] expected = new double[this.Network[this.Network.Count - 1].Neurons.Count]; //create an array as long as the number of neurons in the last layer
                 for (int i = 0; i < this.Network[this.Network.Count - 1].Neurons.Count; i++)
@@ -397,33 +361,64 @@ namespace IA03
                     Console.Write("Valeur attendue pour " + shape + ":\t");
                     double.TryParse(Console.ReadLine(), out expected[i]);
                 }
+                Console.WriteLine();
 
-
+                //restart to mesure the time taken to correct the network
+                chrono.Restart();
                 //correct the network - only last layer
                 this.Network[this.Network.Count - 1].CorrectLayer(expected, last_layer_result, flatten);
+                //writes the chrono value
+                chrono.Stop();
+                Console.Write("Correction terminée en ");
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.Write(chrono.ElapsedMilliseconds);
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.WriteLine(" ms");
 
-                //make the same prediction with the new values
+                //restart to mesure the time taken to make the new calculations
+                chrono.Restart();
                 InitializeData();
+                //writes the chrono value
+                chrono.Stop();
+                Console.Write("Réseau rechargé en ");
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.Write(chrono.ElapsedMilliseconds);
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.WriteLine(" ms");
+
+                //restart to mesure the time taken to calculate again
+                chrono.Restart();
+                //make the same prediction with the new values
                 List<double> recalculated = new List<double>(this.Network[this.Network.Count - 1].GetLayerResults(flatten));
                 index_of_max = FindMaxValue(recalculated);
+                //writes the chrono value
+                chrono.Stop();
+                Console.Write("Calculs terminés en ");
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.Write(chrono.ElapsedMilliseconds);
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.WriteLine(" ms");
 
-                Console.WriteLine("\n\n\t\t&&&&&&&&& New result &&&&&&&&&\n");
+                //shows the new result
+                Console.WriteLine("\n========= Nouveau résultat =========\n");
+                Console.Write("C'est un ");
                 switch (index_of_max)
                 {
                     case 0:
-                        Console.WriteLine("\t\t\tC'est un carré !!");
+                        Console.WriteLine("\x1b[3m{0}\x1b[23m", "carré");
                         break;
                     case 1:
-                        Console.WriteLine("\t\t\tC'est un triangle !!");
+                        Console.WriteLine("\x1b[3m{0}\x1b[23m", "triangle");
                         break;
                     case 2:
-                        Console.WriteLine("\t\t\tC'est un cercle !!");
+                        Console.WriteLine("\x1b[3m{0}\x1b[23m", "cercle");
                         break;
                     default:
-                        Console.WriteLine("\t\t\tErreur :C, index_of_max était : " + index_of_max);
+                        Console.WriteLine("Erreur :C, index_of_max était : " + index_of_max);
                         break;
                 }
                 Console.WriteLine("\n[{0}%, {1}%, {2}%]\n", Math.Round(recalculated[0] * 100), Math.Round(recalculated[1] * 100), Math.Round(recalculated[2] * 100));
+
             }
 
         }
@@ -508,6 +503,9 @@ namespace IA03
         /// <param name="e"></param>
         private void Done_Click(object sender, EventArgs e)
         {
+            //restart to mesure the time taken to convert the grid into values
+            chrono.Restart();
+            //convert the grid into values
             for (int i = 0; i < GRIDSIZE; i++)
             {
                 for (int j = 0; j < GRIDSIZE; j++)
@@ -515,17 +513,46 @@ namespace IA03
                     this.gridToAnalyse[i, j] = Convert.ToInt16(this.UserInput.Controls[i * 32 + j].Tag);
                 }
             }
-            MakePrediction();
-            ConsoleKey key = Console.ReadKey().Key;
 
-            if (key == ConsoleKey.Enter)
+            //writes the chrono value
+            chrono.Stop();
+            Console.Write("Valeurs résupérées en ");
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.Write(chrono.ElapsedMilliseconds);
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.WriteLine(" ms");
+
+            //restart the chrono to mesure the time taken for calculations
+            chrono.Restart();
+            //makes the calculations
+            MakePrediction();
+
+            bool wrong_answer = false;
+            bool quit = false;
+            ConsoleKey key = ConsoleKey.Escape;
+            do
             {
-                Application.Restart();
-            }
-            else
-            {
-                Environment.Exit(0);
-            }
+                Console.WriteLine(wrong_answer ? "{0} n'est pas une réponse valide" : "Souhaitez-vous recommencer ? (O/N)", key);
+                key = Console.ReadKey(true).Key;
+                if (key == ConsoleKey.O)
+                {
+                    wrong_answer = false;
+                    Application.Restart();
+                    Environment.Exit(0);
+                }
+                else if (key == ConsoleKey.N)
+                {
+                    wrong_answer = false;
+                    quit = true;
+                }
+                else
+                {
+                    wrong_answer = true;
+                }
+            } while (!quit);
+            Console.WriteLine("\nMerci d'avoir testé ce programme \\^o^/\nAppuyez sur une touche pour fermer le programme...");
+            Console.ReadKey(true);
+            Environment.Exit(0);
         }
 
         /// <summary>
@@ -540,10 +567,6 @@ namespace IA03
             {
                 Kernels.Add(new List<Kernel>());
             }
-
-            //
-            // Import part
-            //
 
             //a link = a file = a layer/kernel, this means "foreach file that represents a layer or a kernel, do..."
             foreach (string link in File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "Ressources", "layers_links.txt")).Split(';'))
