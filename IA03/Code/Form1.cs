@@ -26,12 +26,14 @@ namespace IA03
 {
     public partial class IA : Form
     {
-        private const bool NEEDCORRECTION = true;
-        private const bool WANTOPERATIONSDETAILS = false;
+        private bool wantCorrection;
+        private bool wantOperationDetails;
         private const int GRIDSIZE = 32;
         private const int CELLSIZE = 16;
         private const int NUMBEROFCONVLAYERS = 2;
         private Stopwatch chrono = new Stopwatch();
+        FlowLayoutPanel correctionGroup;
+        FlowLayoutPanel debugGroup;
         /// <summary>
         /// The grid we'll analyse
         /// </summary> 
@@ -83,7 +85,7 @@ namespace IA03
         private void HandleGrid()
         {
             // handle the grid
-            this.UserInput.Location = new Point((this.ClientSize.Width - this.UserInput.Width) / 3, 50);
+            this.UserInput.Location = new Point((this.ClientSize.Width - this.UserInput.Width) / 3 + 50, 50);
             this.UserInput.AutoSize = false;
             this.UserInput.Size = new Size(GRIDSIZE * CELLSIZE, GRIDSIZE * CELLSIZE);
             this.UserInput.BackColor = Color.White;
@@ -115,14 +117,98 @@ namespace IA03
                 }
             }
 
-            //create a button to set the correction mode
-            
+            //CORRECTION MODE
+            //create a toggle button to set the correction mode
+            correctionGroup = new FlowLayoutPanel()
+            {
+                Name = "Activer la correction ?",
+                ForeColor = Color.White,
+                Location = new Point(50, 50)
+            };
+            Label correctionLabel = new Label()
+            {
+                Text = "Activer la correction ? (recommandé)",
+                ForeColor = Color.White,
+                Location = new Point(50, 25),
+                AutoSize = true,
+                Font = new Font("Microsoft Sans Serif", 10),
+            };
+            System.Windows.Forms.RadioButton correctionTrue = new System.Windows.Forms.RadioButton()
+            {
+                Text = "On",
+                Tag = true,
+                Appearance = Appearance.Button,
+                ForeColor= Color.White,
+                Checked = true,
+                BackColor = Color.LightGreen
+            };
+            System.Windows.Forms.RadioButton correctionFalse = new System.Windows.Forms.RadioButton()
+            {
+                Text = "Off",
+                Tag = false,
+                Appearance = Appearance.Button,
+                ForeColor= Color.White,
+            };
+            //add the field to the form
+            this.Controls.Add(correctionGroup);
+            this.Controls.Add(correctionLabel);
+            correctionGroup.Controls.Add(correctionTrue);
+            correctionGroup.Controls.Add(correctionFalse);
+            //link the buttons with method
+            foreach (System.Windows.Forms.RadioButton radioButton in correctionGroup.Controls)
+            {
+                radioButton.Click += RadioButton_Click;
+            }
+
+
+            //DEBUG MODE
+            //create a toggle button to set the correction mode
+            debugGroup = new FlowLayoutPanel()
+            {
+                Name = "Montrer tous les calculs ?",
+                ForeColor = Color.White,
+                Location = new Point(50, 250)
+            };
+            Label debugLabel = new Label()
+            {
+                Text = "Montrer tous les calculs ?",
+                ForeColor =Color.White,
+                Location = new Point(50, 225),
+                AutoSize = true,
+                Font = new Font("Microsoft Sans Serif", 10)
+            };
+            System.Windows.Forms.RadioButton debugTrue = new System.Windows.Forms.RadioButton()
+            {
+                Text = "On",
+                Tag = true,
+                Appearance = Appearance.Button,
+                ForeColor = Color.White,
+            };
+            System.Windows.Forms.RadioButton debugFalse = new System.Windows.Forms.RadioButton()
+            {
+                Text = "Off",
+                Tag = false,
+                Appearance = Appearance.Button,
+                ForeColor = Color.White,
+                Checked = true,
+                BackColor = Color.LightGreen
+            };
+            //add the field to the form
+            this.Controls.Add(debugGroup);
+            this.Controls.Add(debugLabel);
+            debugGroup.Controls.Add(debugTrue);
+            debugGroup.Controls.Add(debugFalse);
+            //link the buttons with method
+            foreach (System.Windows.Forms.RadioButton radioButton in debugGroup.Controls)
+            {
+                radioButton.Click += RadioButton_Click;
+            }
 
             //create a "next" button placed under the grid
             Button done = new Button
             {
                 Size = new Size(200, 100),
-                Location = new Point((this.ClientSize.Width - 200) / 2, this.UserInput.Bottom + 10),
+                Location = new Point((this.ClientSize.Width - 200) / 2 + 50, this.UserInput.Bottom + 10),
                 Text = "GO",
                 ForeColor = Color.White,
                 Font = new Font(this.Font.FontFamily, 20, FontStyle.Italic),
@@ -143,6 +229,22 @@ namespace IA03
             Console.Write(chrono.ElapsedMilliseconds);
             Console.ForegroundColor = ConsoleColor.White;
             Console.WriteLine(" ms");
+        }
+
+        /// <summary>
+        /// hightlight the checked button
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void RadioButton_Click(object sender, EventArgs e)
+        {
+            foreach (System.Windows.Forms.RadioButton button in this.ActiveControl.Parent.Controls)
+            {
+                if (button.Checked)
+                    button.BackColor = Color.LightGreen;
+                else if (!button.Checked)
+                    button.BackColor = Color.Black;
+            }
         }
 
         /// <summary>
@@ -180,7 +282,7 @@ namespace IA03
             }
             //FNN
             List<double> last_layer_result = new List<double>(flatten);
-            if (!WANTOPERATIONSDETAILS)
+            if (!wantOperationDetails)
             {
                 foreach (Layer layer in this.Network)
                 {
@@ -189,7 +291,7 @@ namespace IA03
             }
 
             //writes the operations details if wanted
-            if (WANTOPERATIONSDETAILS)
+            if (wantOperationDetails)
             {
                 //After convolution 1
                 Console.WriteLine("========= Basic feature maps level 1 rounded - not pooled - not flattered =========");
@@ -340,7 +442,7 @@ namespace IA03
             Console.WriteLine("\n[{0}%, {1}%, {2}%]\n", Math.Round(last_layer_result[0] * 100), Math.Round(last_layer_result[1] * 100), Math.Round(last_layer_result[2] * 100));
 
             //only if we want to train the network
-            if (NEEDCORRECTION)
+            if (wantCorrection)
             {
                 //Training phase
                 Console.WriteLine("========= Phase d'entrainement =========");
@@ -514,6 +616,24 @@ namespace IA03
                 for (int j = 0; j < GRIDSIZE; j++)
                 {
                     this.gridToAnalyse[i, j] = Convert.ToInt16(this.UserInput.Controls[i * 32 + j].Tag);
+                }
+            }
+
+            //convert the correction and debug fields
+            //correction
+            foreach (System.Windows.Forms.RadioButton radioButton in correctionGroup.Controls)
+            {
+                if (radioButton.Checked)
+                {
+                    wantCorrection = Convert.ToBoolean(radioButton.Tag);
+                }
+            }
+            //debug
+            foreach (System.Windows.Forms.RadioButton radioButton in debugGroup.Controls)
+            {
+                if (radioButton.Checked)
+                {
+                    wantOperationDetails = Convert.ToBoolean(radioButton.Tag);
                 }
             }
 
