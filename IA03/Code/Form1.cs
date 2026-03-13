@@ -115,6 +115,9 @@ namespace IA03
                 }
             }
 
+            //create a button to set the correction mode
+            
+
             //create a "next" button placed under the grid
             Button done = new Button
             {
@@ -322,13 +325,13 @@ namespace IA03
             switch (index_of_max)
             {
                 case 0:
-                    Console.WriteLine("\x1b[3m{0}\x1b[23m", "carré");
+                    Console.WriteLine("carré");
                     break;
                 case 1:
-                    Console.WriteLine("\x1b[3m{0}\x1b[23m", "triangle");
+                    Console.WriteLine("triangle");
                     break;
                 case 2:
-                    Console.WriteLine("\x1b[3m{0}\x1b[23m", "cercle");
+                    Console.WriteLine("cercle");
                     break;
                 default:
                     Console.WriteLine("Erreur :C, index_of_max était : " + index_of_max);
@@ -405,13 +408,13 @@ namespace IA03
                 switch (index_of_max)
                 {
                     case 0:
-                        Console.WriteLine("\x1b[3m{0}\x1b[23m", "carré");
+                        Console.WriteLine("carré");
                         break;
                     case 1:
-                        Console.WriteLine("\x1b[3m{0}\x1b[23m", "triangle");
+                        Console.WriteLine("triangle");
                         break;
                     case 2:
-                        Console.WriteLine("\x1b[3m{0}\x1b[23m", "cercle");
+                        Console.WriteLine("cercle");
                         break;
                     default:
                         Console.WriteLine("Erreur :C, index_of_max était : " + index_of_max);
