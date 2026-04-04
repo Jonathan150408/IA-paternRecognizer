@@ -64,7 +64,7 @@ namespace IA03
 
                 //adds the adjustement
                 result += this._adjustment;
-
+                
                 //return the "activated" result
                 switch (function)
                 {
