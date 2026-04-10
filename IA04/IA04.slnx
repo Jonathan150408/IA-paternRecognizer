@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="Console/IAConsole.csproj" Id="ba959530-3d41-499f-aaef-104d1dbbb19f" />
+  <Project Path="Core/Core.csproj" />
+  <Project Path="Forms/Forms.csproj" Id="984ca35f-1934-4ad7-aa6c-d54f46b0b567" />
+</Solution>
