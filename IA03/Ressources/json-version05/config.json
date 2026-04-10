@@ -3,30 +3,30 @@
     {
       "layer_number": 1,
       "links": [
-        ".//Ressources//layers//kernel1_1.txt",
-        ".//Ressources//layers//kernel1_2.txt",
-        ".//Ressources//layers//kernel1_3.txt",
-        ".//Ressources//layers//kernel1_4.txt"
+        ".//Ressources//layers//kernel1_1.json",
+        ".//Ressources//layers//kernel1_2.json",
+        ".//Ressources//layers//kernel1_3.json",
+        ".//Ressources//layers//kernel1_4.json"
       ]
     },
     {
       "layer_number": 2,
       "links": [
-        ".//Ressources//layers//kernel2_1.txt",
-        ".//Ressources//layers//kernel2_2.txt",
-        ".//Ressources//layers//kernel2_3.txt",
-        ".//Ressources//layers//kernel2_4.txt",
-        ".//Ressources//layers//kernel2_5.txt",
-        ".//Ressources//layers//kernel2_6.txt",
-        ".//Ressources//layers//kernel2_7.txt",
-        ".//Ressources//layers//kernel2_8.txt"
+        ".//Ressources//layers//kernel2_1.json",
+        ".//Ressources//layers//kernel2_2.json",
+        ".//Ressources//layers//kernel2_3.json",
+        ".//Ressources//layers//kernel2_4.json",
+        ".//Ressources//layers//kernel2_5.json",
+        ".//Ressources//layers//kernel2_6.json",
+        ".//Ressources//layers//kernel2_7.json",
+        ".//Ressources//layers//kernel2_8.json"
       ]
     }
   ],
   "layers": [
     {
       "layer_number": 1,
-      "link": ".//Ressources//layers//layer1.txt"
+      "link": ".//Ressources//layers//layer1.json"
     }
   ]
 }

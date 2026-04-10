@@ -1,6 +1,9 @@
 ﻿using IA03;
 using IA03.Code;
-
+//JSON
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Serialization;
 ///22.11.2025
 ///Mon projet consite en : former une IA simple, réseau 16-8-2, capable de distinguer une ligne/colonne dans une grille de 4*4
 using System;
@@ -15,10 +18,12 @@ using System.Linq;
 using System.Net.Http;
 using System.Security.AccessControl;
 using System.Security.Cryptography;
+using System.Security.Principal;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Xml.Linq;
 using static IA03.Layer;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.Button;
 
@@ -756,6 +761,53 @@ namespace IA03
                     this.Kernels[index].Add(tempKernel);
                 }
             }
+
+            //test with json
+
+            //reset the network
+            Kernels = new List<List<Kernel>>();
+            Network = new List<Layer>();
+
+            //retireve the config file
+            string path = "C:\\Users\\jnats\\Documents\\GitHub\\IA-paternRecognizer\\IA03\\Ressources\\json-version05\\config.json";
+            JObject links = new JObject(JObject.Parse(File.ReadAllText(path)));
+
+            int layerCounter = 0;
+            //for every layer of kernels in the config file
+            foreach (JObject layerOfKernels in links["kernels"])
+            {
+                Kernels.Add(new List<Kernel>());
+
+                //for every link = kernel
+                foreach(JValue kernelsLink in layerOfKernels["links"])
+                {
+                    //create a new kernel based on the info from the file
+                    JObject jkernel = new JObject(JObject.Parse(File.ReadAllText(kernelsLink.ToString())));
+                    Enum.TryParse(jkernel.SelectToken("function").ToString(), ignoreCase: true, out Function activation);
+                    //initialize an array for the values
+                    int kernelHeight = int.Parse(jkernel.SelectToken("size.height").ToString());
+                    int kernelWidth = int.Parse(jkernel.SelectToken("size.width").ToString());
+                    double[,] kernelValues = new double[kernelHeight, kernelWidth];
+
+                    //browse the array of values and parse them
+                    int rowCounter = 0;
+                    int columnCounter = 0;
+                    foreach (JArray row in jkernel["values"])
+                    {
+                        foreach(JValue value in row)
+                        {
+                            kernelValues[rowCounter, columnCounter] = float.Parse(value.ToString());
+                            columnCounter++;
+                        }
+                        rowCounter++;
+                    }
+
+                    //add the new kernel
+                    Kernels[layerCounter].Add(new Kernel(kernelValues));
+                }
+                layerCounter++;
+            }
+            //TODO -> convertir les valeurs du filtre + créer le kernel + ajouter à la liste
         }
 
         /// <summary>
