@@ -1,4 +1,5 @@
-﻿using System;
+﻿using IA04.Services;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,6 +11,9 @@ namespace IA04
     {
         static void Main(string[] args)
         {
+            IAService dataService = new IAService();
+            Console.WriteLine(dataService.GetPath());
+            Console.ReadLine();
         }
     }
 }

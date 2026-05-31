@@ -12,6 +12,13 @@ namespace IA04.Models
     public class Layer
     {
         /// <summary>
+        /// Permet de déterminer si il s'agit d'une couche de neurones "classiques" ou de kernels
+        /// True correspond à une couche de kernels
+        /// False correspond à une couche de neurones "classiques"
+        /// </summary>
+        public bool IsConvolutiveLayer { get; set; }
+
+        /// <summary>
         /// Kernels : liste de filtres de la couche, elle est facultative car un couche peut être composée de neurones
         /// </summary>
         private List<Kernel> _kernels;
@@ -48,6 +55,7 @@ namespace IA04.Models
         {
             this._function = function;
             this._kernels = kernels;
+            IsConvolutiveLayer = true;
         }
 
         /// <summary>
@@ -57,6 +65,7 @@ namespace IA04.Models
         {
             this._function = function;
             this._neurons = neurons;
+            IsConvolutiveLayer = false;
         }
     }
 }
