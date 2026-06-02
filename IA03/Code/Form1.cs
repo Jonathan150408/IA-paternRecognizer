@@ -762,6 +762,7 @@ namespace IA03
                 }
             }
 
+            /*
             //test with json
 
             //reset the network
@@ -806,7 +807,7 @@ namespace IA03
                     Kernels[layerCounter].Add(new Kernel(kernelValues));
                 }
                 layerCounter++;
-            }
+            }*/
             //TODO -> convertir les valeurs du filtre + créer le kernel + ajouter à la liste
         }
 
