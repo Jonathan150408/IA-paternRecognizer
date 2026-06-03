@@ -470,6 +470,16 @@ namespace IA03
                     }
                     Console.Write("Valeur attendue pour " + shape + ":\t");
                     double.TryParse(Console.ReadLine(), out expected[i]);
+                    
+                    //make sure values aren't greater or lower than 0 and 1
+                    if (expected[i] > 1)
+                    {
+                        expected[i] = 1;
+                    }
+                    else if (expected[i] < 0)
+                    {
+                        expected[i] = 0;
+                    }
                 }
                 Console.WriteLine();
 
