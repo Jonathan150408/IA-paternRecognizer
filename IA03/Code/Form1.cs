@@ -654,7 +654,7 @@ namespace IA03
 
             //writes the chrono value
             chrono.Stop();
-            Console.Write("Valeurs résupérées en ");
+            Console.Write("Valeurs récupérées en ");
             Console.ForegroundColor = ConsoleColor.Green;
             Console.Write(chrono.ElapsedMilliseconds);
             Console.ForegroundColor = ConsoleColor.White;
