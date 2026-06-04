@@ -470,6 +470,16 @@ namespace IA03
                     }
                     Console.Write("Valeur attendue pour " + shape + ":\t");
                     double.TryParse(Console.ReadLine(), out expected[i]);
+                    
+                    //make sure values aren't greater or lower than 0 and 1
+                    if (expected[i] > 1)
+                    {
+                        expected[i] = 1;
+                    }
+                    else if (expected[i] < 0)
+                    {
+                        expected[i] = 0;
+                    }
                 }
                 Console.WriteLine();
 
@@ -644,7 +654,7 @@ namespace IA03
 
             //writes the chrono value
             chrono.Stop();
-            Console.Write("Valeurs résupérées en ");
+            Console.Write("Valeurs récupérées en ");
             Console.ForegroundColor = ConsoleColor.Green;
             Console.Write(chrono.ElapsedMilliseconds);
             Console.ForegroundColor = ConsoleColor.White;
@@ -762,6 +772,7 @@ namespace IA03
                 }
             }
 
+            /*
             //test with json
 
             //reset the network
@@ -806,7 +817,7 @@ namespace IA03
                     Kernels[layerCounter].Add(new Kernel(kernelValues));
                 }
                 layerCounter++;
-            }
+            }*/
             //TODO -> convertir les valeurs du filtre + créer le kernel + ajouter à la liste
         }
 
