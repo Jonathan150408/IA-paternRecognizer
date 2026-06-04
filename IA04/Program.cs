@@ -1,4 +1,5 @@
-﻿using IA04.Services;
+﻿using IA04.Models;
+using IA04.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +14,7 @@ namespace IA04
         {
             IAService dataService = new IAService();
             Console.WriteLine(dataService.GetPath());
+            Network network = dataService.LoadNetwork();
             Console.ReadLine();
         }
     }
