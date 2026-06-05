@@ -25,22 +25,18 @@ namespace IA04.Services
         /// </summary>
         public IAService()
         {
-            Path = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Ressources", "config.json");
+            Path = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Ressources", "network.json");
         }
 
         /// <summary>
         /// Permet de créer et charger une IA à partir de JSON
         /// </summary>
-        /// <returns></returns>
-        /// <exception cref="NotImplementedException"></exception>
+        /// <returns>Le réseau neuronal</returns>
         public Network LoadNetwork()
         {
-            //string jsonString = File.ReadAllText(Path);
-            string jsonString = File.ReadAllText(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Ressources", "network.json"));
+            string jsonString = File.ReadAllText(Path);
             Network network = JsonSerializer.Deserialize<Network>(jsonString);
-
-
-            throw new NotImplementedException();
+            return network;
         }
 
 

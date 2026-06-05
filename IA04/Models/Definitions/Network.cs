@@ -10,7 +10,7 @@ namespace IA04.Models
     /// <summary>
     /// Network : représente l'entièreté du réseau neuronal
     /// </summary>
-    public class Network
+    public partial class Network
     {
         /// <summary>
         /// Cette liste contient toutes les couches du réseau neuronal

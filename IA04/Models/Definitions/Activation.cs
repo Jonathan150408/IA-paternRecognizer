@@ -9,9 +9,9 @@ namespace IA04.Models
     /// <summary>
     /// Activation : diminutif de "fonction d'activation", fonction mathématique qui permet d'interpréter les sorties des neurones/kernels en limitant leur envergure
     /// </summary>
-    public class Activation
+    public partial class Activation
     {
-        public enum activationFunction
+        public enum ActivationFunction
         {
             sigmoid,
             tanh,
@@ -21,7 +21,7 @@ namespace IA04.Models
         /// <summary>
         /// Définit la fonction appliquée
         /// </summary>
-        public activationFunction Function { get; set; }
+        public ActivationFunction Function { get; set; }
 
         /// <summary>
         /// Contructeur par défaut
@@ -37,13 +37,13 @@ namespace IA04.Models
         {
             switch (this.Function)
             {
-                case activationFunction.softmax:
+                case ActivationFunction.softmax:
                     return SoftMax(inputs);
-                case activationFunction.tanh:
+                case ActivationFunction.tanh:
                     return Tanh(inputs);
-                case activationFunction.sigmoid:
+                case ActivationFunction.sigmoid:
                     return Sigmoid(inputs);
-                case activationFunction.none:
+                case ActivationFunction.none:
                     return inputs;
                 default:
                     throw new EntryPointNotFoundException();

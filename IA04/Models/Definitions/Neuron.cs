@@ -11,7 +11,7 @@ namespace IA04.Models
     /// <summary>
     /// Neuron : neurone du réseau neuronal qui permet au réseau de "réfléchir"
     /// </summary>
-    public class Neuron
+    public partial class Neuron
     {
         /// <summary>
         /// Permet d'ordonner les neurones de la couche

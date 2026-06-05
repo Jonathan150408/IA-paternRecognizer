@@ -10,7 +10,7 @@ namespace IA04.Models
     /// <summary>
     /// Kernel : filtre permettant de générer une feature map
     /// </summary>
-    public class Kernel
+    public partial class Kernel
     {
         /// <summary>
         /// Permet d'ordonner les neurones de la couche
