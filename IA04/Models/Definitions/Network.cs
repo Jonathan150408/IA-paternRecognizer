@@ -19,8 +19,16 @@ namespace IA04.Models
         public List<Layer> Layers { get; set; }
 
         /// <summary>
+        /// L'historique des résultats du réseau neuronal
+        /// </summary>
+        public List<object> history { get; set; }
+
+        /// <summary>
         /// Constructeur par défaut
         /// </summary>
-        public Network(){ }
+        public Network()
+        {
+            history = new List<object>();
+        }
     }
 }
