@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace IA04.Models
@@ -12,21 +13,28 @@ namespace IA04.Models
     public class Kernel
     {
         /// <summary>
+        /// Permet d'ordonner les neurones de la couche
+        /// </summary>
+        [JsonPropertyName("Id")]
+        public int Id { get; set; }
+
+        /// <summary>
         /// Filter : un tableau de valeurs permettant d'extraire les features
         /// </summary>
-        private double[,] _filter;
-        public double[,] Filter
-        {
-            get { return _filter; }
-            private set { _filter = value; }
-        }
+        [JsonPropertyName("Filter")]
+        public double[][] Filter { get; set; }
+
+        /// <summary>
+        /// Contructeur par défaut
+        /// </summary>
+        public Kernel() { }
 
         /// <summary>
         /// Constructeur
         /// </summary>
-        public Kernel(double[,] values)
+        public Kernel(double[][] values)
         {
-            _filter = values;
+            Filter = values;
         }
     }
 }

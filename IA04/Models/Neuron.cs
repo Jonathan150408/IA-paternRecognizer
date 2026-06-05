@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Permissions;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace IA04.Models
@@ -12,24 +14,27 @@ namespace IA04.Models
     public class Neuron
     {
         /// <summary>
+        /// Permet d'ordonner les neurones de la couche
+        /// </summary>
+        [JsonPropertyName("Id")]
+        public int Id { get; set; }
+
+        /// <summary>
         /// Weigths : poids du neurone permettant de quantifier l'importance de chaque input du neuron afin de calculer l'output
         /// </summary>
-        private double[] _weights;
-        public double[] Weights
-        {
-            get { return _weights; }
-            private set { _weights = value; }
-        }
+        [JsonPropertyName("Weights")]
+        public double[] Weights { get; set; }
 
         /// <summary>
         /// Adjustment : valeur quantifiant l'importance du neurone dans le réseau
         /// </summary>
-        private double _adjustment;
-        public double Adjustment
-        {
-            get { return _adjustment; }
-            private set { _adjustment = value; }
-        }
+        [JsonPropertyName("Adjustment")]
+        public double Adjustment {  get; set; }
+
+        /// <summary>
+        /// Contructeur par défaut
+        /// </summary>
+        public Neuron(){}
 
 
         /// <summary>
@@ -39,8 +44,8 @@ namespace IA04.Models
         /// <param name="adjustment"></param>
         public Neuron(double[] weights, double adjustment)
         {
-            this._weights = weights;
-            this._adjustment = adjustment;
+            Weights = weights;
+            Adjustment = adjustment;
         }
 
     }

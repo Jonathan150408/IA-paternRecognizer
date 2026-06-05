@@ -21,12 +21,12 @@ namespace IA04.Models
         /// <summary>
         /// Définit la fonction appliquée
         /// </summary>
-        private activationFunction _function;
-        public activationFunction Function
-        {
-            get { return _function; }
-            private set { _function = value; }
-        }
+        public activationFunction Function { get; set; }
+
+        /// <summary>
+        /// Contructeur par défaut
+        /// </summary>
+        public Activation() { }
 
         /// <summary>
         /// Applique la fonction

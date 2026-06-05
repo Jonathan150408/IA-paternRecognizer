@@ -28,13 +28,16 @@ namespace IA04.Services
             Path = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Ressources", "config.json");
         }
 
+        /// <summary>
+        /// Permet de créer et charger une IA à partir de JSON
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
         public Network LoadNetwork()
         {
-            string links = File.ReadAllText(Path);
-            JsonSerializer.Serialize(links);
-            Console.WriteLine(links);
-            Console.WriteLine("-------------------------------------");
-            Console.WriteLine(links[0]);
+            //string jsonString = File.ReadAllText(Path);
+            string jsonString = File.ReadAllText(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Ressources", "network.json"));
+            Network network = JsonSerializer.Deserialize<Network>(jsonString);
 
 
             throw new NotImplementedException();

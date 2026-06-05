@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace IA04.Models
@@ -12,60 +13,78 @@ namespace IA04.Models
     public class Layer
     {
         /// <summary>
-        /// Permet de déterminer si il s'agit d'une couche de neurones "classiques" ou de kernels
-        /// True correspond à une couche de kernels
-        /// False correspond à une couche de neurones "classiques"
+        /// Permet de connaitre la position de la couche dans le réseau.
+        /// Les couches sont utilisées dans l'ordre croissant de leurs ids.
         /// </summary>
-        public bool IsConvolutiveLayer { get; set; }
+        [JsonPropertyName("Id")]
+        public int Id { get; set; }
+
+        public enum layerType
+        {
+            convolutive,
+            full
+        }
+        /// <summary>
+        /// Permet de déterminer si il s'agit d'une couche de neurones "classiques" ou de kernels
+        /// convolutive correspond à une couche de kernels
+        /// full correspond à une couche de neurones "classiques"
+        /// </summary>
+        [JsonPropertyName("Type")]
+        public layerType Type { get; set; }
+        [JsonPropertyName("TypeString")]
+        public string TypeString { get; set; }
 
         /// <summary>
         /// Kernels : liste de filtres de la couche, elle est facultative car un couche peut être composée de neurones
         /// </summary>
-        private List<Kernel> _kernels;
-        public List<Kernel> Kernels
-        {
-            get { return _kernels; }
-            set { _kernels = value; }
-        }
+        [JsonPropertyName("Kernels")]
+        public List<Kernel> Kernels { get; set; }
 
         /// <summary>
         /// Neurons : liste de neurones de la couche, elle est facultative car un couche peut être composée de kernels
         /// </summary>
-        private List<Neuron> _neurons;
-        public List<Neuron> Neurons
-        {
-            get { return _neurons; }
-            set { _neurons = value; }
-        }
+        [JsonPropertyName("Neurons")]
+        public List<Neuron> Neurons { get; set; }
 
+        [JsonConverter(typeof(JsonStringEnumConverter))]
+        public enum ActivationFunction
+        {
+            sigmoid,
+            tanh,
+            softmax,
+            none
+        }
         /// <summary>
         /// Function : fonction d'activation de la couche
         /// </summary>
-        private Activation _function;
-        public Activation Function
-        {
-            get { return _function; }
-            set { _function = value; }
-        }
+        [JsonPropertyName("Function")]
+        public ActivationFunction Function { get; set; }
 
         /// <summary>
-        /// constructeur pour une couche de kernels
+        /// Contructeur par défaut
         /// </summary>
-        public Layer(Activation function, List<Kernel> kernels)
-        {
-            this._function = function;
-            this._kernels = kernels;
-            IsConvolutiveLayer = true;
-        }
+        public Layer() { }
 
-        /// <summary>
-        /// constructeur pour une couche de neurones
-        /// </summary>
-        public Layer(Activation function, List<Neuron> neurons)
-        {
-            this._function = function;
-            this._neurons = neurons;
-            IsConvolutiveLayer = false;
-        }
+        ///// <summary>
+        ///// constructeur pour une couche de kernels
+        ///// </summary>
+        //public Layer(Activation function, List<Kernel> kernels, int id)
+        //{
+        //    Function = function;
+        //    Kernels = kernels;
+        //    Type = layerType.convolutive;
+        //    Id = id;
+        //}
+
+        ///// <summary>
+        ///// constructeur pour une couche de neurones
+        ///// </summary>
+        //public Layer(Activation function, List<Neuron> neurons, int id)
+        //{
+        //    Function = function;
+        //    Neurons = neurons;
+        //    Type = layerType.full;
+        //    Id = id;
+        //}
     }
 }

@@ -1,7 +1,8 @@
 {
-  "kernels": [
+  "layers": [
     {
       "layer_number": 1,
+      "type" : "kernels",
       "links": [
         ".//Ressources//layers//kernel1_1.json",
         ".//Ressources//layers//kernel1_2.json",
@@ -11,6 +12,7 @@
     },
     {
       "layer_number": 2,
+      "type": "kernels",
       "links": [
         ".//Ressources//layers//kernel2_1.json",
         ".//Ressources//layers//kernel2_2.json",
@@ -21,11 +23,10 @@
         ".//Ressources//layers//kernel2_7.json",
         ".//Ressources//layers//kernel2_8.json"
       ]
-    }
-  ],
-  "layers": [
+    },
     {
-      "layer_number": 1,
+      "layer_number": 3,
+      "type" : "full",
       "link": ".//Ressources//layers//layer1.json"
     }
   ]

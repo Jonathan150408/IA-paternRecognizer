@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace IA04.Models
@@ -14,7 +15,13 @@ namespace IA04.Models
         /// <summary>
         /// Cette liste contient toutes les couches du réseau neuronal
         /// </summary>
+        [JsonPropertyName("Layers")]
         public List<Layer> Layers { get; set; }
+
+        /// <summary>
+        /// Constructeur par défaut
+        /// </summary>
+        public Network(){ }
 
         /// <summary>
         /// Le constructeur
