@@ -1,6 +1,6 @@
 ﻿namespace IA04
 {
-    partial class Form1
+    partial class IAForm
     {
         /// <summary>
         /// Variable nécessaire au concepteur.
@@ -28,13 +28,33 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
+            this.UserInput = new System.Windows.Forms.Panel();
+            this.SuspendLayout();
+            // 
+            // UserInput
+            // 
+            this.UserInput.Location = new System.Drawing.Point(389, 135);
+            this.UserInput.Name = "UserInput";
+            this.UserInput.Size = new System.Drawing.Size(200, 100);
+            this.UserInput.TabIndex = 0;
+            // 
+            // IAForm
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Text = "Form1";
+            this.BackColor = System.Drawing.SystemColors.ActiveCaptionText;
+            this.ClientSize = new System.Drawing.Size(1008, 729);
+            this.Controls.Add(this.UserInput);
+            this.ForeColor = System.Drawing.SystemColors.ControlLight;
+            this.Name = "IAForm";
+            this.Text = "IA04-Form";
+            this.ResumeLayout(false);
+
         }
 
         #endregion
+
+        private System.Windows.Forms.Panel UserInput;
     }
 }
 
