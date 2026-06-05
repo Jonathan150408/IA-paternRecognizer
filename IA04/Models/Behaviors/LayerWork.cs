@@ -10,9 +10,9 @@ namespace IA04.Models
 {
     public partial class Layer
     {
-        ///
+        /// ----------------------------------------------------------------------------------------------
         /// METHODS FOR A LAYER OF NEURONS
-        ///
+        /// ----------------------------------------------------------------------------------------------
 
         private Activation functionHandler = new Activation();
 
@@ -47,10 +47,10 @@ namespace IA04.Models
             return results;
         }
 
-        ///
-        ///METHODS FOR A LAYER OF KERNELS
-        ///
-        
+        /// ----------------------------------------------------------------------------------------------
+        /// METHODS FOR A LAYER OF KERNELS
+        /// ----------------------------------------------------------------------------------------------
+
         /// <summary>
         /// Generate a feature map for every kernel of this layer. Only work if the layer is a conv layer.
         /// </summary>
@@ -77,9 +77,9 @@ namespace IA04.Models
             return featureMaps;
         }
 
-        ///
+        /// ----------------------------------------------------------------------------------------------
         /// OTHERS METHODS
-        /// 
+        /// ----------------------------------------------------------------------------------------------
 
         /// <summary>
         /// Correct the layer in the code (no writting in files)
