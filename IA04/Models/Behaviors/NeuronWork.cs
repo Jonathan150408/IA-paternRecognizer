@@ -13,7 +13,7 @@ namespace IA04.Models
 
 
         /// <summary>
-        /// Calculate the result for a single neuron. Also applies the activation function.
+        /// Calculate the result for a single neuron.
         /// </summary>
         /// <param name="inputs"></param>
         /// <param name="function"></param>
