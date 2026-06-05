@@ -19,6 +19,7 @@ namespace IA04.Models
         [JsonPropertyName("Id")]
         public int Id { get; set; }
 
+        [JsonConverter(typeof(JsonStringEnumConverter))]
         public enum layerType
         {
             convolutive,
@@ -31,8 +32,6 @@ namespace IA04.Models
         /// </summary>
         [JsonPropertyName("Type")]
         public layerType Type { get; set; }
-        [JsonPropertyName("TypeString")]
-        public string TypeString { get; set; }
 
         /// <summary>
         /// Kernels : liste de filtres de la couche, elle est facultative car un couche peut être composée de neurones
