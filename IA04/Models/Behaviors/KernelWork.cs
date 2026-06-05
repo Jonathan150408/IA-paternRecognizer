@@ -58,10 +58,10 @@ namespace IA04.Models
         }
 
         /// <summary>
-        /// Creates new feature maps based on the olds, simultate a 3D kernel (the filter is 2-dimensional but applied in a 3rd dimension)
+        /// Creates new feature maps based on more feature maps, simultate a 3D kernel (the filter is 2-dimensional but applied in a 3rd dimension)
         /// </summary>
         /// <param name="previousMaps">A list of old feature maps</param>
-        /// <returns>A list of 2d array -> feature maps</returns>
+        /// <returns>One and only one feature map</returns>
         public double[,] MakeFeatureMap(List<double[,]> previousMaps)
         {
             // 1. Set up variables
