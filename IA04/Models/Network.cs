@@ -22,14 +22,5 @@ namespace IA04.Models
         /// Constructeur par défaut
         /// </summary>
         public Network(){ }
-
-        /// <summary>
-        /// Le constructeur
-        /// </summary>
-        /// <param name="layers"></param>
-        public Network(List<Layer> layers)
-        {
-            Layers = layers;
-        }
     }
 }

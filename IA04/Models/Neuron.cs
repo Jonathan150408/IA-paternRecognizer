@@ -35,18 +35,5 @@ namespace IA04.Models
         /// Contructeur par défaut
         /// </summary>
         public Neuron(){}
-
-
-        /// <summary>
-        /// Constructeur
-        /// </summary>
-        /// <param name="weights"></param>
-        /// <param name="adjustment"></param>
-        public Neuron(double[] weights, double adjustment)
-        {
-            Weights = weights;
-            Adjustment = adjustment;
-        }
-
     }
 }

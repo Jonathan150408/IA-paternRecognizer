@@ -63,27 +63,5 @@ namespace IA04.Models
         /// Contructeur par défaut
         /// </summary>
         public Layer() { }
-
-        ///// <summary>
-        ///// constructeur pour une couche de kernels
-        ///// </summary>
-        //public Layer(Activation function, List<Kernel> kernels, int id)
-        //{
-        //    Function = function;
-        //    Kernels = kernels;
-        //    Type = layerType.convolutive;
-        //    Id = id;
-        //}
-
-        ///// <summary>
-        ///// constructeur pour une couche de neurones
-        ///// </summary>
-        //public Layer(Activation function, List<Neuron> neurons, int id)
-        //{
-        //    Function = function;
-        //    Neurons = neurons;
-        //    Type = layerType.full;
-        //    Id = id;
-        //}
     }
 }

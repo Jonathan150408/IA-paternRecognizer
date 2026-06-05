@@ -28,13 +28,5 @@ namespace IA04.Models
         /// Contructeur par défaut
         /// </summary>
         public Kernel() { }
-
-        /// <summary>
-        /// Constructeur
-        /// </summary>
-        public Kernel(double[][] values)
-        {
-            Filter = values;
-        }
     }
 }
