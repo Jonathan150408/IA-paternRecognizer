@@ -8,6 +8,10 @@ namespace IA04.Models
 {
     public partial class Activation
     {
+        /// ---------------------------------------------------------------------------------------------
+        /// WITH LIST OF DOUBLE FOR A NEURON
+        /// ---------------------------------------------------------------------------------------------
+
         /// <summary>
         /// Applies the activation function to the list of results
         /// </summary>
@@ -102,7 +106,6 @@ namespace IA04.Models
             return final_outputs;
         }
 
-
         /// <summary>
         /// Applies the Sigmoid function to each output.
         /// </summary>
@@ -121,6 +124,88 @@ namespace IA04.Models
 
             // 3. Return the result
             return final_outputs;
+        }
+
+        /// ---------------------------------------------------------------------------------------------
+        /// WITH AN ARRY OF DOUBLE FOR A KERNEL
+        /// ---------------------------------------------------------------------------------------------
+
+        /// <summary>
+        /// Applies the activation function to the list of results
+        /// </summary>
+        /// <param name="inputs">These are the raw outputs from the layer</param>
+        /// <returns>A list of double that represents the layers's final results</returns>
+        public double[,] ApplyFunction(double[,] inputs, Layer.ActivationFunction function)
+        {
+            // 1. Set up variables
+            double[,] outputs;
+
+            // 2. Calculates the result with the function
+            switch (function)
+            {
+                case Layer.ActivationFunction.softmax:
+                    throw new InvalidProgramException("Impossible d'appliquer SoftMax à une feature map");
+                case Layer.ActivationFunction.tanh:
+                    outputs = Tanh(inputs);
+                    break;
+                case Layer.ActivationFunction.sigmoid:
+                    outputs = Sigmoid(inputs);
+                    break;
+                case Layer.ActivationFunction.none:
+                    outputs = inputs;
+                    break;
+                default:
+                    throw new EntryPointNotFoundException();
+            }
+
+            // 3. Return the result
+            return outputs;
+        }
+
+        /// <summary>
+        /// Applies the Tanh function to each output.
+        /// </summary>
+        /// <param name="raw_outputs"></param>
+        /// <returns>An array of double that represents the layers's final results</returns>
+        private double[,] Tanh(double[,] raw_outputs)
+        {
+            // 1. Set up variables
+            double[,] result = new double[raw_outputs.GetLength(0), raw_outputs.GetLength(1)];
+
+            // 2. Browse the list and add the result
+            for (int i = 0; i < raw_outputs.GetLength(0); i++)
+            {
+                for (int j = 0; j < raw_outputs.GetLength(1); j++)
+                {
+                    result[i, j] = Math.Tanh(raw_outputs[i, j]);
+                }
+            }
+
+            // 3. Return the result
+            return result;
+        }
+
+        /// <summary>
+        /// Applies the Sigmoid function to each output.
+        /// </summary>
+        /// <param name="raw_outputs"></param>
+        /// <returns>An array of double that represents the layers's final results</returns>
+        private double[,] Sigmoid(double[,] raw_outputs)
+        {
+            // 1. Set up variables
+            double[,] result = new double[raw_outputs.GetLength(0), raw_outputs.GetLength(1)];
+
+            // 2. Browse the list and add the result
+            for (int i = 0; i < raw_outputs.GetLength(0); i++)
+            {
+                for (int j = 0; j < raw_outputs.GetLength(1); j++)
+                {
+                    result[i, j] = Math.Tanh(1.0 / (1.0 + Math.Exp(-raw_outputs[i, j])));
+                }
+            }
+
+            // 3. Return the result
+            return result;
         }
     }
 }
