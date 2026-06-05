@@ -10,11 +10,11 @@ namespace IA04.Models
 {
     public partial class Layer
     {
+        private Activation functionHandler = new Activation();
+
         /// ----------------------------------------------------------------------------------------------
         /// METHODS FOR A LAYER OF NEURONS
         /// ----------------------------------------------------------------------------------------------
-
-        private Activation functionHandler = new Activation();
 
         /// <summary>
         /// Calculate the result for each neuron and apply the activation function.
@@ -73,7 +73,13 @@ namespace IA04.Models
                 featureMaps.Add(kernel.MakeFeatureMap(rawGrid));
             }
 
-            // 4. Return the results
+            // 4. Applies the function
+            for (int i = 0; i < featureMaps.Count; i++)
+            {
+                featureMaps[i] = functionHandler.ApplyFunction(featureMaps[i], this.Function);
+            }
+
+            // 5. Return the results
             return featureMaps;
         }
 
