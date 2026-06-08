@@ -82,6 +82,37 @@ namespace IA04.Models
             // 5. Return the results
             return featureMaps;
         }
+        /// <summary>
+        /// Generate a feature map for every kernel of this layer based on multiple previous maps. Only work if the layer is a conv layer.
+        /// </summary>
+        /// <param name="rawGrid"></param>
+        /// <returns>A list of maps (double [,])</returns>
+        public List<double[,]> MakeFeatureMaps(List<double[,]> rawGrid)
+        {
+            // 1. Check the layer's type
+            if (this.Type != layerType.convolutive)
+            {
+                throw new InvalidOperationException("Seule les couches convolutives peuvent générer des feature maps. Cette couche est de type " + this.Type.ToString());
+            }
+
+            // 2. Set up variables
+            List<double[,]> featureMaps = new List<double[,]>();
+
+            // 3. Add the feature map of every kernel
+            foreach (Kernel kernel in this.Kernels)
+            {
+                featureMaps.Add(kernel.MakeFeatureMap(rawGrid));
+            }
+
+            // 4. Applies the function
+            for (int i = 0; i < featureMaps.Count; i++)
+            {
+                featureMaps[i] = functionHandler.ApplyFunction(featureMaps[i], this.Function);
+            }
+
+            // 5. Return the results
+            return featureMaps;
+        }
 
         /// ----------------------------------------------------------------------------------------------
         /// OTHERS METHODS
