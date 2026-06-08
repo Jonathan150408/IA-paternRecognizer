@@ -1,15 +1,19 @@
-{
-  "Networks": [
-    {
-      "Id": 0,
-      "Name": "Détecteur de patternes simples",
-      "Description": "Une modèle d'IA simple capable de reconnaitre une forme des plus basiques dans une grille. Carré, triangle ou cercle.",
-      "Path": "/network.json",
-      "NeedForm": true,
-      "Form": {
-        "GridX": 32,
-        "GridY": 32
-      }
-    }
-  ]
-}
+[
+  {
+    "Id": 0,
+    "Name": "Détecteur de patternes simples",
+    "Description": "Une modèle d'IA simple capable de reconnaitre une forme des plus basiques dans une grille. Carré, triangle ou cercle.",
+    "Path": "network.json",
+    "NeedForm": true,
+    "Form": [ 32, 32 ]
+  },
+  {
+    "Id": 1,
+    "Name": "Détecteur de patternes plus complexes",
+    "Description": "Une modèle d'IA simple capable de reconnaitre des chiffres dans une grille.",
+    "Path": "network.json",
+    "NeedForm": true,
+    "Form" :  [2, 2]
+  }
+]
+

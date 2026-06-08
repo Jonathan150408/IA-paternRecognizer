@@ -16,7 +16,7 @@ namespace IA05_Form
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new IAForm());
+            Application.Run(new IAForm(new uint[0]));
         }
     }
 }

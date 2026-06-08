@@ -34,19 +34,19 @@ namespace IA05_Form
         FlowLayoutPanel debugGroup;
 
         /// <summary>
-        /// Default contructor
+        /// Contructor
         /// </summary>
-        public IAForm()
+        public IAForm(uint[] gridDimensions)
         {
             InitializeComponent();
-            HandleGrid();
+            HandleGrid(gridDimensions);
         }
 
         /// <summary>
         /// Create the grid of 32x32 checkboxes (= 1024 checkboxes)
         /// </summary>
         /// <returns></returns>
-        private void HandleGrid()
+        private void HandleGrid(uint[] gridDimensions)
         {
             // GRID
             // 1. Set up the panel
@@ -55,9 +55,9 @@ namespace IA05_Form
             this.UserInput.Size = new Size(GRIDSIZE * CELLSIZE, GRIDSIZE * CELLSIZE);
             this.UserInput.BackColor = Color.White;
             // 2. Create a 32 x 32 square of checkboxes
-            for (int i = 0; i < GRIDSIZE; i++)
+            for (int i = 0; i < gridDimensions[0]; i++)
             {
-                for (int j = 0; j < GRIDSIZE; j++)
+                for (int j = 0; j < gridDimensions[1]; j++)
                 {
                     CheckBox box = new CheckBox
                     {

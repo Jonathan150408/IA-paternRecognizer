@@ -23,9 +23,9 @@ namespace IA04.Services
         /// <summary>
         /// Le contructeur
         /// </summary>
-        public IAService()
+        public IAService(string endPath)
         {
-            Path = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Ressources", "network.json");
+            Path = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Ressources", endPath);
         }
 
         /// <summary>

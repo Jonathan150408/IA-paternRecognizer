@@ -5,6 +5,10 @@ using System.Text;
 using System.Threading.Tasks;
 using IA05_Form;
 using System.Windows.Forms;
+using IA05_Console.Models.Definitions;
+using IA05_Console.Services;
+using IA04.Services;
+using IA04.Models;
 
 namespace IA05_Console
 {
@@ -13,31 +17,56 @@ namespace IA05_Console
         [STAThread]
         static void Main(string[] args)
         {
-            // TODO : temporary value while waiting for an update of the json documents
-            const int GRIDSIZE = 32;
+            //Dictionary<string, int> stats = new Dictionary<string, int>();
 
-            // 1. Set up variables before the form
-            double[,] gridToAnalyse = new double[GRIDSIZE, GRIDSIZE];
-            Dictionary<string, int> stats = new Dictionary<string, int>();
-            bool wantCorrection;
-            bool wantOperationDetails;
 
-            // 2. Launch the form
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-            using (var form = new IAForm())
+            // INITIALIZATION AND MENU
+            // 1. Get all previews
+            PreviewService previewService = new PreviewService();
+            List<NetworkPreview> networkPreviews = previewService.LoadPreviews();
+            List<string> previewsNames = new List<string>();
+            foreach (NetworkPreview networkPreview in networkPreviews)
             {
-                if (form.ShowDialog() == DialogResult.OK)
+                previewsNames.Add(networkPreview.Name);
+            }
+
+            // 2. Display the menu
+            int chosenModel = DisplayMenu("Choisissez un modèle.", previewsNames, 2);
+
+            // 3. Load the neural network
+            IAService iaService = new IAService(networkPreviews[chosenModel].Path);
+            Network network = iaService.LoadNetwork();
+
+
+            // FORM
+            if (networkPreviews[chosenModel].NeedForm)
+            {
+                // 1. Set up variables
+                double[,] gridToAnalyse = new double[
+                    networkPreviews[chosenModel].GridDimensions[0],
+                    networkPreviews[chosenModel].GridDimensions[1]];
+                bool wantCorrection;
+                bool wantOperationDetails;
+
+                // 2. Launch the form
+                Application.EnableVisualStyles();
+                Application.SetCompatibleTextRenderingDefault(false);
+                using (var form = new IAForm(networkPreviews[chosenModel].GridDimensions))
                 {
-                    // 3. Get the data
-                    gridToAnalyse = form.gridToAnalyse;
-                    stats = form.stats;
-                    wantOperationDetails = form.wantOperationDetails;
-                    wantCorrection = form.wantCorrection;
+                    // 3. Get the form's data
+                    if (form.ShowDialog() == DialogResult.OK)
+                    {
+                        gridToAnalyse = form.gridToAnalyse;
+                        wantOperationDetails = form.wantOperationDetails;
+                        wantCorrection = form.wantCorrection;
+                    }
                 }
             }
 
-            // 4. 
+
+            // CALCULATIONS
+
+
 
             Console.Read();
         }
@@ -49,7 +78,7 @@ namespace IA05_Console
         /// <param name="choices">A list of choices</param>
         /// <param name="topLine">The top line of the menu</param>
         /// <returns>The index of the choice selected in the list.</returns>
-        static int DisplaySelectMenu(string title, List<string> choices, int topLine)
+        static int DisplayMenu(string title, List<string> choices, int topLine)
         {
             // 1. Set up variables
             int userChoice = 1;
@@ -58,16 +87,16 @@ namespace IA05_Console
             Console.CursorTop = topLine;
 
             // 2. Writes the choices
-            Console.WriteLine("   " + title);
+            Console.WriteLine(title);
             for (int i = 0; i < choices.Count; i++)
-                Console.WriteLine("      " + choices[i]);
+                Console.WriteLine("  \t" + (i + 1).ToString() + ". " + choices[i]);
 
             // 3. Get an input from the user and decides
             do
             {
                 // 4. Draw the arrow
                 Console.SetCursorPosition(3, topLine + userChoice);
-                Console.Write("->");
+                Console.Write("->\t" + userChoice + ". " + choices[userChoice - 1]);
 
                 // 5. Get the user's input
                 userKey = Console.ReadKey(true);
@@ -96,7 +125,7 @@ namespace IA05_Console
             } while (userKey.Key != ConsoleKey.Enter && userKey.Key != ConsoleKey.Spacebar);
 
             // 8. Return the result
-            return userChoice;
+            return userChoice - 1;
         }
     }
 }

@@ -32,7 +32,7 @@ namespace IA05_Console.Services
         /// Permet de créer et charger une IA à partir de JSON
         /// </summary>
         /// <returns>Le réseau neuronal</returns>
-        public List<NetworkPreview> LoadNetwork()
+        public List<NetworkPreview> LoadPreviews()
         {
             string jsonString = File.ReadAllText(Path);
             List<NetworkPreview> previews = JsonSerializer.Deserialize<List<NetworkPreview>>(jsonString);

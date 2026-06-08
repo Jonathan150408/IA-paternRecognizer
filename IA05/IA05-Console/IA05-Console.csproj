@@ -84,6 +84,7 @@
     <Compile Include="Models\Definitions\Kernel.cs" />
     <Compile Include="Models\Definitions\Layer.cs" />
     <Compile Include="Models\Definitions\Network.cs" />
+    <Compile Include="Models\Definitions\NetworkPreview.cs" />
     <Compile Include="Models\Definitions\Neuron.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -93,11 +94,17 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Services\IAService.cs" />
+    <Compile Include="Services\PreviewService.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
-    <None Include="Ressources\network.json" />
+    <None Include="Ressources\config.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Ressources\network.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">
