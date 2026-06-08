@@ -17,9 +17,9 @@ namespace IA05_Form
         /// The data to give to the console project
         /// </summary>
         public double[,] gridToAnalyse = new double[GRIDSIZE, GRIDSIZE];
-        Dictionary<string, int> stats = new Dictionary<string, int>();
-        private bool wantCorrection;
-        private bool wantOperationDetails;
+        public Dictionary<string, int> stats = new Dictionary<string, int>();
+        public bool wantCorrection;
+        public bool wantOperationDetails;
 
         /// <summary>
         /// Constants used to set up the form

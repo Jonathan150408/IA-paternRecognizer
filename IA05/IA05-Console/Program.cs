@@ -13,19 +13,31 @@ namespace IA05_Console
         [STAThread]
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World");
+            // TODO : temporary value while waiting for an update of the json documents
+            const int GRIDSIZE = 32;
 
-            //utiliser le form
+            // 1. Set up variables before the form
+            double[,] gridToAnalyse = new double[GRIDSIZE, GRIDSIZE];
+            Dictionary<string, int> stats = new Dictionary<string, int>();
+            bool wantCorrection;
+            bool wantOperationDetails;
+
+            // 2. Launch the form
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-
             using (var form = new IAForm())
             {
                 if (form.ShowDialog() == DialogResult.OK)
                 {
-                    Console.WriteLine(form);
+                    // 3. Get the data
+                    gridToAnalyse = form.gridToAnalyse;
+                    stats = form.stats;
+                    wantOperationDetails = form.wantOperationDetails;
+                    wantCorrection = form.wantCorrection;
                 }
             }
+
+            
 
             Console.Read();
         }
