@@ -49,7 +49,7 @@ namespace IA04.Models
             {
                 for (int j = 0; j < this.Filter.GetLength(1); j++)
                 {
-                    result += this.Filter[i][j] * grid[coordinateX + i, coordinateY + j];
+                    result += this.Filter[i,j] * grid[coordinateX + i, coordinateY + j];
                 }
             }
 

@@ -18,6 +18,8 @@ namespace IA05_Console
         static void Main(string[] args)
         {
             //Dictionary<string, int> stats = new Dictionary<string, int>();
+            List<double[,]> gridToAnalyse = new List<double[,]>();
+
 
 
             // INITIALIZATION AND MENU
@@ -31,7 +33,8 @@ namespace IA05_Console
             }
 
             // 2. Display the menu
-            int chosenModel = DisplayMenu("Choisissez un modèle.", previewsNames, 2);
+            int chosenModel = DisplayMenu("Choisissez un modèle.\n", previewsNames, 2);
+            Console.Clear();
 
             // 3. Load the neural network
             IAService iaService = new IAService(networkPreviews[chosenModel].Path);
@@ -42,9 +45,6 @@ namespace IA05_Console
             if (networkPreviews[chosenModel].NeedForm)
             {
                 // 1. Set up variables
-                double[,] gridToAnalyse = new double[
-                    networkPreviews[chosenModel].GridDimensions[0],
-                    networkPreviews[chosenModel].GridDimensions[1]];
                 bool wantCorrection;
                 bool wantOperationDetails;
 
@@ -56,16 +56,16 @@ namespace IA05_Console
                     // 3. Get the form's data
                     if (form.ShowDialog() == DialogResult.OK)
                     {
-                        gridToAnalyse = form.gridToAnalyse;
                         wantOperationDetails = form.wantOperationDetails;
                         wantCorrection = form.wantCorrection;
+                        gridToAnalyse.Add(form.gridToAnalyse);
                     }
                 }
             }
 
 
             // CALCULATIONS
-
+            network.MakePrediction(gridToAnalyse);
 
 
             Console.Read();

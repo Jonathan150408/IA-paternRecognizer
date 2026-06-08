@@ -21,14 +21,16 @@ namespace IA04.Models
         /// <summary>
         /// L'historique des résultats du réseau neuronal
         /// </summary>
-        public List<object> history { get; set; }
+        List<List<double[,]>> mapHistory = new List<List<double[,]>>();
+        List<List<double>> feedForwardHistory = new List<List<double>>();
 
         /// <summary>
         /// Constructeur par défaut
         /// </summary>
         public Network()
         {
-            history = new List<object>();
+            feedForwardHistory = new List<List<double>>();
+            mapHistory = new List<List<double[,]>>();
         }
     }
 }
