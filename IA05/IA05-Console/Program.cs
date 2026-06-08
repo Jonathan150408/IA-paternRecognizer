@@ -19,11 +19,11 @@ namespace IA05_Console
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
-            using (var form = new Form1())
+            using (var form = new IAForm())
             {
                 if (form.ShowDialog() == DialogResult.OK)
                 {
-                    Console.WriteLine(form.Results);
+                    Console.WriteLine(form);
                 }
             }
 
