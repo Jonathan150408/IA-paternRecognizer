@@ -114,9 +114,11 @@
       "Id": 2,
       "Type": "full",
       "Function": "softmax",
+      "IsLast": true,
+      "Results": [ "C'est un carré !", "C'est un triangle !", "C'est un cercle !"],
       "Neurons": [
         {
-          "Id" :  0,
+          "Id": 0,
           "Weights": [
             0.800409719657279,
             0.671746818821202,
@@ -528,7 +530,7 @@
           "Adjustment": -0.174948342060179
         },
         {
-          "Id" : 2,
+          "Id": 2,
           "Weights": [
             -0.81506528352571,
             0.0349546487920111,

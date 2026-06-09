@@ -23,13 +23,9 @@ namespace IA04.Models
                 {
                     if (feedForwardHistory.Count == 0)
                     {
-                        List<double> flatMap = Flatten(mapHistory.Last());
-                        feedForwardHistory.Add(layer.GetLayerResults(flatMap));
+                        feedForwardHistory.Add(Flatten(mapHistory.Last()));
                     }
-                    else
-                    {
-                        feedForwardHistory.Add(feedForwardHistory[feedForwardHistory.Count - 1]);
-                    }
+                    feedForwardHistory.Add(layer.GetLayerResults(feedForwardHistory.Last()));
                 }
                 else if (layer.Type == Layer.layerType.convolutive)
                 {

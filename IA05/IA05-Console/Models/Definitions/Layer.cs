@@ -37,6 +37,18 @@ namespace IA04.Models
         public layerType Type { get; set; }
 
         /// <summary>
+        /// IsLast : Boolean that determines whether the layer give a subresult or the final result. In this case (if true), the layer contains the results to show.
+        /// </summary>
+        [JsonPropertyName("IsLast")]
+        public bool IsLast { get; set; }
+
+        /// <summary>
+        /// Results : An array of strings to show after the thinking. Only one will be the final result. The result is chosen by the neurons.
+        /// </summary>
+        [JsonPropertyName("Results")]
+        public string[] Results { get; set; }
+
+        /// <summary>
         /// Kernels : liste de filtres de la couche, elle est facultative car un couche peut être composée de neurones.
         /// </summary>
         [JsonPropertyName("Kernels")]

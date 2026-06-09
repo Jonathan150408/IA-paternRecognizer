@@ -19,7 +19,8 @@ namespace IA05_Console
         {
             //Dictionary<string, int> stats = new Dictionary<string, int>();
             List<double[,]> gridToAnalyse = new List<double[,]>();
-
+            bool wantCorrection = false;
+            bool wantOperationDetails = false;
 
 
             // INITIALIZATION AND MENU
@@ -51,16 +52,12 @@ namespace IA05_Console
             // FORM
             if (networkPreviews[chosenModel].NeedForm)
             {
-                // 1. Set up variables
-                bool wantCorrection;
-                bool wantOperationDetails;
-
-                // 2. Launch the form
+                // 1. Launch the form
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
                 using (var form = new IAForm(networkPreviews[chosenModel].GridDimensions))
                 {
-                    // 3. Get the form's data
+                    // 2. Get the form's data
                     if (form.ShowDialog() == DialogResult.OK)
                     {
                         wantOperationDetails = form.wantOperationDetails;
@@ -74,8 +71,114 @@ namespace IA05_Console
             // CALCULATIONS
             network.MakePrediction(gridToAnalyse);
 
+            // DEBUG
+            if (wantOperationDetails)
+            {
+                // 1. Writes the maps
+                foreach (List<double[,]> maps in network.mapHistory)
+                {
+                    WriteMaps(maps);
+                }
+
+                // 2. Adds a separator
+                Console.WriteLine("======================================= Étapes suivantes =======================================");
+
+                // 3. Writes the nexts steps
+                foreach (List<double> step in network.feedForwardHistory)
+                {
+                    WriteStep(step);
+                }
+            }
+
+            // CORRECTION
+
 
             Console.Read();
+        }
+
+        /// <summary>
+        /// Write all values of the step
+        /// </summary>
+        /// <param name="step"></param>
+        static void WriteStep(List<double> step)
+        {
+            // 1. Add a separator
+            for (int i = 0; i < Math.Min(step.Count * 3 - 2, 100); i++)
+            {
+                Console.Write("-");
+            }
+            Console.WriteLine();
+
+            // 2. Browse the list
+            for (int i = 0; i < step.Count - 1; i++)
+            {
+                // 3. Write the cell's value unless it's 0
+                if (step[i] >= 0)
+                {
+                    Console.Write(" " + Math.Round(step[i]).ToString() + " ");
+                }
+                else if (step[i] < 0)
+                {
+                    Console.Write(Math.Round(step[i]).ToString() + " ");
+                }
+            }
+            Console.WriteLine();
+
+            // 4. Add a separator
+            for (int i = 0; i < Math.Min(step.Count * 3 - 2, 100); i++)
+            {
+                Console.Write("-");
+            }
+            Console.WriteLine();
+        }
+
+        /// <summary>
+        /// Format the maps into values and write them down in the console.
+        /// </summary>
+        /// <param name="maps"></param>
+        static void WriteMaps(List<double[,]> maps)
+        {
+            // 1. Take each map
+            foreach (double[,] map  in maps)
+            {
+                // 2. Add a separator
+                for (int i = 0; i < map.GetLength(0) * 3 - 2; i++)
+                {
+                    Console.Write("-");
+                }
+                Console.WriteLine();
+
+                // 3. Browse the map
+                for (int i = 0; i < map.GetLength(0) - 1; i++)
+                {
+                    for (int j = 0; j < map.GetLength(1) - 1; j++)
+                    {
+                        // 4. Write the cell's value unless it's 0
+                        if (Math.Round(map[i, j]) == 0)
+                        {
+                            Console.Write("   ");
+                        }
+
+                        else if (map[i, j] > 0)
+                        {
+                            Console.Write(" " + Math.Round(map[i, j]).ToString() + " ");
+                        }
+                        else if (map[i, j] < 0)
+                        {
+                            Console.Write(Math.Round(map[i, j]).ToString() + " ");
+                        }
+
+                    }
+                    Console.WriteLine("|");
+                }
+
+                // 5. Add a separator
+                for (int i = 0;i < map.GetLength(0) * 3 - 2; i++)
+                {
+                    Console.Write("-");
+                }
+                Console.WriteLine();
+            }
         }
 
         /// <summary>
