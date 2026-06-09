@@ -5,7 +5,7 @@ using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
-namespace IA05_Console.Models.Definitions
+namespace IA05.Models
 {
     /// <summary>
     /// NetworkPreview : A light object that resumes the infos of a neural network without having to load it.

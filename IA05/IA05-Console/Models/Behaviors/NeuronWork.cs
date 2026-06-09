@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace IA04.Models
+namespace IA05.Models
 {
     public partial class Neuron
     {
@@ -23,8 +23,10 @@ namespace IA04.Models
             double result = 0;
 
             // 1. Add input * weight to the result
-            for (int i = 0; i < this.Weights.Length; i++)
+            for (int i = 0; i < this.Weights.GetLength(0) - 1; i++)
+            {
                 result += this.Weights[i] * inputs[i];
+            }
 
             // 2. Add the adjustement
             result += this.Adjustment;

@@ -5,7 +5,7 @@ using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
-namespace IA04.Models
+namespace IA05.Models
 {
     /// <summary>
     /// layer : couche du réseau neuronal contenant soit des kernels, soit des neurones

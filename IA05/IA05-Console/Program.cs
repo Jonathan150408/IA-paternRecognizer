@@ -5,10 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using IA05_Form;
 using System.Windows.Forms;
-using IA05_Console.Models.Definitions;
-using IA05_Console.Services;
-using IA04.Services;
-using IA04.Models;
+using IA05.Services;
+using IA05.Models;
 
 namespace IA05_Console
 {
@@ -74,20 +72,26 @@ namespace IA05_Console
             // DEBUG
             if (wantOperationDetails)
             {
-                // 1. Writes the maps
-                foreach (List<double[,]> maps in network.mapHistory)
+                // 1. Writes the steps
+                foreach (List<double[,]> maps in network.History)
                 {
                     WriteMaps(maps);
                 }
 
-                // 2. Adds a separator
-                Console.WriteLine("======================================= Étapes suivantes =======================================");
+                //// 1. Writes the maps
+                //foreach (List<double[,]> maps in network.mapHistory)
+                //{
+                //    WriteMaps(maps);
+                //}
 
-                // 3. Writes the nexts steps
-                foreach (List<double> step in network.feedForwardHistory)
-                {
-                    WriteStep(step);
-                }
+                //// 2. Adds a separator
+                //Console.WriteLine("======================================= Étapes suivantes =======================================");
+
+                //// 3. Writes the nexts steps
+                //foreach (List<double> step in network.feedForwardHistory)
+                //{
+                //    WriteStep(step);
+                //}
             }
 
             // CORRECTION

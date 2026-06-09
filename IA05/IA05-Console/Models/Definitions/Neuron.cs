@@ -6,7 +6,7 @@ using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
-namespace IA04.Models
+namespace IA05.Models
 {
     /// <summary>
     /// Neuron : neurone du réseau neuronal qui permet au réseau de "réfléchir"

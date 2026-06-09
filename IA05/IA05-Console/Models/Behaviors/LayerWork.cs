@@ -6,7 +6,7 @@ using System.Runtime.Serialization.Formatters;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace IA04.Models
+namespace IA05.Models
 {
     public partial class Layer
     {
@@ -21,7 +21,7 @@ namespace IA04.Models
         /// </summary>
         /// <param name="inputs">The raw values to process</param>
         /// <returns>Returns a list of doubles.</returns>
-        public List<double> GetLayerResults(List<double> inputs)
+        public List<double[,]> GetLayerResults(List<double[,]> inputs)
         {
             // 1. Check the layer's type
             if (this.Type != layerType.full)
@@ -30,21 +30,55 @@ namespace IA04.Models
             }
 
             // 2. Set up the variables
-            List<double> results = new List<double>(this.Neurons.Count);
+            List<double> inputsList = Flatten(inputs);
+            List<double> resultsList = new List<double>(this.Neurons.Count);
+            List<double[,]> results = new List<double[,]>();
             int index = 0;
 
             // 3. Calculate every neurons result
             foreach (Neuron neuron in this.Neurons)
             {
-                results.Add(neuron.GetResult(inputs));
+                resultsList.Add(neuron.GetResult(inputsList));
                 index++;
             }
 
             // 4. Applies the activation function
-            functionHandler.ApplyFunction(results, this.Function);
+            functionHandler.ApplyFunction(resultsList, this.Function);
 
-            // 5. Return the results
+            // 5. Convert back from List<double> to List<double[,]>
+            for (int i = 0; i < resultsList.Count; i++)
+            {
+                results[0][0, i] = resultsList[i];
+            }
+
+            // 6. Return the results
             return results;
+        }
+
+        /// <summary>
+        /// Flatten the result. Convert a complex array into a suit of numbers.
+        /// </summary>
+        /// <param name="maps"></param>
+        /// <returns></returns>
+        private List<double> Flatten(List<double[,]> maps)
+        {
+            // 1. Set up the variable
+            List<double> flat = new List<double>();
+
+            // 2. Add each double from the array to the flat array
+            for (int mapIndex = 0; mapIndex < maps.Count; mapIndex++)
+            {
+                for (int mapCoordX = 0; mapCoordX < maps[mapIndex].GetLength(0); mapCoordX++)
+                {
+                    for (int mapCoordY = 0; mapCoordY < maps[mapIndex].GetLength(1); mapCoordY++)
+                    {
+                        flat.Add(maps[mapIndex][mapCoordX, mapCoordY]);
+                    }
+                }
+            }
+
+            // 3. Return the result
+            return flat;
         }
 
         /// ----------------------------------------------------------------------------------------------

@@ -1,4 +1,4 @@
-﻿using IA04.Models;
+﻿using IA05.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Text.Json;
 
-namespace IA04.Services
+namespace IA05.Services
 {
     /// <summary>
     /// Le service qui permet de lire et écrire du JSON

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace IA04.Models
+namespace IA05.Models
 {
     public partial class Kernel
     {

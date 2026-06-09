@@ -16,16 +16,16 @@ namespace IA05_Form
         /// <summary>
         /// The data to give to the console project
         /// </summary>
-        public double[,] gridToAnalyse = new double[GRIDSIZE, GRIDSIZE];
+        public double[,] gridToAnalyse;
         public Dictionary<string, int> stats = new Dictionary<string, int>();
         public bool wantCorrection;
         public bool wantOperationDetails;
 
         /// <summary>
-        /// Constants used to set up the form
+        /// Data used to set up the form
         /// </summary>
-        const int GRIDSIZE = 32;
         const int CELLSIZE = 16;
+        private readonly uint[] GridDimensions;
 
         /// <summary>
         /// Form's composants
@@ -39,25 +39,27 @@ namespace IA05_Form
         public IAForm(uint[] gridDimensions)
         {
             InitializeComponent();
-            HandleGrid(gridDimensions);
+            GridDimensions = gridDimensions;
+            gridToAnalyse = new double[this.GridDimensions[0], this.GridDimensions[1]];
+            HandleGrid();
         }
 
         /// <summary>
         /// Create the grid of 32x32 checkboxes (= 1024 checkboxes)
         /// </summary>
         /// <returns></returns>
-        private void HandleGrid(uint[] gridDimensions)
+        private void HandleGrid()
         {
             // GRID
             // 1. Set up the panel
             this.UserInput.Location = new Point((this.ClientSize.Width - this.UserInput.Width) / 3 + 50, 50);
             this.UserInput.AutoSize = false;
-            this.UserInput.Size = new Size(GRIDSIZE * CELLSIZE, GRIDSIZE * CELLSIZE);
+            this.UserInput.Size = new Size((int)this.GridDimensions[0] * CELLSIZE, (int)this.GridDimensions[1] * CELLSIZE);
             this.UserInput.BackColor = Color.White;
             // 2. Create a 32 x 32 square of checkboxes
-            for (int i = 0; i < gridDimensions[0]; i++)
+            for (int i = 0; i < this.GridDimensions[0]; i++)
             {
-                for (int j = 0; j < gridDimensions[1]; j++)
+                for (int j = 0; j < this.GridDimensions[1]; j++)
                 {
                     CheckBox box = new CheckBox
                     {
@@ -195,11 +197,11 @@ namespace IA05_Form
         {
             // GRID
             // 1. Convert the grid into values (0 or 1)
-            for (int i = 0; i < GRIDSIZE; i++)
+            for (int i = 0; i < this.GridDimensions[0]; i++)
             {
-                for (int j = 0; j < GRIDSIZE; j++)
+                for (int j = 0; j < this.GridDimensions[1]; j++)
                 {
-                    this.gridToAnalyse[i, j] = Convert.ToInt16(this.UserInput.Controls[i * 32 + j].Tag);
+                    this.gridToAnalyse[i, j] = Convert.ToInt16(this.UserInput.Controls[i * (int)this.GridDimensions[0] + j].Tag);
                 }
             }
 

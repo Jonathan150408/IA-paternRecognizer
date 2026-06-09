@@ -5,32 +5,36 @@ using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
-namespace IA04.Models
+namespace IA05.Models
 {
     /// <summary>
-    /// Network : représente l'entièreté du réseau neuronal
+    /// Network : représente l'entièreté du réseau neuronal.
     /// </summary>
     public partial class Network
     {
         /// <summary>
-        /// Cette liste contient toutes les couches du réseau neuronal
+        /// Layers : The list of all layers in the neural network.
         /// </summary>
         [JsonPropertyName("Layers")]
         public List<Layer> Layers { get; set; }
 
         /// <summary>
-        /// L'historique des résultats du réseau neuronal
+        /// Schema : A list of string that defines what steps the Network will follow.
         /// </summary>
-        public List<List<double[,]>> mapHistory = new List<List<double[,]>>();
-        public List<List<double>> feedForwardHistory = new List<List<double>>();
+        [JsonPropertyName("Schema")]
+        public List<string> Schema { get; set; }
 
         /// <summary>
-        /// Constructeur par défaut
+        /// History : A list of results that the IA calculated.
+        /// </summary>
+        public List<List<double[,]>> History;
+
+        /// <summary>
+        /// Default constructor
         /// </summary>
         public Network()
         {
-            feedForwardHistory = new List<List<double>>();
-            mapHistory = new List<List<double[,]>>();
+            History = new List<List<double[,]>>();
         }
     }
 }

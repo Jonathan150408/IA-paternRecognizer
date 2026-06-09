@@ -1,5 +1,4 @@
-﻿using IA04.Models;
-using IA05_Console.Models.Definitions;
+﻿using IA05.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -8,7 +7,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace IA05_Console.Services
+namespace IA05.Services
 {
     /// <summary>
     /// PreviewService : A service that loads the previews.
