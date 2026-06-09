@@ -34,8 +34,25 @@ namespace IA04.Services
         /// <returns>Le réseau neuronal</returns>
         public Network LoadNetwork()
         {
+            // 1. Get the content of the json file
             string jsonString = File.ReadAllText(Path);
+
+            // 2. Convert into data
             Network network = JsonSerializer.Deserialize<Network>(jsonString);
+
+            // 3. Set up the kernels
+            foreach (Layer layer in network.Layers)
+            {
+                if (layer.Type == Layer.layerType.convolutive)
+                {
+                    foreach (Kernel kernel in layer.Kernels)
+                    {
+                        kernel.SetupFilter();
+                    }
+                }
+            }
+
+            // 4. Return the result
             return network;
         }
 

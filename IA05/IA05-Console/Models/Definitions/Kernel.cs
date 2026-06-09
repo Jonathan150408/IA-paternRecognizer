@@ -29,17 +29,25 @@ namespace IA04.Models
         /// <summary>
         /// Contructeur par défaut
         /// </summary>
-        public Kernel()
+        public Kernel() { }
+
+        public void SetupFilter()
         {
-            Filter = To2D(JaggedFilter);
+            this.Filter = To2D(JaggedFilter);
         }
 
-        // Convertit double[,] en double[][]
-        private static double[][] ToJagged(double[,] array)
+        /// <summary> 
+        /// Convert from double[,] to double[][].
+        /// </summary>
+        /// <param name="array"></param>
+        /// <returns></returns>
+        private double[][] ToJagged(double[,] array)
         {
+            // 1. Set up the variables
             int rows = array.GetLength(0);
             int cols = array.GetLength(1);
 
+            // 2. Convert the array into [][]
             var result = new double[rows][];
             for (int i = 0; i < rows; i++)
             {
@@ -49,25 +57,34 @@ namespace IA04.Models
                     result[i][j] = array[i, j];
                 }
             }
+
+            // 3. Return the result
             return result;
         }
 
-        // Convertit double[][] en double[,]
-        private static double[,] To2D(double[][] jagged)
+        /// <summary> 
+        /// Convert from double[][] to double[,].
+        /// </summary>
+        /// <param name="array"></param>
+        /// <returns></returns>
+        private double[,] To2D(double[][] jagged)
         {
+            // 1. Check the array
             if (jagged == null || jagged.Length == 0)
                 throw new ArgumentException("Jagged array is null or empty.");
 
+            // 2. Set up the variables
             int rows = jagged.Length;
             int cols = jagged[0].Length;
 
-            // Validation
+            // 3. Check if the array is fine
             for (int i = 1; i < rows; i++)
             {
                 if (jagged[i].Length != cols)
                     throw new ArgumentException("Invalid matrix: rows must all have the same length.");
             }
 
+            // 4. Convert the array into [,]
             var result = new double[rows, cols];
             for (int i = 0; i < rows; i++)
             {
@@ -76,6 +93,8 @@ namespace IA04.Models
                     result[i, j] = jagged[i][j];
                 }
             }
+
+            // 5. Return the result
             return result;
         }
     }

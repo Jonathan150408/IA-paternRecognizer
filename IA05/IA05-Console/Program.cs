@@ -31,12 +31,19 @@ namespace IA05_Console
             {
                 previewsNames.Add(networkPreview.Name);
             }
+            previewsNames.Add("Quitter");
 
             // 2. Display the menu
-            int chosenModel = DisplayMenu("Choisissez un modèle.\n", previewsNames, 2);
+            Title();
+            int chosenModel = DisplayMenu("Choisissez un modèle.", previewsNames, 7);
+            // 3. Quit the programm if the user choose to quit
+            if (chosenModel == previewsNames.LastIndexOf("Quitter"))
+            {
+                Environment.Exit(0);
+            }
             Console.Clear();
 
-            // 3. Load the neural network
+            // 4. Load the neural network
             IAService iaService = new IAService(networkPreviews[chosenModel].Path);
             Network network = iaService.LoadNetwork();
 
@@ -69,6 +76,22 @@ namespace IA05_Console
 
 
             Console.Read();
+        }
+
+        /// <summary>
+        /// Writes a title
+        /// </summary>
+        static void Title()
+        {
+            Console.SetCursorPosition(15, 2);
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.WriteLine("╔══════════════════════════════════════════════╗");
+            Console.SetCursorPosition(15, 3);
+            Console.WriteLine("║                - IAManager -                 ║");
+            Console.SetCursorPosition(15, 4);
+            Console.WriteLine("║          Réalisé par Jonathan Junod          ║");
+            Console.SetCursorPosition(15, 5);
+            Console.WriteLine("╚══════════════════════════════════════════════╝\n");
         }
 
         /// <summary>
