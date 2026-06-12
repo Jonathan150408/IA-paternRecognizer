@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
@@ -13,23 +14,20 @@ namespace IA05.Models
         /// Make the whole thinking process
         /// </summary>
         /// <param name="input"></param>
-        public void MakePrediction(List<double[,]> input)
+        public Dictionary<string, double> MakePrediction(List<double[,]> input)
         {
             // 1. Set up variables
             this.History.Clear();
             this.History.Add(input);
 
             // 2. Calculate the result for every step
-            foreach (String step in this.Schema)
+            foreach (string step in this.Schema)
             {
                 switch (step)
                 {
                     case "MaxPooling":
                         this.History.Add(GeneralMaxPooling(this.History.Last()));
                         break;
-                    //case "Flatten":
-                    //    this.History.Add(Flatten(this.History.Last()));
-                    //    break;
                     default:
                         int.TryParse(step, out int layerId);
                         Layer currentLayer = this.Layers.Find(l  => l.Id == layerId);
@@ -46,35 +44,24 @@ namespace IA05.Models
                 }
                 
             }
+
+            // 3. Get the biggest result
+            double[,] lastResults = this.History.Last().Last();
+            Dictionary<string, double> resultChances = new Dictionary<string, double>(); // name - probability (for example : triangle - 64.64841)
+
+            for (int i = 0; i < lastResults.GetLength(0); i++)
+            {
+                for (int j = 0; j < lastResults.GetLength(1); j++)
+                {
+                    resultChances.Add(this.Layers.Last().Results[i * lastResults.GetLength(0) + j], lastResults[i, j]);
+                }
+            }
+
+            
+
+            // 4. Return the result
+            return resultChances;
         }
-
-        ///// <summary>
-        ///// Flatten the result. Convert a complex array into a suit of numbers.
-        ///// </summary>
-        ///// <param name="maps"></param>
-        ///// <returns></returns>
-        //private List<double[,]> Flatten(List<double[,]> maps)
-        //{
-        //    // 1. Set up the variable
-        //    List<double[,]> flat = new List<double[,]>();
-        //    int index = 0;
-
-        //    // 2. Add each double from the array to the flat array
-        //    for (int mapIndex = 0; mapIndex < maps.Count; mapIndex++)
-        //    {
-        //        for (int mapCoordX = 0; mapCoordX < maps[mapIndex].GetLength(0) - 1; mapCoordX++)
-        //        {
-        //            for (int mapCoordY = 0; mapCoordY  < maps[mapIndex].GetLength(1) - 1; mapCoordY++)
-        //            {
-        //                flat[0][0, index] = maps[mapIndex][mapCoordX, mapCoordY];
-        //                index ++;
-        //            }
-        //        }
-        //    }
-
-        //    // 3. Return the result
-        //    return flat;
-        //}
 
         /// <summary>
         /// Takes all the feature maps and proceed to a 2x2 max pooling -> we only take the max value and the map become 4 times smaller
