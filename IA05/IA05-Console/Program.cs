@@ -126,11 +126,15 @@ namespace IA05_Console
 
                         else if (map[i, j] > 0)
                         {
+                            Console.ForegroundColor = ConsoleColor.DarkCyan;
                             Console.Write(" " + Math.Round(map[i, j]).ToString() + " ");
+                            Console.ForegroundColor = ConsoleColor.White;
                         }
                         else if (map[i, j] < 0)
                         {
+                            Console.ForegroundColor = ConsoleColor.DarkRed;
                             Console.Write(Math.Round(map[i, j]).ToString() + " ");
+                            Console.ForegroundColor = ConsoleColor.White;
                         }
 
                     }
