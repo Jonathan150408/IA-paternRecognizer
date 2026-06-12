@@ -34,7 +34,7 @@ namespace IA05_Console
 
             // 2. Display the menu
             Title();
-            int chosenModel = DisplayMenu("Choisissez un modèle.", previewsNames, 7);
+            int chosenModel = DisplayMenu("Choisissez un modèle.", previewsNames, 7, 0);
             // 3. Quit the programm if the user choose to quit
             if (chosenModel == previewsNames.LastIndexOf("Quitter"))
             {
@@ -82,7 +82,9 @@ namespace IA05_Console
             // FINAL RESULT
 
             // 1. Write a separator and the best result
-            Console.WriteLine("================ Final Result ================\n" + results.Max(v => v.Key) + " : " + results.Max(v => v.Value).ToString());
+            Console.WriteLine("================ Final Result ================\n");
+            var max = results.OrderByDescending(v => v.Value).First();
+            Console.WriteLine($"{max.Key} : {max.Value}");
 
             // 2. Writes all the others scores
             Console.WriteLine("\n\nTous les scores : ");
@@ -166,17 +168,23 @@ namespace IA05_Console
             Console.WriteLine("╚══════════════════════════════════════════════╝\n");
         }
 
+
         /// <summary>
         /// Displays an interactive menu.
         /// </summary>
-        /// <param name="title">A facultative title to show</param>
-        /// <param name="choices">A list of choices</param>
-        /// <param name="topLine">The top line of the menu</param>
+        /// <param name="title">A facultative string to write</param>
+        /// <param name="choices">A list of strings within the user will choose one</param>
+        /// <param name="topLine">A positive integer that specifies where to write</param>
+        /// <param name="defaultChoiceIndex">The default selected choice - set to 0 for "classic" behaviour</param>
         /// <returns>The index of the choice selected in the list.</returns>
-        static int DisplayMenu(string title, List<string> choices, int topLine)
+        static int DisplayMenu(string title, List<string> choices, int topLine, int defaultChoiceIndex)
         {
             // 1. Set up variables
             int userChoice = 0;
+            if (defaultChoiceIndex >= 0 && defaultChoiceIndex < choices.Count)
+            {
+                userChoice = defaultChoiceIndex;
+            }
             ConsoleKeyInfo userKey;
             Console.CursorVisible = false;
             Console.CursorTop = topLine;
