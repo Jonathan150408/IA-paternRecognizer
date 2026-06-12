@@ -176,7 +176,7 @@ namespace IA05_Console
         static int DisplayMenu(string title, List<string> choices, int topLine)
         {
             // 1. Set up variables
-            int userChoice = 1;
+            int userChoice = 0;
             ConsoleKeyInfo userKey;
             Console.CursorVisible = false;
             Console.CursorTop = topLine;
@@ -184,14 +184,17 @@ namespace IA05_Console
             // 2. Writes the choices
             Console.WriteLine(title);
             for (int i = 0; i < choices.Count; i++)
+            {
                 Console.WriteLine("  \t" + (i + 1).ToString() + ". " + choices[i]);
+            }
+            topLine++;
 
             // 3. Get an input from the user and decides
             do
             {
                 // 4. Draw the arrow
                 Console.SetCursorPosition(3, topLine + userChoice);
-                Console.Write("->\t" + userChoice + ". " + choices[userChoice - 1]);
+                Console.Write("->\t");
 
                 // 5. Get the user's input
                 userKey = Console.ReadKey(true);
@@ -205,22 +208,37 @@ namespace IA05_Console
                 {
                     userChoice++;
                     // If exceed the number of choices, reset to the min choice
-                    if (userChoice > choices.Count)
-                        userChoice = 1;
+                    if (userChoice >= choices.Count)
+                        userChoice = 0;
                 }
                 else if (userKey.Key == ConsoleKey.UpArrow)
                 {
                     userChoice--;
-                    // If is less than 1, set the choosed option to the last option
-                    if (userChoice < 1)
-                        userChoice = choices.Count;
+                    // If is less than 0, set the choosed option to the last option
+                    if (userChoice < 0)
+                        userChoice = choices.Count - 1;
                 }
+                // If the user press a number (the key on the keyboard)
                 else if (char.IsDigit(userKey.KeyChar))
-                    return userKey.KeyChar - '0';
+                {
+                    // a. Try to parse it
+                    if (int.TryParse(userKey.KeyChar.ToString(), out userChoice))
+                    {
+                        // b. If valid return, else reset to 0
+                        if (userChoice >= 1 && userChoice <= choices.Count)
+                        {
+                            return userChoice - 1;
+                        }
+                        else
+                        {
+                            userChoice = 0;
+                        }
+                    }
+                }
             } while (userKey.Key != ConsoleKey.Enter && userKey.Key != ConsoleKey.Spacebar);
 
             // 8. Return the result
-            return userChoice - 1;
+            return userChoice;
         }
     }
 }
