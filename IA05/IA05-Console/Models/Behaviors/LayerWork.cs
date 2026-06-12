@@ -43,13 +43,15 @@ namespace IA05.Models
             }
 
             // 4. Applies the activation function
-            functionHandler.ApplyFunction(resultsList, this.Function);
+            resultsList = functionHandler.ApplyFunction(resultsList, this.Function);
 
             // 5. Convert back from List<double> to List<double[,]>
+            double[,] tempResultArray = new double[1, resultsList.Count];
             for (int i = 0; i < resultsList.Count; i++)
             {
-                results[0][0, i] = resultsList[i];
+                tempResultArray[0, i] = resultsList[i];
             }
+            results.Add(tempResultArray);
 
             // 6. Return the results
             return results;

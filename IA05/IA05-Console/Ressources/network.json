@@ -1,5 +1,5 @@
 {
-  "Schema": [ "0", "MaxPooling", "1", "MaxPooling", "Flatten", "2" ],
+  "Schema": [ "0", "MaxPooling", "1", "MaxPooling", "2" ],
   "Layers": [
     {
       "Id": 0,
@@ -116,7 +116,7 @@
       "Type": "full",
       "Function": "softmax",
       "IsLast": true,
-      "Results": [ "C'est un carré !", "C'est un triangle !", "C'est un cercle !" ],
+      "Results": [ "Carré", "Triangle", "Cercle" ],
       "Neurons": [
         {
           "Id": 0,

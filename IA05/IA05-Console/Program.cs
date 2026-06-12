@@ -67,7 +67,7 @@ namespace IA05_Console
 
 
             // CALCULATIONS
-            network.MakePrediction(gridToAnalyse);
+            Dictionary<string, double> results = network.MakePrediction(gridToAnalyse);
 
             // DEBUG
             if (wantOperationDetails)
@@ -75,23 +75,20 @@ namespace IA05_Console
                 // 1. Writes the steps
                 foreach (List<double[,]> maps in network.History)
                 {
-                    WriteMaps(maps);
+                    WriteStep(maps);
                 }
+            }
 
-                //// 1. Writes the maps
-                //foreach (List<double[,]> maps in network.mapHistory)
-                //{
-                //    WriteMaps(maps);
-                //}
+            // FINAL RESULT
 
-                //// 2. Adds a separator
-                //Console.WriteLine("======================================= Étapes suivantes =======================================");
+            // 1. Write a separator and the best result
+            Console.WriteLine("================ Final Result ================\n" + results.Max(v => v.Key) + " : " + results.Max(v => v.Value).ToString());
 
-                //// 3. Writes the nexts steps
-                //foreach (List<double> step in network.feedForwardHistory)
-                //{
-                //    WriteStep(step);
-                //}
+            // 2. Writes all the others scores
+            Console.WriteLine("\n\nTous les scores : ");
+            foreach (KeyValuePair<string, double> result in results)
+            {
+                Console.WriteLine(result.Key + " : " + result.Value.ToString());
             }
 
             // CORRECTION
@@ -101,46 +98,10 @@ namespace IA05_Console
         }
 
         /// <summary>
-        /// Write all values of the step
-        /// </summary>
-        /// <param name="step"></param>
-        static void WriteStep(List<double> step)
-        {
-            // 1. Add a separator
-            for (int i = 0; i < Math.Min(step.Count * 3 - 2, 100); i++)
-            {
-                Console.Write("-");
-            }
-            Console.WriteLine();
-
-            // 2. Browse the list
-            for (int i = 0; i < step.Count - 1; i++)
-            {
-                // 3. Write the cell's value unless it's 0
-                if (step[i] >= 0)
-                {
-                    Console.Write(" " + Math.Round(step[i]).ToString() + " ");
-                }
-                else if (step[i] < 0)
-                {
-                    Console.Write(Math.Round(step[i]).ToString() + " ");
-                }
-            }
-            Console.WriteLine();
-
-            // 4. Add a separator
-            for (int i = 0; i < Math.Min(step.Count * 3 - 2, 100); i++)
-            {
-                Console.Write("-");
-            }
-            Console.WriteLine();
-        }
-
-        /// <summary>
         /// Format the maps into values and write them down in the console.
         /// </summary>
         /// <param name="maps"></param>
-        static void WriteMaps(List<double[,]> maps)
+        static void WriteStep(List<double[,]> maps)
         {
             // 1. Take each map
             foreach (double[,] map  in maps)
