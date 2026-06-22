@@ -94,7 +94,66 @@ namespace IA05_Console
             }
 
             // CORRECTION
+            if (wantCorrection)
+            {
+                // GETTING THE VALUES
+                // 1. Writes the title
+                Console.WriteLine("========= Phase d'entrainement =========");
 
+                // 2. Set up variables
+                double[] expected = new double[network.Layers.Last().Neurons.Count];
+
+                // 3. Ask for expected values
+                for (int i = 0; i < network.Layers.Last().Neurons.Count; i++)
+                {
+                    string shape = "";
+                    switch (i)
+                    {
+                        case 0:
+                            shape = "Carré";
+                            break;
+                        case 1:
+                            shape = "Triangle";
+                            break;
+                        case 2:
+                            shape = "Cercle";
+                            break;
+                    }
+                    Console.Write("Valeur attendue pour " + shape + ":\t");
+                    double.TryParse(Console.ReadLine(), out expected[i]);
+
+                    // 4. Make sure values aren't greater or lower than 0 and 1
+                    if (expected[i] > 1)
+                    {
+                        expected[i] = 1;
+                    }
+                    else if (expected[i] < 0)
+                    {
+                        expected[i] = 0;
+                    }
+                }
+                Console.WriteLine();
+
+                // CORRECTING
+                // 1. Correct the last layer
+                network.Layers.Last().CorrectLayer(expected, network.History.Last()[0], network.History[network.History.Count - 2]);
+
+                // NEW RESULT
+                // 1. Compute the new result
+                results = network.MakePrediction(gridToAnalyse);
+
+                // 2. Write a separator and the best result
+                Console.WriteLine("================ Final Result ================\n");
+                max = results.OrderByDescending(v => v.Value).First();
+                Console.WriteLine($"{max.Key} : {max.Value}");
+
+                // 3. Writes all the others scores
+                Console.WriteLine("\n\nTous les scores : ");
+                foreach (KeyValuePair<string, double> result in results)
+                {
+                    Console.WriteLine(result.Key + " : " + result.Value.ToString());
+                }
+            }
 
             Console.Read();
         }

@@ -160,13 +160,13 @@ namespace IA05.Models
         /// <param name="expected_results"></param>
         /// <param name="real_outputs"></param>
         /// <param name="processed_values"></param>
-        public void CorrectLayer(double[] expected_results, List<double> real_outputs, List<double> processed_values)
+        public void CorrectLayer(double[] expected_results, double[,] real_outputs, List<double[,]> processed_values)
         {
             if (this.Type == layerType.full)
             {
                 for (int i = 0; i < this.Neurons.Count; i++)
                 {
-                    this.Neurons[i].CorrectNeuron(expected_results[i], real_outputs[i], processed_values, this.Function);
+                    this.Neurons[i].CorrectNeuron(expected_results[i], real_outputs[0, i], processed_values, this.Function);
                 }
             }
             else if (this.Type == layerType.convolutive)
