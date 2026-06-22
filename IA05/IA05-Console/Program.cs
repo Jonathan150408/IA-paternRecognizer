@@ -123,17 +123,9 @@ namespace IA05_Console
 
             // FINAL RESULT
 
-            // 1. Write a separator and the best result
-            Console.WriteLine("================ Final Result ================\n");
-            var max = results.OrderByDescending(v => v.Value).First();
-            Console.WriteLine($"{max.Key} : {max.Value}");
+            // 1. Write the results
+            WriteResult(results);
 
-            // 2. Writes all the others scores
-            Console.WriteLine("\n\nTous les scores : ");
-            foreach (KeyValuePair<string, double> result in results)
-            {
-                Console.WriteLine(result.Key + " : " + result.Value.ToString());
-            }
 
             // CORRECTION
             if (wantCorrection)
@@ -184,17 +176,8 @@ namespace IA05_Console
                 // 1. Compute the new result
                 results = network.MakePrediction(gridToAnalyse);
 
-                // 2. Write a separator and the best result
-                Console.WriteLine("================ Final Result ================\n");
-                max = results.OrderByDescending(v => v.Value).First();
-                Console.WriteLine($"{max.Key} : {max.Value}");
-
-                // 3. Writes all the others scores
-                Console.WriteLine("\n\nTous les scores : ");
-                foreach (KeyValuePair<string, double> result in results)
-                {
-                    Console.WriteLine(result.Key + " : " + result.Value.ToString());
-                }
+                // 2. Show the results
+                WriteResult(results);
             }
 
             // RESTART
@@ -241,6 +224,22 @@ namespace IA05_Console
                     gridToAnalyse: gridToAnalyse
                     );
             }
+        }
+
+        static void WriteResult(Dictionary<string, double> results)
+        {
+            // 1. Write a separator and the best result
+            Console.WriteLine("================ Résultat ================\n");
+            var max = results.OrderByDescending(v => v.Value).First();
+            Console.WriteLine($"C'est un {max.Key}");
+
+            // 3. Writes all the others scores
+            Console.WriteLine("\n\nTous les scores : ");
+            foreach (KeyValuePair<string, double> result in results.OrderByDescending(v => v.Value))
+            {
+                Console.WriteLine(result.Key + " : " + result.Value.ToString("N2") + "%");
+            }
+            Console.WriteLine();
         }
 
         /// <summary>
