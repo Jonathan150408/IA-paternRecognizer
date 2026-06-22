@@ -12,6 +12,31 @@ namespace IA05_Console
 {
     internal class Program
     {
+        /// <summary>
+        /// Determines wether the neural network is ready or need to be loaded
+        /// </summary>
+        static bool initialized = false;
+        /// <summary>
+        /// A service that loads the previews
+        /// </summary>
+        static PreviewService previewService;
+        /// <summary>
+        /// All the previews of the awailables networks
+        /// </summary>
+        static List<NetworkPreview> networkPreviews;
+        /// <summary>
+        /// The list of awailables networks's names
+        /// </summary>
+        static List<string> previewsNames;
+        /// <summary>
+        /// A service that loads the chosen model
+        /// </summary>
+        static IAService iaService;
+        /// <summary>
+        /// The neural network itself
+        /// </summary>
+        static Network network;
+
         [STAThread]
         static void Main(string[] args)
         {
@@ -22,15 +47,18 @@ namespace IA05_Console
 
 
             // INITIALIZATION AND MENU
-            // 1. Get all previews
-            PreviewService previewService = new PreviewService();
-            List<NetworkPreview> networkPreviews = previewService.LoadPreviews();
-            List<string> previewsNames = new List<string>();
-            foreach (NetworkPreview networkPreview in networkPreviews)
+            if (!initialized)
             {
-                previewsNames.Add(networkPreview.Name);
+                // 1. Get all previews
+                previewService = new PreviewService();
+                networkPreviews = previewService.LoadPreviews();
+                previewsNames = new List<string>();
+                foreach (NetworkPreview networkPreview in networkPreviews)
+                {
+                    previewsNames.Add(networkPreview.Name);
+                }
+                previewsNames.Add("Quitter");
             }
-            previewsNames.Add("Quitter");
 
             // 2. Display the menu
             Title();
@@ -43,16 +71,30 @@ namespace IA05_Console
             Console.Clear();
 
             // 4. Load the neural network
-            IAService iaService = new IAService(networkPreviews[chosenModel].Path);
-            Network network = iaService.LoadNetwork();
+            if (!initialized)
+            {
+                iaService = new IAService(networkPreviews[chosenModel].Path);
+                network = iaService.LoadNetwork();
+            }
 
+            // 5. Handle the following steps
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
+            HandleNetwork(
+                chosenModel: chosenModel,
+                wantOperationDetails: wantOperationDetails,
+                wantCorrection: wantCorrection,
+                gridToAnalyse: gridToAnalyse
+                );
+            
+        }
 
+        static void HandleNetwork(int chosenModel, bool wantOperationDetails, bool wantCorrection, List<double[,]> gridToAnalyse)
+        {
             // FORM
             if (networkPreviews[chosenModel].NeedForm)
             {
                 // 1. Launch the form
-                Application.EnableVisualStyles();
-                Application.SetCompatibleTextRenderingDefault(false);
                 using (var form = new IAForm(networkPreviews[chosenModel].GridDimensions))
                 {
                     // 2. Get the form's data
@@ -155,7 +197,50 @@ namespace IA05_Console
                 }
             }
 
-            Console.Read();
+            // RESTART
+            // 1. Set up the variables
+            bool wrongAnswer = false;
+            bool quit = false;
+            ConsoleKey key = ConsoleKey.Escape;
+
+            // 2. Get the user's key
+            do
+            {
+                Console.WriteLine(wrongAnswer ? "{0} n'est pas une réponse valide" : "Souhaitez-vous recommencer ? (O/N)", key);
+                key = Console.ReadKey(true).Key;
+                if (key == ConsoleKey.O)
+                {
+                    wrongAnswer = false;
+                    quit = false;
+                }
+                else if (key == ConsoleKey.N)
+                {
+                    wrongAnswer = false;
+                    quit = true;
+                }
+                else
+                {
+                    wrongAnswer = true;
+                }
+            } while (wrongAnswer);
+
+            // 3. Restart or quit
+            if (quit)
+            {
+                Console.WriteLine("\nMerci d'avoir testé ce programme \\^o^/\nAppuyez sur une touche pour fermer le programme...");
+                Console.ReadKey(true);
+                Environment.Exit(0);
+            }
+            else
+            {
+                initialized = true;
+                HandleNetwork(
+                    chosenModel: chosenModel,
+                    wantOperationDetails: wantOperationDetails,
+                    wantCorrection: wantCorrection,
+                    gridToAnalyse: gridToAnalyse
+                    );
+            }
         }
 
         /// <summary>
