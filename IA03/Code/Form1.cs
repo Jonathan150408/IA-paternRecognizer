@@ -37,6 +37,7 @@ namespace IA03
         private const int CELLSIZE = 16;
         private const int NUMBEROFCONVLAYERS = 2;
         private Stopwatch chrono = new Stopwatch();
+
         FlowLayoutPanel correctionGroup;
         FlowLayoutPanel debugGroup;
         /// <summary>

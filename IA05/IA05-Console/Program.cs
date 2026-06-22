@@ -1,13 +1,14 @@
-﻿using System;
+﻿using IA05.Models;
+using IA05.Services;
+using IA05_Console.Services;
+using IA05_Form;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using IA05_Form;
 using System.Windows.Forms;
-using IA05.Services;
-using IA05.Models;
-using IA05_Console.Services;
 
 namespace IA05_Console
 {
@@ -46,23 +47,42 @@ namespace IA05_Console
         /// </summary>
         static Network network;
 
+        /// <summary>
+        /// A chrono used to get the loading time
+        /// </summary>
+        static Stopwatch chrono = new Stopwatch();
+
         [STAThread]
         static void Main(string[] args)
         {
+            ///////////////////////////////////////////////////////////////////////////////////////////
+            // Start the chrono
+            chrono.Restart();
+
             // ENVIRONMENT SETUP
             fileSetupService = new FileSetupService();
             fileSetupService.Setup();
 
-            //Dictionary<string, int> stats = new Dictionary<string, int>();
+            // Log the chrono
+            LogChrono("Vérification des fichiers et setup fait");
+
+            ///////////////////////////////////////////////////////////////////////////////////////////
+            // Start the chrono
+            chrono.Restart();
+
+            // INITIALIZATION
+            // 1. Set up variables
             List<double[,]> gridToAnalyse = new List<double[,]>();
             bool wantCorrection = false;
             bool wantOperationDetails = false;
 
+            // 2. One-time form setup
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
 
-            // INITIALIZATION AND MENU
+            // 3. Get all previews
             if (!initialized)
             {
-                // 1. Get all previews
                 previewService = new PreviewService();
                 networkPreviews = previewService.LoadPreviews();
                 previewsNames = new List<string>();
@@ -73,43 +93,70 @@ namespace IA05_Console
                 previewsNames.Add("Quitter");
             }
 
-            // 2. Display the menu
-            Title();
-            int chosenModel = DisplayMenu("Choisissez un modèle.", previewsNames, 7, 0);
-            // 3. Quit the programm if the user choose to quit
+            // Log the chrono
+            LogChrono("Chargement des previews réalisés");
+
+            ///////////////////////////////////////////////////////////////////////////////////////////
+            //No chrono at the beginning because of the user's input -> handled in the method
+            // MENU
+            // 1. Display the menu
+            Title(6);
+            int chosenModel = DisplayMenu("Choisissez un modèle.", previewsNames, 10, 0);
+            // 2. Quit the programm if the user choose to quit
             if (chosenModel == previewsNames.LastIndexOf("Quitter"))
             {
-                Environment.Exit(0);
+                Environment.Exit(417);
             }
-            Console.Clear();
+            ClearConsoleArea(100, previewsNames.Count + 16, 4);
 
-            // 4. Load the neural network
+            // Start the chrono
+            chrono.Restart();
+
+            // 3. Load the neural network
             if (!initialized)
             {
                 iaService = new IAService(networkPreviews[chosenModel].Path);
                 network = iaService.LoadNetwork();
             }
 
-            // 5. Handle the following steps
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
+            // Log the chrono
+            LogChrono("Réseau chargé");
+
+            ///////////////////////////////////////////////////////////////////////////////////////////
+            // Chrono is handled inside the method
+            // 1. Handle the following steps
             HandleNetwork(
                 chosenModel: chosenModel,
                 wantOperationDetails: wantOperationDetails,
                 wantCorrection: wantCorrection,
                 gridToAnalyse: gridToAnalyse
                 );
-            
         }
 
+        /// <summary>
+        /// Handle the calculations, this is splited from main because this part carries every step of the computing process without needing to get/initialize data.
+        /// If this is placed ni main, we'll have a conflict with the saving process.
+        /// </summary>
+        /// <param name="chosenModel"></param>
+        /// <param name="wantOperationDetails"></param>
+        /// <param name="wantCorrection"></param>
+        /// <param name="gridToAnalyse"></param>
         static void HandleNetwork(int chosenModel, bool wantOperationDetails, bool wantCorrection, List<double[,]> gridToAnalyse)
         {
+            ///////////////////////////////////////////////////////////////////////////////////////////
+            // Start the chrono
+            chrono.Restart();
+
             // FORM
             if (networkPreviews[chosenModel].NeedForm)
             {
                 // 1. Launch the form
                 using (var form = new IAForm(networkPreviews[chosenModel].GridDimensions))
                 {
+                    // Log the chrono
+                    LogChrono("Formulaire chargé");
+
+                    form.Activate();
                     // 2. Get the form's data
                     if (form.ShowDialog() == DialogResult.OK)
                     {
@@ -120,9 +167,19 @@ namespace IA05_Console
                 }
             }
 
+            ///////////////////////////////////////////////////////////////////////////////////////////
+            // Start the chrono
+            chrono.Restart();
 
             // CALCULATIONS
             Dictionary<string, double> results = network.MakePrediction(gridToAnalyse);
+
+            // Log the chrono
+            LogChrono("Calculs terminés");
+
+            ///////////////////////////////////////////////////////////////////////////////////////////
+            // Start the chrono
+            chrono.Restart();
 
             // DEBUG
             if (wantOperationDetails)
@@ -134,11 +191,24 @@ namespace IA05_Console
                 }
             }
 
+            // Log the chrono
+            LogChrono("Calculs rédigés");
+
+            ///////////////////////////////////////////////////////////////////////////////////////////
+            // Start the chrono
+            chrono.Restart();
+
             // FINAL RESULT
 
             // 1. Write the results
             WriteResult(results);
 
+            // Log the chrono
+            LogChrono("Résultats affichés");
+
+            ///////////////////////////////////////////////////////////////////////////////////////////
+            // Start the chrono
+            chrono.Restart();
 
             // CORRECTION
             if (wantCorrection)
@@ -167,7 +237,14 @@ namespace IA05_Console
                             break;
                     }
                     Console.Write("Valeur attendue pour " + shape + ":\t");
+
+                    // pause the chrono
+                    chrono.Stop();
+
                     double.TryParse(Console.ReadLine(), out expected[i]);
+
+                    // unpause the chrono
+                    chrono.Start();
 
                     // 4. Make sure values aren't greater or lower than 0 and 1
                     if (expected[i] > 1)
@@ -181,16 +258,40 @@ namespace IA05_Console
                 }
                 Console.WriteLine();
 
+                // Log the chrono
+                LogChrono("Valeurs correctes reçues en");
+
+                ///////////////////////////////////////////////////////////////////////////////////////////
+                // Start the chrono
+                chrono.Restart();
+
                 // CORRECTING
                 // 1. Correct the last layer
                 network.Layers.Last().CorrectLayer(expected, network.History.Last()[0], network.History[network.History.Count - 2]);
+
+                // Log the chrono
+                LogChrono("Correction effectuée");
+
+                ///////////////////////////////////////////////////////////////////////////////////////////
+                // Start the chrono
+                chrono.Restart();
 
                 // NEW RESULT
                 // 1. Compute the new result
                 results = network.MakePrediction(gridToAnalyse);
 
+                // Log the chrono
+                LogChrono("Calculs revisités");
+
+                ///////////////////////////////////////////////////////////////////////////////////////////
+                // Start the chrono
+                chrono.Restart();
+
                 // 2. Show the results
                 WriteResult(results);
+
+                // Log the chrono
+                LogChrono("Nouveaux résultats écrits");
             }
 
             // RESTART
@@ -260,7 +361,7 @@ namespace IA05_Console
             Console.WriteLine("\n\nTous les scores : ");
             foreach (KeyValuePair<string, double> result in results.OrderByDescending(v => v.Value))
             {
-                Console.WriteLine(result.Key + " : " + result.Value.ToString("N2") + "%");
+                Console.WriteLine(result.Key + " : " + Math.Round(result.Value * 100).ToString() + "%");
             }
             Console.WriteLine();
         }
@@ -321,19 +422,26 @@ namespace IA05_Console
         /// <summary>
         /// Writes a title
         /// </summary>
-        static void Title()
+        static void Title(int topLine)
         {
-            Console.SetCursorPosition(15, 2);
+            // 1. Start the chrono
+            chrono.Restart();
+
+            // 2. Writes the title
+            Console.SetCursorPosition(15, topLine);
             Console.ForegroundColor = ConsoleColor.White;
             Console.WriteLine("╔══════════════════════════════════════════════╗");
-            Console.SetCursorPosition(15, 3);
+            Console.SetCursorPosition(15, topLine + 1);
             Console.WriteLine("║                - IAManager -                 ║");
-            Console.SetCursorPosition(15, 4);
+            Console.SetCursorPosition(15, topLine + 2);
             Console.WriteLine("║          Réalisé par Jonathan Junod          ║");
-            Console.SetCursorPosition(15, 5);
+            Console.SetCursorPosition(15, topLine + 3);
             Console.WriteLine("╚══════════════════════════════════════════════╝\n");
-        }
 
+            // Log the chrono
+            Console.SetCursorPosition(0, 2);
+            LogChrono("Titre affiché");
+        }
 
         /// <summary>
         /// Displays an interactive menu.
@@ -345,6 +453,9 @@ namespace IA05_Console
         /// <returns>The index of the choice selected in the list.</returns>
         static int DisplayMenu(string title, List<string> choices, int topLine, int defaultChoiceIndex)
         {
+            // Start the chrono
+            chrono.Restart();
+
             // 1. Set up variables
             int userChoice = 0;
             if (defaultChoiceIndex >= 0 && defaultChoiceIndex < choices.Count)
@@ -362,6 +473,10 @@ namespace IA05_Console
                 Console.WriteLine("  \t" + (i + 1).ToString() + ". " + choices[i]);
             }
             topLine++;
+
+            // Log the chrono
+            Console.SetCursorPosition(0, 3);
+            LogChrono("Menu dessiné");
 
             // 3. Get an input from the user and decides
             do
@@ -413,6 +528,45 @@ namespace IA05_Console
 
             // 8. Return the result
             return userChoice;
+        }
+
+        /// <summary>
+        /// Stops the chrono and display it's value with a short message
+        /// </summary>
+        /// <param name="logged"></param>
+        static void LogChrono(string logged)
+        {
+            //writes the chrono value
+            chrono.Stop();
+            Console.Write($"{logged} en ");
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.Write(chrono.ElapsedMilliseconds);
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.WriteLine(" ms");
+        }
+
+        /// <summary>
+        /// Clear a console area
+        /// </summary>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
+        static void ClearConsoleArea(int width, int height, int topPosition)
+        {
+            // 1. Set the cursor position
+            Console.SetCursorPosition(0, topPosition);
+
+            // 2. Write empty chars
+            for (int i = 0; i < height; i++)
+            {
+                for (int j = 0; j < width; j++)
+                {
+                    Console.Write(' ');
+                }
+                Console.WriteLine();
+            }
+
+            // 3. Set the cursor position
+            Console.SetCursorPosition(0, topPosition);
         }
     }
 }
