@@ -56,15 +56,26 @@ namespace IA05.Services
             return network;
         }
 
-
         /// <summary>
-        /// Donne le chemin de fichier utilisé
+        /// Overwrites the json file with the current data to save the network
         /// </summary>
-        /// <returns></returns>
-        public string GetPath()
+        /// <param name="network"></param>
+        public void SaveNetwork(Network network)
         {
-            return this.Path;
-        }
+            // 1. Set up the kernels for saving
+            foreach (Layer layer in network.Layers)
+            {
+                if (layer.Type == Layer.layerType.convolutive)
+                {
+                    foreach (Kernel kernel in layer.Kernels)
+                    {
+                        kernel.SetSaveFilter();
+                    }
+                }
+            }
 
+            // 2. Save the network into json file
+            File.WriteAllText(Path, JsonSerializer.Serialize<Network>(network));
+        }
     }
 }

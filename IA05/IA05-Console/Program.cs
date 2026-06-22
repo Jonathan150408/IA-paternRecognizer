@@ -7,6 +7,7 @@ using IA05_Form;
 using System.Windows.Forms;
 using IA05.Services;
 using IA05.Models;
+using IA05_Console.Services;
 
 namespace IA05_Console
 {
@@ -16,10 +17,22 @@ namespace IA05_Console
         /// Determines wether the neural network is ready or need to be loaded
         /// </summary>
         static bool initialized = false;
+
+
         /// <summary>
         /// A service that loads the previews
         /// </summary>
         static PreviewService previewService;
+        /// <summary>
+        /// A service that loads the chosen model
+        /// </summary>
+        static IAService iaService;
+        /// <summary>
+        /// A service that set the files up if needed before running the IA
+        /// </summary>
+        static FileSetupService fileSetupService;
+
+
         /// <summary>
         /// All the previews of the awailables networks
         /// </summary>
@@ -29,10 +42,6 @@ namespace IA05_Console
         /// </summary>
         static List<string> previewsNames;
         /// <summary>
-        /// A service that loads the chosen model
-        /// </summary>
-        static IAService iaService;
-        /// <summary>
         /// The neural network itself
         /// </summary>
         static Network network;
@@ -40,6 +49,10 @@ namespace IA05_Console
         [STAThread]
         static void Main(string[] args)
         {
+            // ENVIRONMENT SETUP
+            fileSetupService = new FileSetupService();
+            fileSetupService.Setup();
+
             //Dictionary<string, int> stats = new Dictionary<string, int>();
             List<double[,]> gridToAnalyse = new List<double[,]>();
             bool wantCorrection = false;
@@ -210,8 +223,14 @@ namespace IA05_Console
             // 3. Restart or quit
             if (quit)
             {
+                // a. Save the network
+                iaService.SaveNetwork(network);
+                fileSetupService.Commit();
+                // b. Writes a small message
                 Console.WriteLine("\nMerci d'avoir testé ce programme \\^o^/\nAppuyez sur une touche pour fermer le programme...");
+                // c. Waits for a user input
                 Console.ReadKey(true);
+                // d. Close the program
                 Environment.Exit(0);
             }
             else
@@ -226,6 +245,10 @@ namespace IA05_Console
             }
         }
 
+        /// <summary>
+        /// Shows the results in the console
+        /// </summary>
+        /// <param name="results"></param>
         static void WriteResult(Dictionary<string, double> results)
         {
             // 1. Write a separator and the best result

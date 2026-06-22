@@ -35,6 +35,10 @@ namespace IA05.Models
         {
             this.Filter = To2D(JaggedFilter);
         }
+        public void SetSaveFilter()
+        {
+            this.JaggedFilter = ToJagged(Filter);
+        }
 
         /// <summary> 
         /// Convert from double[,] to double[][].
