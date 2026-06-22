@@ -13,7 +13,7 @@
     "Description": "Une modèle d'IA simple capable de reconnaitre des chiffres dans une grille.",
     "Path": "network.json",
     "NeedForm": true,
-    "Form" :  [2, 2]
+    "Form" :  [32, 32]
   }
 ]
 
