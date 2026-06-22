@@ -13,6 +13,21 @@ namespace IA05.Models
     public partial class Network
     {
         /// <summary>
+        /// TotalOfGuesses : A counter that increments by 1 on each guess
+        /// </summary>
+        [JsonPropertyName("TotalOfGuesses")]
+        public int TotalOfGuesses { get; set; }
+        /// <summary>
+        /// TotalOfCorrectAnswers : A counter that increments by 1 on each correct answer
+        /// </summary>
+        [JsonPropertyName("TotalOfCorrectAnswers")]
+        public int TotalOfCorrectAnswers { get; set; }
+        /// <summary>
+        /// TotalGuessDistribution : An array of integer that counts the number of times the network make prediction per category
+        /// </summary>
+        [JsonPropertyName("TotalGuessDistribution")]
+        public int[] TotalGuessDistribution { get; set; }
+        /// <summary>
         /// Layers : The list of all layers in the neural network.
         /// </summary>
         [JsonPropertyName("Layers")]

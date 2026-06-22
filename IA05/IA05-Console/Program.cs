@@ -52,6 +52,19 @@ namespace IA05_Console
         /// </summary>
         static Stopwatch chrono = new Stopwatch();
 
+        /// <summary>
+        /// The number of trials for this session
+        /// </summary>
+        static int numberOfTrials = 0;
+        /// <summary>
+        /// The number of correct answers
+        /// </summary>
+        static int numberOfCorrect = 0;
+        /// <summary>
+        /// The numbers of each shape guessed | Square - Triangle - Circle
+        /// </summary>
+        static int[] guessDistribution = new int[] { 0, 0, 0};
+
         [STAThread]
         static void Main(string[] args)
         {
@@ -258,6 +271,14 @@ namespace IA05_Console
                 }
                 Console.WriteLine();
 
+                // 5. Increments the counters
+                numberOfTrials++;
+                if (results.Values.ToList().IndexOf(results.Values.Max()) == Array.IndexOf(expected, expected.Max()))
+                {
+                    numberOfCorrect++;
+                }
+                guessDistribution[results.Values.ToList().IndexOf(results.Values.Max())]++;
+
                 // Log the chrono
                 LogChrono("Valeurs correctes reçues en");
 
@@ -324,14 +345,21 @@ namespace IA05_Console
             // 3. Restart or quit
             if (quit)
             {
-                // a. Save the network
+                // a. Merge the last infos
+                network.TotalOfGuesses += numberOfTrials;
+                network.TotalOfCorrectAnswers += numberOfCorrect;
+                for (int i = 0; i < network.TotalGuessDistribution.GetLength(0); i++)
+                {
+                    network.TotalGuessDistribution[i] += guessDistribution[i];
+                }
+                // b. Save the network
                 iaService.SaveNetwork(network);
                 fileSetupService.Commit();
-                // b. Writes a small message
-                Console.WriteLine("\nMerci d'avoir testé ce programme \\^o^/\nAppuyez sur une touche pour fermer le programme...");
-                // c. Waits for a user input
+                // c. Writes a small message
+                GoodbyeMessage();
+                // d. Waits for a user input
                 Console.ReadKey(true);
-                // d. Close the program
+                // e. Close the program
                 Environment.Exit(0);
             }
             else
@@ -356,7 +384,6 @@ namespace IA05_Console
             Console.WriteLine("================ Résultat ================\n");
             var max = results.OrderByDescending(v => v.Value).First();
             Console.WriteLine($"C'est un {max.Key}");
-
             // 3. Writes all the others scores
             Console.WriteLine("\n\nTous les scores : ");
             foreach (KeyValuePair<string, double> result in results.OrderByDescending(v => v.Value))
@@ -567,6 +594,43 @@ namespace IA05_Console
 
             // 3. Set the cursor position
             Console.SetCursorPosition(0, topPosition);
+        }
+
+        static void GoodbyeMessage()
+        {
+            // 1. Basics stats
+            Console.WriteLine("\n\n>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\nAu revoir ^^\n");
+            Console.WriteLine("Nombre d'essais pour cette session : {0}", numberOfTrials);
+            Console.WriteLine("Taux de réponses correctes pour cette session : {0}%", Math.Round((double)numberOfCorrect / (double)numberOfTrials * 100));
+            Console.WriteLine("\nNombre d'essais en tout : {0}", network.TotalOfGuesses);
+            Console.WriteLine("Taux de réponses correctes en tout : {0}%", Math.Round((double)network.TotalOfCorrectAnswers / (double)network.TotalOfGuesses * 100));
+
+            // 2. Advanced stats
+            Console.WriteLine("\n\nRépartition des réponses de cette session :");
+            for (int i = 0; i < guessDistribution.GetLength(0); i++)
+            {
+                Console.WriteLine(
+                    "\t" +
+                    network.Layers.Last().Results[i].ToString() +
+                    " : " +
+                    Math.Round((double)guessDistribution[i] / (double)numberOfTrials * 100) +
+                    "%"
+                    );
+            }
+            Console.WriteLine("\nRépartition des réponses de en tout :");
+            for (int i = 0; i < network.TotalGuessDistribution.GetLength(0); i++)
+            {
+                Console.WriteLine(
+                    "\t" +
+                    network.Layers.Last().Results[i].ToString() +
+                    " : " +
+                    Math.Round((double)network.TotalGuessDistribution[i] / (double)network.TotalOfGuesses*100) +
+                    "%"
+                    );
+            }
+
+            // 3. Kind message ^^
+            Console.WriteLine("\nMerci d'avoir testé ce programme \\^o^/\nAppuyez sur une touche pour fermer le programme...");
         }
     }
 }
