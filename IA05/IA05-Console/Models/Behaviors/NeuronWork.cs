@@ -11,7 +11,7 @@ namespace IA05.Models
     public partial class Neuron
     {
         //learning rate
-        const double LEARNING_RATE = 0.002;
+        const double LEARNING_RATE = 0.001;
 
 
         /// <summary>
