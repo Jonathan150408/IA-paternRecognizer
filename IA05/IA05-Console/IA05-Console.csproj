@@ -101,6 +101,7 @@
     <None Include="App.config" />
     <None Include="packages.config" />
     <None Include="Ressources\config.json" />
+    <None Include="Ressources\LinesRecognizer.json" />
     <None Include="Ressources\network.json" />
   </ItemGroup>
   <ItemGroup>

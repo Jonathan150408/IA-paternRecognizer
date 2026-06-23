@@ -9,11 +9,11 @@
   },
   {
     "Id": 1,
-    "Name": "Détecteur de patternes plus complexes",
-    "Description": "Une modèle d'IA simple capable de reconnaitre des chiffres dans une grille.",
-    "Path": "network.json",
+    "Name": "Détecteur de lignes basiques",
+    "Description": "Une modèle d'IA miniature capable de déterminer si un ligne est verticale, horizontale ou pas une ligne dans une grille.",
+    "Path": "LinesRecognizer.json",
     "NeedForm": true,
-    "Form" :  [32, 32]
+    "Form": [ 5, 5 ]
   }
 ]
 

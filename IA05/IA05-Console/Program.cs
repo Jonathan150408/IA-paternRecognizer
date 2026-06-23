@@ -239,20 +239,7 @@ namespace IA05_Console
                 // 3. Ask for expected values
                 for (int i = 0; i < network.Layers.Last().Neurons.Count; i++)
                 {
-                    string shape = "";
-                    switch (i)
-                    {
-                        case 0:
-                            shape = "Carré";
-                            break;
-                        case 1:
-                            shape = "Triangle";
-                            break;
-                        case 2:
-                            shape = "Cercle";
-                            break;
-                    }
-                    Console.Write("Valeur attendue pour " + shape + ":\t");
+                    Console.Write("Valeur attendue pour " + network.Layers.Last().Results[i] + ":\t");
 
                     // pause the chrono
                     chrono.Stop();
@@ -386,7 +373,7 @@ namespace IA05_Console
             // 1. Write a separator and the best result
             Console.WriteLine("\n================ Résultat ================\n");
             var max = results.OrderByDescending(v => v.Value).First();
-            Console.WriteLine($"C'est un {max.Key}");
+            Console.WriteLine($"C'est {max.Key}");
             // 3. Writes all the others scores
             Console.WriteLine("\n\nTous les scores : ");
             foreach (KeyValuePair<string, double> result in results.OrderByDescending(v => v.Value))

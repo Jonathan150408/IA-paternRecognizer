@@ -65,7 +65,7 @@ namespace IA05_Console.Services
                     foreach (string file in Directory.GetFiles(RootDirectory))
                     {
                         string fileName = Path.GetFileName(file);
-                        File.Copy(file, Path.Combine(WorkingDirectory, fileName), false);
+                        File.Copy(file, Path.Combine(WorkingDirectory, fileName), true);
                     }
                 }
 
@@ -79,7 +79,7 @@ namespace IA05_Console.Services
                 foreach (string file in Directory.GetFiles(RootDirectoryRepoScoped))
                 {
                     string fileName = Path.GetFileName(file);
-                    File.Copy(file, Path.Combine(WorkingDirectory, fileName), false);
+                    File.Copy(file, Path.Combine(WorkingDirectory, fileName), true);
                 }
 
                 return;
