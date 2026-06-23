@@ -216,14 +216,43 @@ namespace IA05_Console
                     template.Run(network);
                 }
 
-                // 2. Quit
-                // a. Merge the last infos
-                network.TotalOfGuesses += numberOfTrials;
-                network.TotalOfCorrectAnswers += numberOfCorrect;
-                for (int i = 0; i < network.TotalGuessDistribution.GetLength(0); i++)
+                // 2. Ask if we want to continue
+                ConsoleKey userChoice = ConsoleKey.NoName;
+                do
                 {
-                    network.TotalGuessDistribution[i] += guessDistribution[i];
-                }
+                    // a. Little message
+                    Console.WriteLine("\nSouhaitez-vous refaire passer l'entrainement ? (O/N)");
+
+                    // b. Get the key
+                    userChoice = Console.ReadKey().Key;
+                    Console.WriteLine();
+
+                    // c. If ok, train again
+                    if (userChoice == ConsoleKey.O)
+                    {
+                        // AUTO-TRAINING (with templates)
+                        foreach (TrainingTemplate template in trainingTemplates)
+                        {
+                            template.Run(network);
+                        }
+                    }
+                    else if (userChoice != ConsoleKey.N)
+                    {
+                        Console.WriteLine("{0} n'est pas une touche acceptée.", userChoice);
+                    }
+
+                    // d. Leave or continue
+                } while (userChoice != ConsoleKey.N);
+                
+
+                // 3. Quit
+                //// a. Merge the last infos
+                //network.TotalOfGuesses += numberOfTrials;
+                //network.TotalOfCorrectAnswers += numberOfCorrect;
+                //for (int i = 0; i < network.TotalGuessDistribution.GetLength(0); i++) 
+                //{
+                //    network.TotalGuessDistribution[i] += guessDistribution[i];
+                //}
                 // b. Save the network
                 iaService.SaveNetwork(network);
                 fileSetupService.Commit();
