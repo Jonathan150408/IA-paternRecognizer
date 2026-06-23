@@ -80,7 +80,6 @@ namespace IA05_Console
             // ENVIRONMENT SETUP
             fileSetupService = new FileService();
             fileSetupService.Setup();
-            trainingTemplates = new List<TrainingTemplate>();
 
             // Log the chrono
             LogChrono("Vérification des fichiers et setup fait");
@@ -136,6 +135,7 @@ namespace IA05_Console
                 iaService = new IAService(networkPreviews[chosenModel].Path);
                 network = iaService.LoadNetwork();
                 trainingTemplateService = new TrainingTemplatesService(networkPreviews[chosenModel].Path);
+                trainingTemplates = trainingTemplateService.LoadTemplates();
             }
 
             // Log the chrono
@@ -177,7 +177,7 @@ namespace IA05_Console
                     Console.WriteLine("\nSouhaitez-vous créer un nouveau template ? (O/N)");
 
                     // b. Get the key
-                    userChoice = Console.ReadKey(true).Key;
+                    userChoice = Console.ReadKey().Key;
 
                     // c. If ok, create a new one
                     if (userChoice == ConsoleKey.O)
@@ -194,24 +194,28 @@ namespace IA05_Console
                 } while (userChoice != ConsoleKey.N);
 
                 // SAVING
+                // 1. Save the templates
                 trainingTemplateService.SaveTemplates(trainingTemplates);
                 fileSetupService.Commit();
+
+                // 2. Writes a goodbye message
+                Console.WriteLine("\n\n>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\nAu revoir ^^\n");
+                Console.WriteLine("\nMerci d'avoir testé ce programme \\^o^/\nAppuyez sur une touche pour fermer le programme...");
+
+                // 3. Waits for an action then leave
                 Console.ReadKey(true);
                 Environment.Exit(0);
             }
             else if (usageMode == 3)
             {
                 // AUTO-TRAINING (with templates)
-                // 1. Get the templates
-                trainingTemplates = trainingTemplateService.LoadTemplates();
-
-                // 2. Use the template to train
+                // 1. Use the template to train
                 foreach (TrainingTemplate template in trainingTemplates)
                 {
                     template.Run(network);
                 }
 
-                // 3. Quit
+                // 2. Quit
                 // a. Merge the last infos
                 network.TotalOfGuesses += numberOfTrials;
                 network.TotalOfCorrectAnswers += numberOfCorrect;
@@ -223,7 +227,9 @@ namespace IA05_Console
                 iaService.SaveNetwork(network);
                 fileSetupService.Commit();
                 // c. Writes a small message
-                GoodbyeMessage();
+                Console.WriteLine("\n\n>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\nAu revoir ^^\n");
+                Console.WriteLine("Les statistiques de l'auto-entrainement ne sont pas encore disponibles.");
+                Console.WriteLine("\nMerci d'avoir testé ce programme \\^o^/\nAppuyez sur une touche pour fermer le programme...");
                 // d. Waits for a user input
                 Console.ReadKey(true);
                 // e. Close the program
@@ -261,7 +267,10 @@ namespace IA05_Console
             // 1. Set up variables
             double[] expected = new double[network.Layers.Last().Neurons.Count];
 
-            // 2. Ask for expected values
+            // 2. Writes the title
+            Console.WriteLine("\n========= Phase d'entrainement =========");
+
+            // 3. Ask for expected values
             for (int i = 0; i < network.Layers.Last().Neurons.Count; i++)
             {
                 Console.Write("Valeur attendue pour " + network.Layers.Last().Results[i] + ":");

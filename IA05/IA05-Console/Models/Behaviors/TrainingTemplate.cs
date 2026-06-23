@@ -40,10 +40,7 @@ namespace IA05_Console.Models
             // 1. Writes the title
             Console.WriteLine("\n========= Phase d'entrainement =========");
 
-            // 2. Set up variables
-            results.Clear();
-
-            // 3. Correct the network
+            // 2. Correct the network
             network.Layers.Last().CorrectLayer(this.ExpectedResult, network.History.Last()[0], network.History[network.History.Count - 2]);
 
             // Log the chrono
@@ -53,6 +50,7 @@ namespace IA05_Console.Models
             chrono.Restart();
 
             // 1. Compute the new result
+            results.Clear();
             results = network.MakePrediction(FakeInput);
 
             // 2. Show the new result
