@@ -37,14 +37,5 @@ namespace IA05.Services
             List<NetworkPreview> previews = JsonSerializer.Deserialize<List<NetworkPreview>>(jsonString);
             return previews;
         }
-
-        /// <summary>
-        /// Gives the used path
-        /// </summary>
-        /// <returns></returns>
-        public string GetPath()
-        {
-            return this.Path;
-        }
     }
 }

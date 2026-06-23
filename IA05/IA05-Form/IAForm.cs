@@ -18,7 +18,6 @@ namespace IA05_Form
         /// </summary>
         public double[,] gridToAnalyse;
         public Dictionary<string, int> stats = new Dictionary<string, int>();
-        public bool wantCorrection;
         public bool wantOperationDetails;
 
         /// <summary>
@@ -83,49 +82,6 @@ namespace IA05_Form
                 }
             }
             this.UserInput.Location = new Point((this.ClientSize.Width / 2 - this.UserInput.Width / 2), 50);
-
-            // CORRECTION TOGGLE
-            // 5. Create a toggle button to set the correction mode
-            correctionGroup = new FlowLayoutPanel()
-            {
-                Name = "Activer la correction ?",
-                ForeColor = Color.White,
-                Location = new Point(50, 50)
-            };
-            Label correctionLabel = new Label()
-            {
-                Text = "Activer la correction ? (recommandé)",
-                ForeColor = Color.White,
-                Location = new Point(50, 25),
-                AutoSize = true,
-                Font = new Font("Microsoft Sans Serif", 10),
-            };
-            RadioButton correctionTrue = new RadioButton()
-            {
-                Text = "On",
-                Tag = true,
-                Appearance = Appearance.Button,
-                ForeColor = Color.White,
-                Checked = true,
-                BackColor = Color.LightGreen
-            };
-            RadioButton correctionFalse = new RadioButton()
-            {
-                Text = "Off",
-                Tag = false,
-                Appearance = Appearance.Button,
-                ForeColor = Color.White,
-            };
-            // 6. Add the field to the form
-            this.Controls.Add(correctionGroup);
-            this.Controls.Add(correctionLabel);
-            correctionGroup.Controls.Add(correctionTrue);
-            correctionGroup.Controls.Add(correctionFalse);
-            // 7. Link the buttons with method
-            foreach (RadioButton radioButton in correctionGroup.Controls)
-            {
-                radioButton.Click += RadioButton_Click;
-            }
 
             // DEBUG TOGGLE
             // 8. Create a toggle button to set the correction mode
@@ -203,16 +159,6 @@ namespace IA05_Form
                 for (int j = 0; j < this.GridDimensions[1]; j++)
                 {
                     this.gridToAnalyse[i, j] = Convert.ToInt16(this.UserInput.Controls[i * (int)this.GridDimensions[0] + j].Tag);
-                }
-            }
-
-            // CORRECTION
-            // 2. Convert the correction field
-            foreach (RadioButton radioButton in correctionGroup.Controls)
-            {
-                if (radioButton.Checked)
-                {
-                    wantCorrection = Convert.ToBoolean(radioButton.Tag);
                 }
             }
 

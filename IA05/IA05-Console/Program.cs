@@ -1,5 +1,6 @@
 ﻿using IA05.Models;
 using IA05.Services;
+using IA05_Console.Models;
 using IA05_Console.Services;
 using IA05_Form;
 using System;
@@ -31,7 +32,11 @@ namespace IA05_Console
         /// <summary>
         /// A service that set the files up if needed before running the IA
         /// </summary>
-        static FileSetupService fileSetupService;
+        static FileService fileSetupService;
+        /// <summary>
+        /// A service that loads all templates
+        /// </summary>
+        static TrainingTemplatesService trainingTemplateService;
 
 
         /// <summary>
@@ -46,12 +51,12 @@ namespace IA05_Console
         /// The neural network itself
         /// </summary>
         static Network network;
+        static List<TrainingTemplate> trainingTemplates;
 
         /// <summary>
         /// A chrono used to get the loading time
         /// </summary>
         static Stopwatch chrono = new Stopwatch();
-
         /// <summary>
         /// The number of trials for this session
         /// </summary>
@@ -73,8 +78,9 @@ namespace IA05_Console
             chrono.Restart();
 
             // ENVIRONMENT SETUP
-            fileSetupService = new FileSetupService();
+            fileSetupService = new FileService();
             fileSetupService.Setup();
+            trainingTemplates = new List<TrainingTemplate>();
 
             // Log the chrono
             LogChrono("Vérification des fichiers et setup fait");
@@ -86,7 +92,6 @@ namespace IA05_Console
             // INITIALIZATION
             // 1. Set up variables
             List<double[,]> gridToAnalyse = new List<double[,]>();
-            bool wantCorrection = false;
             bool wantOperationDetails = false;
 
             // 2. One-time form setup
@@ -130,20 +135,153 @@ namespace IA05_Console
             {
                 iaService = new IAService(networkPreviews[chosenModel].Path);
                 network = iaService.LoadNetwork();
+                trainingTemplateService = new TrainingTemplatesService(networkPreviews[chosenModel].Path);
             }
 
             // Log the chrono
             LogChrono("Réseau chargé");
 
             ///////////////////////////////////////////////////////////////////////////////////////////
-            // Chrono is handled inside the method
-            // 1. Handle the following steps
-            HandleNetwork(
-                chosenModel: chosenModel,
-                wantOperationDetails: wantOperationDetails,
-                wantCorrection: wantCorrection,
-                gridToAnalyse: gridToAnalyse
-                );
+            // No chrono here !!
+            // 1. Set up variables
+            List<string> usages = new List<string>() { "Entrainement", "Mise à l'épreuve", "Ajout de templates", "Générer l'auto-entrainement" };
+
+            // 2. Ask for the usage mode
+            int usageMode = DisplayMenu("Choisissez un mode d'utilisation :", usages, 10, 0);
+            ClearConsoleArea(52, 12, 5);
+
+            ///////////////////////////////////////////////////////////////////////////////////////////
+            // Chrono is handled inside the methods
+            if (usageMode == 0 || usageMode == 1)
+            {
+                // MANUAL USAGE (0 = training, 1 = testing)
+                // 1. Handle the following steps
+                HandleNetwork(
+                    chosenModel: chosenModel,
+                    wantOperationDetails: wantOperationDetails,
+                    wantCorrection: usageMode == 0,
+                    gridToAnalyse: gridToAnalyse
+                    );
+            }
+            else if (usageMode == 2)
+            {
+                // TEMPLATE CREATION
+                // 1. Create a new template (show the form)
+                CreateTrainingTemplate(networkPreviews[chosenModel]);
+
+                // 2. Ask if the user wants more templates
+                ConsoleKey userChoice = ConsoleKey.NoName;
+                do
+                {
+                    // a. Little message
+                    Console.WriteLine("\nSouhaitez-vous créer un nouveau template ? (O/N)");
+
+                    // b. Get the key
+                    userChoice = Console.ReadKey(true).Key;
+
+                    // c. If ok, create a new one
+                    if (userChoice == ConsoleKey.O)
+                    {
+                        // TEMPLATE CREATION
+                        CreateTrainingTemplate(networkPreviews[chosenModel]);
+                    }
+                    else if (userChoice != ConsoleKey.N)
+                    {
+                        Console.WriteLine("{0} n'est pas une touche acceptée.", userChoice);
+                    }
+
+                    // d. Leave or continue
+                } while (userChoice != ConsoleKey.N);
+
+                // SAVING
+                trainingTemplateService.SaveTemplates(trainingTemplates);
+                fileSetupService.Commit();
+                Console.ReadKey(true);
+                Environment.Exit(0);
+            }
+            else if (usageMode == 3)
+            {
+                // AUTO-TRAINING (with templates)
+                // 1. Get the templates
+                trainingTemplates = trainingTemplateService.LoadTemplates();
+
+                // 2. Use the template to train
+                foreach (TrainingTemplate template in trainingTemplates)
+                {
+                    template.Run(network);
+                }
+
+                // 3. Quit
+                // a. Merge the last infos
+                network.TotalOfGuesses += numberOfTrials;
+                network.TotalOfCorrectAnswers += numberOfCorrect;
+                for (int i = 0; i < network.TotalGuessDistribution.GetLength(0); i++)
+                {
+                    network.TotalGuessDistribution[i] += guessDistribution[i];
+                }
+                // b. Save the network
+                iaService.SaveNetwork(network);
+                fileSetupService.Commit();
+                // c. Writes a small message
+                GoodbyeMessage();
+                // d. Waits for a user input
+                Console.ReadKey(true);
+                // e. Close the program
+                Environment.Exit(0);
+            }
+        }
+
+        /// <summary>
+        /// Create a new training template
+        /// </summary>
+        /// <param name="networkPreview"></param>
+        static void CreateTrainingTemplate(NetworkPreview networkPreview)
+        {
+            // FORM
+            chrono.Restart();
+            // 1. Reset the grid in case of restart
+            double[,] template = new double[networkPreview.GridDimensions[0], networkPreview.GridDimensions[1]];
+
+            // 2. Launch the form
+            using (var form = new IAForm(networkPreview.GridDimensions, networkPreview.CellSize))
+            {
+                // Log the chrono
+                LogChrono("Formulaire chargé");
+
+                form.Activate();
+                // 3. Get the form's data
+                if (form.ShowDialog() == DialogResult.OK)
+                {
+                    template = form.gridToAnalyse;
+                }
+            }
+
+            // EXPECTED RESULTS
+
+            // 1. Set up variables
+            double[] expected = new double[network.Layers.Last().Neurons.Count];
+
+            // 2. Ask for expected values
+            for (int i = 0; i < network.Layers.Last().Neurons.Count; i++)
+            {
+                Console.Write("Valeur attendue pour " + network.Layers.Last().Results[i] + ":");
+                Console.SetCursorPosition(Console.CursorLeft - (Console.CursorLeft + 2) % 16 + 16, Console.CursorTop);
+                double.TryParse(Console.ReadLine(), out expected[i]);
+
+                // 4. Make sure values aren't greater or lower than 0 and 1
+                if (expected[i] > 1)
+                {
+                    expected[i] = 1;
+                }
+                else if (expected[i] < 0)
+                {
+                    expected[i] = 0;
+                }
+            }
+            Console.WriteLine();
+
+            // TEMPLATE
+            trainingTemplates.Add(new TrainingTemplate(template, expected));
         }
 
         /// <summary>
@@ -177,7 +315,6 @@ namespace IA05_Console
                     if (form.ShowDialog() == DialogResult.OK)
                     {
                         wantOperationDetails = form.wantOperationDetails;
-                        wantCorrection = form.wantCorrection;
                         gridToAnalyse.Add(form.gridToAnalyse);
                     }
                 }
@@ -587,6 +724,9 @@ namespace IA05_Console
             Console.SetCursorPosition(0, topPosition);
         }
 
+        /// <summary>
+        /// Show stats and say goodbye
+        /// </summary>
         static void GoodbyeMessage()
         {
             // 1. Basics stats
