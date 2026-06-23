@@ -52,7 +52,6 @@ namespace IA05_Form
         {
             // GRID
             // 1. Set up the panel
-            this.UserInput.Location = new Point((this.ClientSize.Width - this.UserInput.Width) / 3 + 50, 50);
             this.UserInput.AutoSize = false;
             this.UserInput.Size = new Size((int)this.GridDimensions[0] * CELLSIZE, (int)this.GridDimensions[1] * CELLSIZE);
             this.UserInput.BackColor = Color.White;
@@ -82,6 +81,7 @@ namespace IA05_Form
                     this.UserInput.Controls.Add(box);
                 }
             }
+            this.UserInput.Location = new Point((this.ClientSize.Width / 2 - this.UserInput.Width / 2), 50);
 
             // CORRECTION TOGGLE
             // 5. Create a toggle button to set the correction mode
@@ -174,13 +174,13 @@ namespace IA05_Form
             Button validation = new Button
             {
                 Size = new Size(200, 100),
-                Location = new Point((this.ClientSize.Width - 200) / 2 + 50, this.UserInput.Bottom + 10),
                 Text = "GO",
                 ForeColor = Color.White,
                 Font = new Font(this.Font.FontFamily, 20, FontStyle.Italic),
                 Cursor = Cursors.Hand,
                 TabStop = true
             };
+            validation.Location = new Point((this.ClientSize.Width - validation.Width) / 2, this.UserInput.Bottom + 10);
             // 12. Add the submit button
             this.Controls.Add(validation);
             validation.BringToFront();
