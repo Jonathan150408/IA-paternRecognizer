@@ -178,6 +178,7 @@ namespace IA05_Console
 
                     // b. Get the key
                     userChoice = Console.ReadKey().Key;
+                    Console.WriteLine();
 
                     // c. If ok, create a new one
                     if (userChoice == ConsoleKey.O)
