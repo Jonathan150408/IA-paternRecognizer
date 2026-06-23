@@ -42,12 +42,17 @@ namespace IA05.Models
         /// </summary>
         [JsonPropertyName("Form")]
         public uint[] GridDimensions { get; set; }
+        /// <summary>
+        /// CellSize : An integer taht defines the size of a form's cell
+        /// </summary>
+        [JsonPropertyName("CellSize")]
+        public int CellSize { get; set; }
 
 
         /// <summary>
         /// Constructor
         /// </summary>
-        public NetworkPreview(uint id, string name, string description, string path, bool needForm, uint[] gridDimensions)
+        public NetworkPreview(uint id, string name, string description, string path, bool needForm, uint[] gridDimensions, int cellsize)
         {
             Id = id;
             Name = name;
@@ -55,6 +60,7 @@ namespace IA05.Models
             Path = path;
             NeedForm = needForm;
             GridDimensions = gridDimensions ?? new uint[0];
+            CellSize = cellsize;
         }
     }
 }

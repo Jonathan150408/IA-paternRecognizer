@@ -24,7 +24,7 @@ namespace IA05_Form
         /// <summary>
         /// Data used to set up the form
         /// </summary>
-        const int CELLSIZE = 16;
+        int CellSize;
         private readonly uint[] GridDimensions;
 
         /// <summary>
@@ -36,11 +36,12 @@ namespace IA05_Form
         /// <summary>
         /// Contructor
         /// </summary>
-        public IAForm(uint[] gridDimensions)
+        public IAForm(uint[] gridDimensions, int cellSize)
         {
             InitializeComponent();
             GridDimensions = gridDimensions;
             gridToAnalyse = new double[this.GridDimensions[0], this.GridDimensions[1]];
+            CellSize = cellSize;
             HandleGrid();
         }
 
@@ -53,7 +54,7 @@ namespace IA05_Form
             // GRID
             // 1. Set up the panel
             this.UserInput.AutoSize = false;
-            this.UserInput.Size = new Size((int)this.GridDimensions[0] * CELLSIZE, (int)this.GridDimensions[1] * CELLSIZE);
+            this.UserInput.Size = new Size((int)this.GridDimensions[0] * CellSize, (int)this.GridDimensions[1] * CellSize);
             this.UserInput.BackColor = Color.White;
             // 2. Create a 32 x 32 square of checkboxes
             for (int i = 0; i < this.GridDimensions[0]; i++)
@@ -64,8 +65,8 @@ namespace IA05_Form
                     {
                         Appearance = Appearance.Button,
                         Tag = 0,
-                        Size = new Size(CELLSIZE, CELLSIZE),
-                        Location = new Point(j * CELLSIZE, i * CELLSIZE),
+                        Size = new Size(CellSize, CellSize),
+                        Location = new Point(j * CellSize, i * CellSize),
                         AutoSize = false,
                         Margin = new Padding(0),
                         Padding = new Padding(0),

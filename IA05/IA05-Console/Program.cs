@@ -167,7 +167,7 @@ namespace IA05_Console
                 gridToAnalyse.Clear();
 
                 // 2. Launch the form
-                using (var form = new IAForm(networkPreviews[chosenModel].GridDimensions))
+                using (var form = new IAForm(networkPreviews[chosenModel].GridDimensions, networkPreviews[chosenModel].CellSize))
                 {
                     // Log the chrono
                     LogChrono("Formulaire chargé");
@@ -239,7 +239,8 @@ namespace IA05_Console
                 // 3. Ask for expected values
                 for (int i = 0; i < network.Layers.Last().Neurons.Count; i++)
                 {
-                    Console.Write("Valeur attendue pour " + network.Layers.Last().Results[i] + ":\t");
+                    Console.Write("Valeur attendue pour " + network.Layers.Last().Results[i] + ":");
+                    Console.SetCursorPosition(Console.CursorLeft - (Console.CursorLeft + 2) % 16 + 16, Console.CursorTop);
 
                     // pause the chrono
                     chrono.Stop();
