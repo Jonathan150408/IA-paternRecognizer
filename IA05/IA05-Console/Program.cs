@@ -163,14 +163,17 @@ namespace IA05_Console
             // FORM
             if (networkPreviews[chosenModel].NeedForm)
             {
-                // 1. Launch the form
+                // 1. Reset the grid in case of restart
+                gridToAnalyse.Clear();
+
+                // 2. Launch the form
                 using (var form = new IAForm(networkPreviews[chosenModel].GridDimensions))
                 {
                     // Log the chrono
                     LogChrono("Formulaire chargé");
 
                     form.Activate();
-                    // 2. Get the form's data
+                    // 3. Get the form's data
                     if (form.ShowDialog() == DialogResult.OK)
                     {
                         wantOperationDetails = form.wantOperationDetails;
@@ -228,7 +231,7 @@ namespace IA05_Console
             {
                 // GETTING THE VALUES
                 // 1. Writes the title
-                Console.WriteLine("========= Phase d'entrainement =========");
+                Console.WriteLine("\n========= Phase d'entrainement =========");
 
                 // 2. Set up variables
                 double[] expected = new double[network.Layers.Last().Neurons.Count];
@@ -381,7 +384,7 @@ namespace IA05_Console
         static void WriteResult(Dictionary<string, double> results)
         {
             // 1. Write a separator and the best result
-            Console.WriteLine("================ Résultat ================\n");
+            Console.WriteLine("\n================ Résultat ================\n");
             var max = results.OrderByDescending(v => v.Value).First();
             Console.WriteLine($"C'est un {max.Key}");
             // 3. Writes all the others scores
