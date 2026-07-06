@@ -106,6 +106,7 @@
     <None Include="Ressources\config.json" />
     <None Include="Ressources\LinesRecognizer.json" />
     <None Include="Ressources\ShapeRecognizer.json" />
+    <None Include="Ressources\TrainingData\LinesRecognizer.json" />
     <None Include="Ressources\TrainingData\ShapeRecognizer.json" />
   </ItemGroup>
   <ItemGroup>
