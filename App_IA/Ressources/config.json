@@ -1,0 +1,21 @@
+[
+  {
+    "Id": 0,
+    "Name": "Détecteur de patternes simples",
+    "Description": "Une modèle d'IA simple capable de reconnaitre une forme des plus basiques dans une grille. Carré, triangle ou cercle.",
+    "Path": "ShapeRecognizer.json",
+    "NeedForm": true,
+    "Form": [ 32, 32 ],
+    "CellSize" :  16
+  },
+  {
+    "Id": 1,
+    "Name": "Détecteur de lignes basiques",
+    "Description": "Une modèle d'IA miniature capable de déterminer si un ligne est verticale, horizontale ou pas une ligne dans une grille.",
+    "Path": "LinesRecognizer.json",
+    "NeedForm": true,
+    "Form": [ 5, 5 ],
+    "CellSize" : 32
+  }
+]
+
